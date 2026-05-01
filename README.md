@@ -138,6 +138,15 @@ claims are significant (handled separately by the statistical reporting
 helpers); (d) the engine is free of bench-developer overfitting in query
 phrasing.
 
+## Preprint
+
+The companion methodology paper is included in this repository:
+
+- [`PREPRINT.md`](PREPRINT.md) — *Calibrated Falsification Harnesses for Retrieval Evaluation* (v7, with N=10,000 validation, broken-predictor suite, sensitivity grid, and the soundness proposition for the four-null gate).
+- [`SUPPLEMENTARY.md`](SUPPLEMENTARY.md) — extended tables, ablations, and the bench-size calibration curve.
+
+Submission to arXiv is pending. The DOI will be added to `CITATION.cff` on acceptance. In the interim, the markdown is the canonical source; both files are immutable for v0.1.0 (verifiable via `lock_state` against the v0.1.0 tag).
+
 ## How this complements existing tools
 
 | Capability | DVC | MLflow | W&B Artifacts | Ragas | TruLens | falsify-eval |
