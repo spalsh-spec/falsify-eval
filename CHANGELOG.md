@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-05-01
+
+### Fixed
+- Export `bootstrap_diff_ci` and `power_n_required` from top-level package
+  (`from falsify_eval import bootstrap_diff_ci` was previously broken despite
+  being documented in the README; caught by the new CI import-smoke job).
+
 ### Added
 - GitHub Actions CI matrix (Python 3.10/3.11/3.12 × ubuntu/macos)
 - Issue and PR templates

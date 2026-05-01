@@ -19,12 +19,19 @@ from .gate import (
     four_null_gate,
 )
 from .lock import lock_state, verify_state
-from .stats import bootstrap_ci, paired_permutation_p, cohens_d_paired
+from .stats import (
+    bootstrap_ci,
+    bootstrap_diff_ci,
+    paired_permutation_p,
+    cohens_d_paired,
+    power_n_required,
+)
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __all__ = [
     "null_a_permuted", "null_b_uniform", "null_c_random_retrieval",
     "null_d_marginal_matched", "four_null_gate",
     "lock_state", "verify_state",
-    "bootstrap_ci", "paired_permutation_p", "cohens_d_paired",
+    "bootstrap_ci", "bootstrap_diff_ci",
+    "paired_permutation_p", "cohens_d_paired", "power_n_required",
 ]
