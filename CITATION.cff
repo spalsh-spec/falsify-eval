@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "falsify-eval: a calibrated falsification harness for retrieval evaluation"
+version: 0.1.0
+date-released: 2026-05-01
+authors:
+  - family-names: Sharma
+    given-names: Sparsh
+    email: sparshsharma219@gmail.com
+license: Apache-2.0
+url: https://github.com/sparshsharma/falsify-eval
+preferred-citation:
+  type: article
+  title: "Calibrated Falsification Harnesses for Retrieval Evaluation"
+  authors:
+    - family-names: Sharma
+      given-names: Sparsh
+  year: 2026
+  notes: "Preprint forthcoming on arXiv (cs.IR)."

@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# OS
+.DS_Store
+.fuse_hidden*
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Local artifacts (users shouldn't commit their bench output to falsify-eval itself)
+*.lock.json
+/tmp/
+*.log
+
+# Anything intentionally kept local — never publish via this repo
+PRIVATE/

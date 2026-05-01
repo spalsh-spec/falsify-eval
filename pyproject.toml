@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "falsify-eval"
+version = "0.1.0"
+description = "Calibrated falsification harness for retrieval evaluation."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "Sparsh Sharma", email = "sparshsharma219@gmail.com"}]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy>=1.24",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+keywords = ["retrieval", "evaluation", "falsification", "reproducibility", "rag", "ir"]
+
+[project.optional-dependencies]
+test = ["pytest>=7.0"]
+
+[project.urls]
+Homepage   = "https://github.com/sparshsharma/falsify-eval"
+Issues     = "https://github.com/sparshsharma/falsify-eval/issues"
+Preprint   = "https://arxiv.org/abs/<TBD-on-submission>"
+
+[tool.setuptools.packages.find]
+include = ["falsify_eval*"]
