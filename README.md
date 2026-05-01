@@ -3,8 +3,11 @@
 **A calibrated falsification harness for retrieval evaluation.**
 Bring your own retrieval system, your own corpus, your own metric.
 
+[![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
+[![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
+[![Docs](https://img.shields.io/badge/docs-README%20%2B%20preprint-blue)](#preprint)
 
 ---
 

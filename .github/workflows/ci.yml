@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests py${{ matrix.python }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install package + test deps
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+
+      - name: Run pytest
+        run: python -m pytest tests/ -q
+
+      - name: Run synthetic demo (smoke)
+        run: python examples/synthetic_demo.py
+
+  lint-imports:
+    name: import smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Verify all public symbols importable
+        run: |
+          python -c "
+          from falsify_eval import (
+              four_null_gate,
+              null_a_permuted,
+              null_b_uniform,
+              null_c_random_retrieval,
+              null_d_marginal_matched,
+              lock_state, verify_state,
+              bootstrap_ci, bootstrap_diff_ci,
+              paired_permutation_p, cohens_d_paired,
+          )
+          print('All public symbols import cleanly.')
+          "
