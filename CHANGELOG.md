@@ -7,6 +7,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] — 2026-05-04
+
+### Added — terminal UX overhaul (Claude-Code-style hints)
+- `falsify-eval doctor` — end-to-end install verification. Reports python +
+  numpy + falsify-eval versions, runs the gate against an embedded demo
+  bench, prints next-step commands. The right first command for any new user.
+- `falsify-eval quickstart [DIR]` — writes a sample `bench.jsonl` and
+  `pool.txt` and prints the exact `grade` command to run against them.
+  Zero-friction first-run.
+- `falsify-eval grade --demo` — grade an embedded 50-query synthetic bench
+  with no input files needed. Useful for CI smoke-tests and "does this even
+  work" checks.
+- ANSI-coloured output (auto-disabled when not a TTY or when `NO_COLOR`
+  env var is set, so CI logs stay clean).
+- Post-grade "what's next?" hint footer suggesting the next command,
+  conditional on PASS vs FAIL. On FAIL, diagnoses which null failed and
+  suggests the most likely cause.
+- Per-error contextual hints. `INPUT ERROR: k=99 > len(item_pool)=8` is
+  followed by a `hint:` line suggesting `--pool` or smaller K in `--metric`.
+  The "gold not in pool" error suggests label-set drift between train/eval.
+- `--quiet` flag on `grade` to suppress hints (for piping/JSON consumers).
+- Examples in every subcommand's `--help` output.
+
+### Added — explicit compatibility statement
+- README now lists every environment falsify-eval is known to install in
+  with a one-line install command: local, Colab, Kaggle/Sagemaker, GitHub
+  Actions, Docker, AWS Lambda, air-gapped. The library is pure Python +
+  numpy with no native extensions, so the audit surface is tiny and the
+  deployment surface is large.
+
+### Added — LLM-RAG validation worked example
+- `examples/llm_rag_validation.py` — wraps a Claude-Haiku call as a
+  retriever and runs the four-null gate on its output. Includes a
+  random-baseline negative control and a keyword-fallback positive control
+  so the gate's three regimes (FAIL / modest PASS / strong PASS) are
+  visible. To adapt to GPT-4, Llama, Mistral, Gemini, or any other LLM:
+  swap the body of the retriever function. Everything else is identical.
+- Documentation explicitly states that falsify-eval grades the
+  *retrieval side* of any RAG pipeline, regardless of LLM vendor or stack
+  (BM25, FAISS, Pinecone, Weaviate, Vespa, etc.).
+
+### Honest non-claim
+We do **not** claim "tested against every known AI model." That requires
+hundreds of dollars in API costs and a multi-day study. We ship the
+worked Claude example as a pattern; running it against other models is
+one function-body swap and we encourage external validators to publish
+the result of doing so.
+
 ## [0.1.3] — 2026-05-04
 
 ### Fixed

@@ -54,6 +54,59 @@ summarisation, or open-ended QA — those domains need their own null
 distributions and are planned for v0.3+. We will not claim coverage before
 shipping the work.
 
+## Compatibility — where it actually runs
+
+Pure Python ≥ 3.10 + numpy ≥ 1.24. No GPUs, no native extensions, no
+internet access required at runtime. Installs cleanly anywhere those two
+dependencies install:
+
+| Environment | One-liner |
+|---|---|
+| Local laptop | `pip install -e .` after cloning |
+| Google Colab | `!pip install git+https://github.com/spalsh-spec/falsify-eval` then `import falsify_eval` |
+| Kaggle / Sagemaker / Databricks | same as Colab |
+| GitHub Actions | add `pip install git+https://github.com/spalsh-spec/falsify-eval` to your workflow `run:` block |
+| Docker (any base image with Python 3.10+) | `RUN pip install git+https://github.com/spalsh-spec/falsify-eval` |
+| AWS Lambda / Cloud Functions | bundle as a layer; the wheel is < 50 KB |
+| Air-gapped / offline | clone the repo to a USB stick; install from local path |
+
+The library is intentionally minimal so the audit surface is small and the
+deployment surface is large. There are no hidden network calls, no telemetry,
+and no opinions about your runtime.
+
+## Validating LLM-RAG outputs
+
+If you're running a Claude-, GPT-, Llama-, or Mistral-backed RAG pipeline,
+falsify-eval grades the **retrieval side** of it — i.e., the top-K documents
+your retriever pulls before the LLM writes its answer. The pattern is the
+same for every LLM:
+
+```python
+from falsify_eval import four_null_gate
+
+# Replace this with whatever your retriever returns. The library doesn't
+# care if your retriever is BM25, FAISS, Pinecone, Weaviate, Vespa, or
+# a homegrown bag-of-words — it grades the OUTPUT, not the engine.
+def my_rag_retriever(query: str) -> list[str]:
+    """Return top-K document IDs for a query. Implementation is yours."""
+    ...
+
+queries = [...]                    # your eval queries
+gold = [...]                        # known-correct doc ID per query
+pool = [...]                        # all doc IDs in your corpus
+retrieved = [my_rag_retriever(q) for q in queries]
+
+def recall_at_5(r, g, _rel): return 1.0 if g in r[:5] else 0.0
+res = four_null_gate(retrieved, gold, [3]*len(gold), recall_at_5,
+                     item_pool=pool, k=5, n_trials=100, tau=0.05, seed=2026)
+print("GATE:", "PASS" if res["gate_passes"] else "FAIL", res["deltas"])
+```
+
+A worked Claude-API example with a real 50-query bench is in
+[`examples/llm_rag_validation.py`](examples/llm_rag_validation.py). To
+adapt it to GPT-4, Llama, Mistral, Gemini, or any other provider: change
+the API call inside `my_rag_retriever`. The four-null gate is identical.
+
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
