@@ -183,11 +183,19 @@ The combination is the methodology's contribution: a harness whose verdicts are 
 
 ---
 
-## 10. External Replication Invitation & Bug Bounty
+## 10. External Replication Invitation
 
-(Same as v6; $2000 bounty offered.)
+> **Status note (2026-05-04):** the cash bounty programme previously described
+> in this section is *currently suspended* pending further internal validation
+> of the implementation. External replication is still actively invited and
+> verified findings will be attributed in the changelog; only the monetary
+> award is on hold. The original protocol design is preserved below as an
+> academic record.
 
-**Additional v7-specific challenge:** the projection in §5.8.b is a falsifiable prediction. If a third party runs `tests/run_full_10k_overnight.py` and observes Δ_full at N=10,000 outside the projected CI [−0.011, −0.005], we will pay the same $2000 bounty (under bounty class 3, "counterexample to a stated prediction").
+(Same as v6; replication challenges previously paired with a $2000 bounty
+remain valid as scientific challenges, without the monetary component.)
+
+**Additional v7-specific challenge:** the projection in §5.8.b is a falsifiable prediction. If a third party runs `tests/run_full_10k_overnight.py` and observes Δ_full at N=10,000 outside the projected CI [−0.011, −0.005], the result will be acknowledged in the changelog and a follow-up note published — previously this would have triggered a $2000 award under "counterexample to a stated prediction"; that award is currently suspended.
 
 ---
 

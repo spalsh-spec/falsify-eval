@@ -59,11 +59,6 @@ Use the PR template. Small, focused PRs ship faster than big ones. If you're
 proposing a methodological change, open a discussion first so we can avoid you
 spending time on something that won't merge.
 
-## Bug bounty
-
-See README §Bug bounty. Bounty submissions go through the dedicated issue
-template, not regular bug reports.
-
 ## Code of conduct
 
 See `CODE_OF_CONDUCT.md`. The short version: be the kind of collaborator you

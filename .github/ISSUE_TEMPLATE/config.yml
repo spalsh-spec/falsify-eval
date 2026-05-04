@@ -3,6 +3,3 @@ contact_links:
   - name: Methodology question
     url: https://github.com/spalsh-spec/falsify-eval/discussions
     about: For questions about the four-null gate, statistical assumptions, or applying the harness to your evaluation problem, please open a discussion rather than an issue.
-  - name: Bug bounty submission
-    url: https://github.com/spalsh-spec/falsify-eval/issues/new?template=bug_bounty.md
-    about: Submitting a bounty claim? Use the dedicated template (separate from regular bug reports).

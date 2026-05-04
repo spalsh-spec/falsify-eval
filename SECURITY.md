@@ -32,13 +32,10 @@ For this library specifically:
 - Coordinated disclosure window: 90 days from confirmation, or earlier if a
   fix is shipped
 
-## Bounty
+## Acknowledgement
 
-The bug-bounty section in `README.md` covers methodology bounties (a
-predictor that passes the four-null gate but provably doesn't use the
-query, or a counterexample to Proposition 1). Security issues in the
-library implementation are out of scope for that bounty but will be
-acknowledged in the changelog under the reporter's preferred attribution.
+Confirmed security reports will be credited in the changelog under the
+reporter's preferred attribution unless the reporter requests anonymity.
 
 ## Supported versions
 

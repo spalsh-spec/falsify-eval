@@ -188,19 +188,6 @@ If this library helps your work, please cite the methodology paper:
 }
 ```
 
-## Bug bounty
-
-The methodology paper offers a $2000 bounty for any of:
-
-1. A retrieval system that PASSes the four-null gate (τ=0.05, N_trials=50)
-   *and* whose top-K output can be shown via separate evidence to not actually
-   use the query.
-2. A counterexample to Proposition 1's Hoeffding + Bonferroni argument.
-3. A reproducible drift between the demo's published numbers and a third-party
-   run on identical artifacts.
-
-Submit issues tagged `bug-bounty` against this repository.
-
 ## Contributing
 
 Issues and PRs welcome. The reference implementation is intentionally minimal;
