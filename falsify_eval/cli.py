@@ -110,17 +110,19 @@ def _demo_bench(n: int = 50, seed: int = 2026):
 def _print_result(res: dict, n_queries: int, metric_label: str):
     print()
     print(bold(f"falsify-eval · {metric_label} on {n_queries} queries"))
-    print(f"  real mean = {bold(f'{res[\"real_mean\"]:.4f}')}")
+    real_str = "%.4f" % res["real_mean"]
+    print(f"  real mean = {bold(real_str)}")
     for x in "ABCD":
         passed = res["passes"][x]
         verdict = green("✓") if passed else red("✗")
         delta_s = f"{res['deltas'][x]:+.4f}"
         delta_c = green(delta_s) if passed else red(delta_s)
         print(f"  Null {x}: mean={res['null_means'][x]:.4f}  Δ={delta_c}  {verdict}")
+    tau_str = dim("(τ=" + str(res["tau"]) + ")")
     if res["gate_passes"]:
-        print(f"  GATE: {green('✓ PASS')}  {dim(f'(τ={res[\"tau\"]})')}")
+        print(f"  GATE: {green('✓ PASS')}  {tau_str}")
     else:
-        print(f"  GATE: {red('✗ FAIL')}  {dim(f'(τ={res[\"tau\"]})')}")
+        print(f"  GATE: {red('✗ FAIL')}  {tau_str}")
     for w in res.get("warnings", []):
         print(f"  {yellow('⚠ warning:')} {w}")
 
