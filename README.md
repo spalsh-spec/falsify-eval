@@ -16,6 +16,44 @@ python3 examples/synthetic_demo.py
 > A PyPI release is planned for v0.2; until then please install from source as
 > shown above. Requires Python ≥ 3.10 and `numpy ≥ 1.24`.
 
+## Three ways to use it
+
+```bash
+# 1. As a Python library (the original surface)
+python -c "from falsify_eval import four_null_gate; ..."
+
+# 2. As a CLI on JSONL benchmarks (no Python knowledge needed)
+falsify-eval grade --input bench.jsonl --metric ndcg@5 --pool labels.txt
+
+# 3. As an MCP server inside Claude Code or any MCP-compatible client
+python -m falsify_eval.mcp_server
+```
+
+For the MCP server, add to your client's MCP config:
+
+```json
+{
+  "mcpServers": {
+    "falsify-eval": {
+      "command": "python",
+      "args": ["-m", "falsify_eval.mcp_server"]
+    }
+  }
+}
+```
+
+Claude can then invoke `grade_retrieval` directly on any retrieval pipeline
+output you give it — no glue code, no separate scoring service.
+
+### Scope honesty
+
+falsify-eval is calibrated for **retrieval and ranking evaluation**: search,
+recommendation top-K, RAG retrieval-side, classification-as-retrieval. It is
+**not yet** generalised to LLM free-text generation, multi-document
+summarisation, or open-ended QA — those domains need their own null
+distributions and are planned for v0.3+. We will not claim coverage before
+shipping the work.
+
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)

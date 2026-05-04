@@ -25,6 +25,55 @@ def _grade(retrieved_lists, gold_list, rel_list, metric_fn):
     ]))
 
 
+def _validate_inputs(retrieved_lists, gold_list, rel_list, *,
+                     item_pool, k: int, n_trials: int, tau: float) -> None:
+    """Raise ValueError early on common input mistakes.
+
+    Catches the failure modes that previously produced silent all-zero output
+    or raw numpy ValueError from inside the null hypotheses.
+    """
+    n_r, n_g, n_rel = len(retrieved_lists), len(gold_list), len(rel_list)
+    if not (n_r == n_g == n_rel):
+        raise ValueError(
+            f"length mismatch: retrieved_lists={n_r}, gold_list={n_g}, "
+            f"rel_list={n_rel}; all three must have one entry per query"
+        )
+    if n_g == 0:
+        raise ValueError("gold_list is empty — need at least one query")
+    if not isinstance(k, int) or k < 1:
+        raise ValueError(f"k must be a positive integer, got {k!r}")
+    if not isinstance(n_trials, int) or n_trials < 1:
+        raise ValueError(f"n_trials must be a positive integer, got {n_trials!r}")
+    if not (0.0 <= tau <= 1.0):
+        raise ValueError(f"tau must be in [0, 1], got {tau}")
+
+    if item_pool is not None:
+        pool = list(item_pool)
+        if len(pool) == 0:
+            raise ValueError("item_pool is empty")
+        if k > len(pool):
+            raise ValueError(
+                f"k={k} > len(item_pool)={len(pool)}; Null C samples k items "
+                f"without replacement from item_pool, so k must be ≤ pool size"
+            )
+        # Catch the silent gold-not-in-pool failure
+        pool_set = set(pool)
+        missing_gold = sorted({g for g in gold_list if g not in pool_set})
+        if missing_gold:
+            preview = missing_gold[:5]
+            more = "" if len(missing_gold) <= 5 else f" (+{len(missing_gold)-5} more)"
+            raise ValueError(
+                f"{len(missing_gold)} gold label(s) not present in item_pool: "
+                f"{preview}{more}; check label-set alignment between bench and pool"
+            )
+
+    distinct_gold = len(set(gold_list))
+    if distinct_gold == 1:
+        # Mathematically valid but worth a quiet flag in the result later;
+        # we don't raise here because single-class benches are legitimate.
+        pass
+
+
 def null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
                     *, n_trials: int = 50, seed: int = 2026) -> np.ndarray:
     """G_A: permute gold labels via a bijection π over distinct labels.
@@ -113,6 +162,23 @@ def four_null_gate(retrieved_lists,
           "n_trials":          int,
         }
     """
+    _validate_inputs(retrieved_lists, gold_list, rel_list,
+                     item_pool=item_pool, k=k, n_trials=n_trials, tau=tau)
+
+    warnings: list[str] = []
+    distinct_gold = len(set(gold_list))
+    if distinct_gold == 1:
+        warnings.append(
+            "single-class benchmark: Null A and Null D collapse to the same "
+            "distribution; treat ΔA and ΔD as one test, not two"
+        )
+    if item_pool is not None and len(gold_list) < 2 * len(set(item_pool)):
+        warnings.append(
+            f"sparse marginal: N={len(gold_list)} queries over "
+            f"{len(set(item_pool))} pool items; Null D's marginal estimator "
+            f"is noisy when N < 2·|pool| — Δ_D may behave like Δ_B"
+        )
+
     real = _grade(retrieved_lists, gold_list, rel_list, metric_fn)
     a = null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
                         n_trials=n_trials, seed=seed).mean()
@@ -133,4 +199,5 @@ def four_null_gate(retrieved_lists,
         "gate_passes": all(passes.values()),
         "tau":         tau,
         "n_trials":    n_trials,
+        "warnings":    warnings,
     }

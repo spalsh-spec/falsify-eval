@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "falsify-eval"
-version = "0.1.2"
+version = "0.1.3"
 description = "Calibrated falsification harness for retrieval evaluation."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -33,6 +33,9 @@ Homepage   = "https://github.com/spalsh-spec/falsify-eval"
 Issues     = "https://github.com/spalsh-spec/falsify-eval/issues"
 Repository = "https://github.com/spalsh-spec/falsify-eval"
 Preprint   = "https://arxiv.org/abs/<TBD-on-submission>"
+
+[project.scripts]
+falsify-eval = "falsify_eval.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["falsify_eval*"]

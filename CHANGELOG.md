@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-05-04
+
+### Fixed
+- **`k > len(item_pool)` now raises a clear `ValueError`** instead of crashing
+  with a raw numpy "Cannot take a larger sample than population" error from
+  inside Null C. Caught by the public stress-test ladder (Tier 5a).
+- **Gold labels not present in `item_pool` now raise a clear `ValueError`**
+  instead of silently producing all-zero output that read as "everything fails
+  the gate." The error names the missing labels (first 5 + count). Caught by
+  the public stress-test ladder (Tier 5f).
+
+### Added
+- **`falsify-eval` CLI.** Non-Python users can now drive the four-null gate
+  from JSONL files: `falsify-eval grade --input bench.jsonl --metric ndcg@5`.
+  Built-in metrics: `ndcg`, `recall`, `mrr` at any K. Subcommands `lock` and
+  `verify` wrap `lock_state` / `verify_state`.
+- **MCP server (`python -m falsify_eval.mcp_server`).** Exposes
+  `grade_retrieval` as a tool any MCP client (Claude Code, Claude Desktop,
+  custom enterprise apps) can invoke directly. Stdio JSON-RPC; no extra
+  dependencies beyond the base library.
+- **Result dict now includes a `warnings` list.** Soft signals that the gate
+  ran successfully but the *interpretation* needs care:
+  - single-class benchmark (Null A and Null D mathematically collapse)
+  - sparse marginal (Null D's marginal estimator is noisy when N < 2·|pool|)
+- Comprehensive input-validation tests in `tests/test_validation.py`.
+- Public stress-test ladder (`STRESS_TEST_LADDER.md`) with five tiers from
+  smoke test to mathematical-edge cases, plus runnable scripts in
+  `tests/stress/`.
+
+### Scope statement (added in response to user request)
+- falsify-eval is a methodology for **retrieval / ranking evaluation**.
+  Generalising the four-null gate to LLM text-generation, classification, RAG,
+  or recommender-system evaluation requires *new null distributions designed
+  for those domains*. That is v0.3+ work; we will not claim universal coverage
+  before doing it. Standard II of the house.
+
 ## [0.1.2] — 2026-05-04
 
 ### Fixed
