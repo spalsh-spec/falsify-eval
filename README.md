@@ -7,9 +7,14 @@ retrieval-evaluation pipeline silently accepts. Bring your own retrieval system,
 your own corpus, your own metric — verify your numbers in thirty seconds.
 
 ```bash
-pip install falsify-eval
-python -m falsify_eval.examples.synthetic_demo
+git clone https://github.com/spalsh-spec/falsify-eval.git
+cd falsify-eval
+pip install -e .
+python3 examples/synthetic_demo.py
 ```
+
+> A PyPI release is planned for v0.2; until then please install from source as
+> shown above. Requires Python ≥ 3.10 and `numpy ≥ 1.24`.
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -56,7 +61,7 @@ public interface accepts any callable that returns top-K rankings.
 ## Quick demo
 
 ```bash
-git clone https://github.com/<your-handle>/falsify-eval.git
+git clone https://github.com/spalsh-spec/falsify-eval.git
 cd falsify-eval
 pip install -e .
 python3 examples/synthetic_demo.py

@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-05-04
+
+### Fixed
+- **README hero install command was broken.** Removed `pip install falsify-eval`
+  (package is not yet published to PyPI; would have produced
+  "No matching distribution found"). Replaced with the source-install path
+  that actually works today, plus a one-line note that PyPI is planned for v0.2.
+- **README hero demo command was broken** (`python -m falsify_eval.examples.synthetic_demo`
+  failed with `ModuleNotFoundError: No module named 'falsify_eval.examples'`
+  because the `examples/` directory is at the repo root, not inside the
+  package). Replaced with `python3 examples/synthetic_demo.py`.
+- **README "Quick demo" git-clone URL contained a literal `<your-handle>`
+  placeholder** that any real user would have copy-pasted verbatim and seen
+  fail. Replaced with the real `spalsh-spec/falsify-eval` URL.
+- **`pyproject.toml` Homepage and Issues URLs pointed at non-existent
+  `github.com/sparshsharma/falsify-eval`** (HTTP 404). Corrected to
+  `github.com/spalsh-spec/falsify-eval` and added explicit `Repository` URL
+  for completeness.
+- Suspended the cash bug-bounty programme pending further internal validation
+  (removed from README, CONTRIBUTING, SECURITY, issue template, and
+  config.yml; preserved as academic record in PREPRINT §10 with status note).
+
+### Reported by
+- External user (Akosh, India, 2026-05-04). All four blockers were
+  reproducible on a fresh clone with Python 3.14 + numpy 2.4.4.
+
 ## [0.1.1] — 2026-05-01
 
 ### Fixed

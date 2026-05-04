@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "falsify-eval"
-version = "0.1.0"
+version = "0.1.2"
 description = "Calibrated falsification harness for retrieval evaluation."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -29,8 +29,9 @@ keywords = ["retrieval", "evaluation", "falsification", "reproducibility", "rag"
 test = ["pytest>=7.0"]
 
 [project.urls]
-Homepage   = "https://github.com/sparshsharma/falsify-eval"
-Issues     = "https://github.com/sparshsharma/falsify-eval/issues"
+Homepage   = "https://github.com/spalsh-spec/falsify-eval"
+Issues     = "https://github.com/spalsh-spec/falsify-eval/issues"
+Repository = "https://github.com/spalsh-spec/falsify-eval"
 Preprint   = "https://arxiv.org/abs/<TBD-on-submission>"
 
 [tool.setuptools.packages.find]
