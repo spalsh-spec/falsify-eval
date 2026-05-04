@@ -16,7 +16,7 @@ We illustrate on a small Sanskrit / Dravidian retrieval engine (6 309 chunks, 13
 
 The combination — strong PASS on the four-null gate by Δ ≥ +0.25 across two bench sizes, predictively-correct UNDER-NS verdict confirmed by 6.7× bench expansion, projected confirmation at 476× bench expansion, correct verdict on a 7-system positive-control suite, hyperparameter robustness, monotonic calibration-curve evolution, and the discovery of a per-text-class reranker mechanism that bench expansion exposed — is the methodology's contribution. The harness is *internally validated by its own protocol and externally validated by repeated bench expansion at increasing scales*.
 
-The methodology generalises to LLM behavioural eval pipelines (§7.3). External replication invitation with a $2000 bug bounty is in §10.
+The methodology generalises to LLM behavioural eval pipelines (§7.3). External replication is invited (§10); the previously-offered cash bounty is currently suspended pending further internal validation.
 
 **Code & data:** `https://github.com/sparshsharma/vak_engine` (Apache 2.0).
 **Reproduction:** `python3 tests/stats_audit_v{4,5,6}.py` for the N=21 and N=141 audits. Sample-validate the 10k via `python3 tests/stats_audit_v7_sample.py` (~30 min on M1) or run the full overnight bench via `python3 tests/run_full_10k_overnight.py` (~19 hours).
