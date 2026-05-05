@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>falsify-eval — what, how, why · Bhardwaj &amp; Sons</title>
+<title>falsify-eval, what, how, why · Bhardwaj &amp; Sons</title>
 <meta name="description" content="A 10-minute first-principles explainer of the four-null gate for retrieval evaluation. Worked example, interactive demo, honest limits, and how to verify the claim in 30 seconds.">
 <style>
 :root{--paper:#f3eee5;--paper-deep:#ebe2d2;--ink:#1c1611;--ink-mute:#6b5e4f;--rule:#d4c8b2;--accent:#9c4a1a;--gold:#9d8147;--green:#3d7a4a;--red:#a8341c;--blue:#2a5e8a}
@@ -91,9 +91,9 @@ footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;letter-spacing:.
 <section>
 <h2>1 · What this is, in thirty seconds.</h2>
 
-<p>If you build a retrieval system — a search engine, a recommender, the retriever inside a RAG pipeline — you usually grade it with one number: <code>nDCG@10</code> or <code>recall@5</code> or similar. <strong>The number does not tell you whether your engine is using the query at all.</strong> A "predictor" that ignores every query and always returns the most-frequent class can score above a sensible threshold on every metric in standard use. That's the failure mode falsify-eval catches.</p>
+<p>If you build a retrieval system, a search engine, a recommender, the retriever inside a RAG pipeline, you usually grade it with one number: <code>nDCG@10</code> or <code>recall@5</code> or similar. <strong>The number does not tell you whether your engine is using the query at all.</strong> A "predictor" that ignores every query and always returns the most-frequent class can score above a sensible threshold on every metric in standard use. That's the failure mode falsify-eval catches.</p>
 
-<p>The library runs your engine's output against four hypothetical baselines (we call them <em>nulls</em>) and reports which baselines your engine beats by enough to matter. The fourth baseline is the contribution: a marginal-matched random predictor that simulates "the system that exploits gold-label distribution without using the query." If your engine doesn't beat that one, it's not really retrieving — it's pattern-matching the test.</p>
+<p>The library runs your engine's output against four hypothetical baselines (we call them <em>nulls</em>) and reports which baselines your engine beats by enough to matter. The fourth baseline is the contribution: a marginal-matched random predictor that simulates "the system that exploits gold-label distribution without using the query." If your engine doesn't beat that one, it's not really retrieving, it's pattern-matching the test.</p>
 
 <div class="callout">
 "Most retrieval-system papers report a single aggregate metric and call it a contribution. Three failure modes make this practice unsafe at any benchmark size, and dangerous on small ones. This library closes one of them."
@@ -104,9 +104,9 @@ footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;letter-spacing:.
 <section>
 <h2>2 · The hidden failure: why a high benchmark score can mean nothing.</h2>
 
-<p>Imagine a corpus where 80% of the gold answers are "Document A" and 20% are split across "Documents B–F." A predictor that <em>always</em> returns "Document A" without reading the query will score around 0.80 recall@1 — well above the noise floor of any benchmark. It is not retrieving. It is exploiting that the gold-label distribution is skewed.</p>
+<p>Imagine a corpus where 80% of the gold answers are "Document A" and 20% are split across "Documents B–F." A predictor that <em>always</em> returns "Document A" without reading the query will score around 0.80 recall@1, well above the noise floor of any benchmark. It is not retrieving. It is exploiting that the gold-label distribution is skewed.</p>
 
-<p>This sounds contrived. It is not. Real-world retrieval benchmarks routinely have skewed gold distributions because some documents are queried more often than others, some categories dominate the corpus, and some questions have many equivalent answers. The published numbers <em>look</em> impressive against a uniform-random baseline. They are sometimes barely above the marginal-matched baseline — meaning the engine is doing little more than knowing the popularity distribution.</p>
+<p>This sounds contrived. It is not. Real-world retrieval benchmarks routinely have skewed gold distributions because some documents are queried more often than others, some categories dominate the corpus, and some questions have many equivalent answers. The published numbers <em>look</em> impressive against a uniform-random baseline. They are sometimes barely above the marginal-matched baseline, meaning the engine is doing little more than knowing the popularity distribution.</p>
 
 <p>Three nulls in standard use will <em>fail to detect this</em>:</p>
 <ul>
@@ -147,7 +147,7 @@ This demo uses simulated values calibrated to a 50-query, 12-label synthetic ben
 </div>
 
 <h3>The fourth null in formal terms</h3>
-<p><strong>Null D — gold-marginal-matched random.</strong> For each query, draw the gold label from the empirical frequency distribution of gold labels in the bench, then score the engine's output against that drawn gold. Repeat for n_trials, average. A predictor that exploits the marginal distribution will produce a Δ_D near zero — exactly what we want it to flag.</p>
+<p><strong>Null D, gold-marginal-matched random.</strong> For each query, draw the gold label from the empirical frequency distribution of gold labels in the bench, then score the engine's output against that drawn gold. Repeat for n_trials, average. A predictor that exploits the marginal distribution will produce a Δ_D near zero, exactly what we want it to flag.</p>
 </section>
 
 <!-- ── 4. WORKED EXAMPLE ──────────────────────────────────────────────── -->
@@ -178,7 +178,7 @@ This demo uses simulated values calibrated to a 50-query, 12-label synthetic ben
 
 <p>Five honest non-claims:</p>
 <ol>
-<li><strong>It does not grade LLM text generation.</strong> The four-null gate is calibrated for retrieval and ranking — search, recommendation top-K, RAG retrieval-side, classification-as-retrieval. Grading the LLM's <em>generated answer</em> requires different null distributions designed for free-text output. That is v0.3+ work.</li>
+<li><strong>It does not grade LLM text generation.</strong> The four-null gate is calibrated for retrieval and ranking, search, recommendation top-K, RAG retrieval-side, classification-as-retrieval. Grading the LLM's <em>generated answer</em> requires different null distributions designed for free-text output. That is v0.3+ work.</li>
 <li><strong>It does not detect plagiarism, training-data leakage, or memorisation.</strong> Those are different problems requiring different methods.</li>
 <li><strong>It does not promise statistical significance with default settings.</strong> The default n_trials=50 gives noisy Δ estimates. For publishable claims use n_trials ≥ 200 and the bootstrap CI helpers in <code>falsify_eval.stats</code>.</li>
 <li><strong>It does not handle clustered queries correctly.</strong> Bootstrap CIs assume queries are i.i.d. If your bench has paraphrase clusters, near-duplicates, or temporally correlated queries, the CIs are anti-conservative by roughly √(cluster size). Known limit. Documented in <code>STRESS_TEST_LADDER.md</code> Tier 5d.</li>
@@ -196,7 +196,7 @@ This demo uses simulated values calibrated to a 50-query, 12-label synthetic ben
 <p>Multifractal-detrended-fluctuation features (MFDFA) over the Sanskrit corpus were a hypothesised reranking signal. After a stratified sweep at N=10,000 the result was a <em>statistically significant small negative</em> Δ at the optimal weight. The methodology let us catch this rather than ship it. The feature was disabled in production. Documented in the v6 preprint §5.8.c.</p>
 
 <h3>The closure-capture defect</h3>
-<p>The first published validation numbers were inflated because of a Python closure-capture bug — default arguments were being evaluated at module-import time, causing some configurations to be silently shadowed by older values. The fix produced a +0.0154 lift at the corrected weight, which was the first <em>validated</em> positive lift. Public retraction of the pre-fix numbers came with the fix. This is what every methodology of this type promises and few deliver.</p>
+<p>The first published validation numbers were inflated because of a Python closure-capture bug, default arguments were being evaluated at module-import time, causing some configurations to be silently shadowed by older values. The fix produced a +0.0154 lift at the corrected weight, which was the first <em>validated</em> positive lift. Public retraction of the pre-fix numbers came with the fix. This is what every methodology of this type promises and few deliver.</p>
 
 <h3>The Akosh install bugs (2026-05-04)</h3>
 <p>An external user in India, Akosh, tried to follow the README's install instructions and reported "failed basic bench tests." Reproducing on a fresh clone revealed three bugs <em>in the README</em>: <code>pip install falsify-eval</code> referenced an unpublished PyPI package, the demo command used the wrong import path, and the Quick-demo URL had a literal <code>&lt;your-handle&gt;</code> placeholder. The library code was fine. v0.1.2 shipped 45 minutes after the report. <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/CHANGELOG.md">Akosh credited in changelog.</a></p>
@@ -212,11 +212,11 @@ This demo uses simulated values calibrated to a 50-query, 12-label synthetic ben
 <p>The four-null gate is not the first attempt to discipline retrieval evaluation. It builds on three lines of work:</p>
 
 <ul>
-<li><strong>BEIR</strong> (Thakur, Reimers, Rücklé et al., 2021) — heterogeneous benchmark suite for zero-shot retrieval. Establishes the practice of evaluating retrievers across many corpora, not one. <em>Different from us:</em> BEIR diversifies the bench; we diversify the null hypotheses.</li>
-<li><strong>MTEB</strong> (Muennighoff et al., 2022) — Massive Text Embedding Benchmark. Standardised evaluation across 8 task categories. <em>Different from us:</em> MTEB is a leaderboard infrastructure; we are a per-system audit.</li>
-<li><strong>OLMES</strong> (Gu et al., AI2, 2024) — open evaluation standard with explicit reproducibility checks. Closest in spirit to our work. <em>Different from us:</em> OLMES standardises <em>what</em> to measure; we add <em>which baselines to compare against</em>, particularly Null D.</li>
-<li><strong>RAGAS</strong> (Es et al., 2023) — reference-free RAG evaluation. <em>Different from us:</em> RAGAS evaluates the generation side; we evaluate the retrieval side.</li>
-<li><strong>Voorhees, "Variations in relevance judgments and the measurement of retrieval effectiveness"</strong> (1998) — the original meta-evaluation paper from TREC, foundational to all of this.</li>
+<li><strong>BEIR</strong> (Thakur, Reimers, Rücklé et al., 2021), heterogeneous benchmark suite for zero-shot retrieval. Establishes the practice of evaluating retrievers across many corpora, not one. <em>Different from us:</em> BEIR diversifies the bench; we diversify the null hypotheses.</li>
+<li><strong>MTEB</strong> (Muennighoff et al., 2022). Massive Text Embedding Benchmark. Standardised evaluation across 8 task categories. <em>Different from us:</em> MTEB is a leaderboard infrastructure; we are a per-system audit.</li>
+<li><strong>OLMES</strong> (Gu et al., AI2, 2024), open evaluation standard with explicit reproducibility checks. Closest in spirit to our work. <em>Different from us:</em> OLMES standardises <em>what</em> to measure; we add <em>which baselines to compare against</em>, particularly Null D.</li>
+<li><strong>RAGAS</strong> (Es et al., 2023), reference-free RAG evaluation. <em>Different from us:</em> RAGAS evaluates the generation side; we evaluate the retrieval side.</li>
+<li><strong>Voorhees, "Variations in relevance judgments and the measurement of retrieval effectiveness"</strong> (1998), the original meta-evaluation paper from TREC, foundational to all of this.</li>
 </ul>
 
 <p>The contribution of falsify-eval is narrow and specific: <strong>the marginal-matched null (Null D) and its packaging as a four-test gate that any retrieval evaluator can run in ~30 seconds.</strong> Everything else is lineage.</p>
@@ -245,7 +245,7 @@ This demo uses simulated values calibrated to a 50-query, 12-label synthetic ben
 <tr><td><strong>2026-03 (mid)</strong></td><td>Constant predictor passed three-null gate. The gap that became Null D.</td></tr>
 <tr><td><strong>2026-04 (early)</strong></td><td>Closure-capture bug found; pre-fix numbers retracted publicly</td></tr>
 <tr><td><strong>2026-04 (mid)</strong></td><td>N=21 → N=141 → N=10,000 bench expansion. UNDER-NS verdict confirmed.</td></tr>
-<tr><td><strong>2026-04 (late)</strong></td><td>Industrial v6 release — broken-predictor suite, sensitivity grid, bench-size curve, isolated baselines, all PASS</td></tr>
+<tr><td><strong>2026-04 (late)</strong></td><td>Industrial v6 release, broken-predictor suite, sensitivity grid, bench-size curve, isolated baselines, all PASS</td></tr>
 <tr><td><strong>2026-05-01</strong></td><td>v0.1.0 → public GitHub release as Apache 2.0 standalone library</td></tr>
 <tr><td><strong>2026-05-04</strong></td><td>Akosh report → v0.1.2 fix → v0.1.3 input validation + CLI + MCP → v0.1.4 doctor + LLM-RAG example. <strong>Current.</strong></td></tr>
 </tbody>

@@ -3,140 +3,244 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Is the AI actually any good? — read as much as you have time for</title>
-<meta name="description" content="A plain-English explainer about catching AI systems that fake their benchmark scores. Read one sentence, one paragraph, or 15 minutes — your call.">
+<title>Is the AI actually any good?</title>
+<meta name="description" content="A plain-English explainer about catching AI systems that fake their benchmark scores. Read one sentence, one paragraph, or fifteen minutes. Your call.">
+<meta property="og:title" content="Is the AI actually any good?">
+<meta property="og:description" content="AI systems take exams. This catches the ones that didn't really study.">
 <style>
-:root{--paper:#f3eee5;--paper-deep:#ebe2d2;--ink:#1c1611;--ink-mute:#6b5e4f;--rule:#d4c8b2;--accent:#9c4a1a;--gold:#9d8147;--green:#3d7a4a;--red:#a8341c}
+:root{
+  --paper:#f3eee5; --paper-deep:#ebe2d2; --ink:#1c1611; --ink-mute:#6b5e4f;
+  --rule:#d4c8b2; --accent:#9c4a1a; --gold:#9d8147;
+  --green:#3d7a4a; --red:#a8341c;
+}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--paper);color:var(--ink);font-family:Garamond,"EB Garamond",Georgia,serif;line-height:1.7;padding:2rem 1.5rem 4rem;max-width:740px;margin:0 auto;font-size:19px}
+html{scroll-behavior:smooth}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:Garamond,"EB Garamond",Georgia,serif;
+  line-height:1.7; font-size:19px;
+  padding:3rem 1.5rem 5rem; max-width:680px; margin:0 auto;
+  -webkit-font-smoothing:antialiased;
+}
 
-/* ──── Layer 1 — the one sentence ──── */
-.l1{padding:3rem 0 2rem;border-bottom:1px solid var(--rule);margin-bottom:1rem}
-.eyebrow{font-family:"Helvetica Neue",sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:1rem}
-.headline{font-size:2.6rem;font-weight:400;font-style:italic;line-height:1.15;color:var(--ink)}
+/* ── Layer 1, the headline ───────────────────────────────── */
+.l1{padding:4rem 0 3rem; border-bottom:1px solid var(--rule); margin-bottom:1rem}
+.eyebrow{
+  font-family:"Helvetica Neue","SF Pro Text",Arial,sans-serif;
+  font-size:.7rem; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--ink-mute); margin-bottom:1.5rem;
+}
+.headline{
+  font-size:3rem; font-weight:400; font-style:italic; line-height:1.1;
+  color:var(--ink); letter-spacing:-.01em;
+}
 .headline em{color:var(--accent)}
-.subhead{font-family:"Helvetica Neue",sans-serif;font-size:.85rem;color:var(--ink-mute);margin-top:1rem;letter-spacing:.05em}
-.subhead a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)}
+.subhead{
+  font-family:"Helvetica Neue",sans-serif; font-size:.85rem;
+  color:var(--ink-mute); margin-top:1.75rem; letter-spacing:.04em;
+}
+.subhead a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent)}
 
-/* ──── Section dividers (progressive disclosure) ──── */
-.layer{margin:3rem 0;padding-top:.5rem}
-.layer-tag{font-family:"Helvetica Neue",sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--accent);margin-bottom:.4rem;font-weight:600}
-.layer h2{font-family:Garamond,serif;font-size:1.7rem;font-weight:400;font-style:italic;color:var(--ink);margin-bottom:1rem;border-bottom:1px solid var(--rule);padding-bottom:.4rem}
-.layer h3{font-family:"Helvetica Neue",sans-serif;font-size:.78rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:1.5rem 0 .5rem;font-weight:600}
+/* ── Layers ──────────────────────────────────────────────── */
+.layer{margin:5rem 0; padding-top:.5rem}
+.layer-tag{
+  font-family:"Helvetica Neue",sans-serif;
+  font-size:.65rem; letter-spacing:.28em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:.75rem; font-weight:600;
+}
+.layer h2{
+  font-family:Garamond,serif; font-size:2rem; font-weight:400; font-style:italic;
+  color:var(--ink); margin-bottom:1.5rem; letter-spacing:-.005em; line-height:1.2;
+}
+.layer h3{
+  font-family:"Helvetica Neue",sans-serif;
+  font-size:.78rem; letter-spacing:.2em; text-transform:uppercase;
+  color:var(--accent); margin:2rem 0 .75rem; font-weight:600;
+}
+p{margin-bottom:1.4rem}
+p:last-child{margin-bottom:0}
+em{font-style:italic; color:var(--ink)}
+strong{font-weight:600; color:var(--ink)}
+ul,ol{margin:.5rem 0 1.5rem 1.5rem}
+li{margin-bottom:.85rem}
+a{color:var(--accent); border-bottom:1px solid var(--accent); text-decoration:none}
+a:hover{color:var(--ink); border-bottom-color:var(--ink)}
 
-p{margin-bottom:1.1rem}
-em{font-style:italic;color:var(--ink)}
-strong{font-weight:600;color:var(--ink)}
-ul,ol{margin:.5rem 0 1.1rem 1.5rem}
-li{margin-bottom:.6rem}
-a{color:var(--accent);border-bottom:1px solid var(--accent);text-decoration:none}
-a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+.callout{
+  background:transparent; border-left:3px solid var(--accent);
+  padding:.4rem 0 .4rem 1.5rem; margin:2rem 0;
+  font-family:Garamond,serif; font-style:italic;
+  color:var(--ink); font-size:1.1rem; line-height:1.5;
+}
+.aside{
+  background:transparent; border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+  padding:1rem 0; margin:1.75rem 0;
+  font-family:"Helvetica Neue",sans-serif; font-size:.85rem;
+  color:var(--ink-mute);
+}
+.tldr{
+  background:#fff; border:1px solid var(--rule); border-radius:3px;
+  padding:1.25rem 1.5rem; margin:2rem 0;
+  font-family:Garamond,serif; font-style:italic; font-size:1rem;
+  color:var(--ink-mute);
+}
+.tldr strong{
+  font-style:normal; font-family:"Helvetica Neue",sans-serif;
+  font-size:.65rem; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--accent); display:block; margin-bottom:.5rem;
+}
 
-.callout{background:var(--paper-deep);border-left:4px solid var(--accent);padding:1.1rem 1.4rem;margin:1.5rem 0;font-family:Garamond,serif;font-style:italic;color:var(--ink);font-size:1.05rem;line-height:1.5}
-.aside{background:#fef9e7;border-left:3px solid var(--gold);padding:.85rem 1.1rem;margin:1.25rem 0;font-family:"Helvetica Neue",sans-serif;font-size:.88rem;color:var(--ink)}
-.tldr{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:1rem 1.25rem;margin:1.25rem 0;font-family:Garamond,serif;font-style:italic;font-size:1rem;color:var(--ink-mute)}
-.tldr strong{font-style:normal;font-family:"Helvetica Neue",sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:.3rem}
-
-/* Demo */
-.demo{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:1.5rem;margin:1.5rem 0;font-family:"Helvetica Neue",sans-serif}
-.demo-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
-.demo-btn{background:var(--paper-deep);border:1px solid var(--rule);padding:.55rem .9rem;cursor:pointer;font-family:"Helvetica Neue",sans-serif;font-size:.82rem;border-radius:2px;color:var(--ink)}
-.demo-btn:hover{border-color:var(--accent);color:var(--accent)}
-.demo-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.test-row{display:grid;grid-template-columns:1fr 70px 60px;gap:.75rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--paper-deep);font-size:.92rem}
+/* ── Demo ────────────────────────────────────────────────── */
+.demo{
+  background:#fff; border:1px solid var(--rule); border-radius:4px;
+  padding:1.75rem; margin:2rem 0;
+  font-family:"Helvetica Neue",sans-serif;
+}
+.demo-controls{display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1.5rem}
+.demo-btn{
+  background:var(--paper); border:1px solid var(--rule);
+  padding:.6rem 1rem; cursor:pointer;
+  font-family:"Helvetica Neue",sans-serif; font-size:.82rem;
+  border-radius:2px; color:var(--ink);
+  transition:all .15s ease;
+}
+.demo-btn:hover{border-color:var(--accent); color:var(--accent)}
+.demo-btn.active{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.test-row{
+  display:grid; grid-template-columns:1fr 70px 60px; gap:.75rem;
+  align-items:center; padding:.7rem 0;
+  border-bottom:1px solid var(--paper-deep); font-size:.92rem;
+}
 .test-row:last-child{border-bottom:none}
-.test-name{font-family:Garamond,serif;font-style:italic;color:var(--ink);font-size:1rem;line-height:1.3}
-.test-name small{display:block;font-style:normal;font-family:"Helvetica Neue",sans-serif;font-size:.72rem;color:var(--ink-mute);margin-top:.15rem}
-.test-score{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
-.test-verdict{text-align:center;font-size:1.3rem;font-weight:600}
-.test-verdict.beat{color:var(--green)}.test-verdict.lose{color:var(--red)}
-.real-score{font-family:Garamond,serif;font-style:italic;font-size:1.05rem;color:var(--ink);margin:1rem 0;text-align:center;padding:.5rem;background:var(--paper-deep);border-radius:3px}
-.real-score strong{font-style:normal;font-weight:600}
-.gate-result{margin-top:1rem;padding:1rem;border-radius:3px;font-family:Garamond,serif;font-style:italic;font-size:1.2rem;text-align:center}
-.gate-pass{background:#e8f5e9;color:var(--green);border:1px solid var(--green)}
-.gate-fail{background:#ffebee;color:var(--red);border:1px solid var(--red)}
-.gate-explain{font-family:"Helvetica Neue",sans-serif;font-size:.85rem;color:var(--ink);margin-top:.6rem;font-style:normal;line-height:1.4}
+.test-name{
+  font-family:Garamond,serif; font-style:italic;
+  color:var(--ink); font-size:1rem; line-height:1.3;
+}
+.test-name small{
+  display:block; font-style:normal;
+  font-family:"Helvetica Neue",sans-serif; font-size:.72rem;
+  color:var(--ink-mute); margin-top:.2rem;
+}
+.test-score{font-variant-numeric:tabular-nums; text-align:right; font-weight:600}
+.test-verdict{text-align:center; font-size:1.3rem; font-weight:600}
+.test-verdict.beat{color:var(--green)} .test-verdict.lose{color:var(--red)}
+.real-score{
+  font-family:Garamond,serif; font-style:italic; font-size:1.05rem;
+  color:var(--ink); margin:1.25rem 0 1rem;
+  text-align:center; padding:.75rem; background:var(--paper);
+  border-radius:3px; border:1px solid var(--rule);
+}
+.real-score strong{font-style:normal; font-weight:600}
+.gate-result{
+  margin-top:1.25rem; padding:1.1rem; border-radius:3px;
+  font-family:Garamond,serif; font-style:italic; font-size:1.2rem;
+  text-align:center;
+}
+.gate-pass{background:#e8f5e9; color:var(--green); border:1px solid var(--green)}
+.gate-fail{background:#ffebee; color:var(--red); border:1px solid var(--red)}
+.gate-explain{
+  font-family:"Helvetica Neue",sans-serif; font-size:.85rem;
+  color:var(--ink); margin-top:.7rem; font-style:normal; line-height:1.5;
+}
 
-table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-family:"Helvetica Neue",sans-serif;font-size:.88rem}
-th{text-align:left;padding:.5rem .75rem;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);border-bottom:1px solid var(--rule);font-weight:600}
-td{padding:.55rem .75rem;border-bottom:1px solid var(--paper-deep);vertical-align:top}
-td.right{text-align:right;font-variant-numeric:tabular-nums}
+/* ── Tables ──────────────────────────────────────────────── */
+table{
+  width:100%; border-collapse:collapse; margin:1.5rem 0;
+  font-family:"Helvetica Neue",sans-serif; font-size:.88rem;
+}
+th{
+  text-align:left; padding:.6rem .75rem;
+  font-size:.65rem; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-mute); border-bottom:1px solid var(--rule); font-weight:600;
+}
+td{padding:.65rem .75rem; border-bottom:1px solid var(--paper-deep); vertical-align:top}
+td.right{text-align:right; font-variant-numeric:tabular-nums}
 
-footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--rule);text-align:center;font-family:"Helvetica Neue",sans-serif;font-size:.75rem;color:var(--ink-mute);letter-spacing:.05em}
-footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;color:var(--gold);font-family:"Sanskrit Text",serif}
+/* ── Footer ──────────────────────────────────────────────── */
+footer{
+  margin-top:6rem; padding-top:2.5rem; border-top:1px solid var(--rule);
+  text-align:center;
+  font-family:"Helvetica Neue",sans-serif; font-size:.75rem;
+  color:var(--ink-mute); letter-spacing:.05em; line-height:1.7;
+}
+footer .deva{
+  display:block; margin-bottom:.75rem; font-size:.95rem;
+  color:var(--gold); font-family:"Sanskrit Text","Adobe Devanagari",serif;
+}
 
 @media(max-width:600px){
-  body{padding:1.5rem 1rem 3rem;font-size:18px}
-  .headline{font-size:2rem}
-  .test-row{grid-template-columns:1fr 60px 50px;gap:.5rem;font-size:.85rem}
+  body{padding:2rem 1rem 3rem; font-size:18px}
+  .headline{font-size:2.1rem}
+  .layer{margin:3.5rem 0}
+  .layer h2{font-size:1.6rem}
+  .test-row{grid-template-columns:1fr 60px 50px; gap:.5rem; font-size:.85rem}
 }
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 1 — read time: 5 seconds                                   -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 1, five seconds -->
 <section class="l1">
   <div class="eyebrow">Read as much as you have time for</div>
   <h1 class="headline">AI systems take exams. <em>This catches the ones that didn't really study.</em></h1>
-  <div class="subhead">Free · open source · 30-second self-check · technical version <a href="EXPLAINER.html">here</a></div>
+  <div class="subhead">Free. Open source. 30-second self-check. Technical version <a href="EXPLAINER.html">here</a>.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 2 — read time: 30 seconds                                  -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 2, thirty seconds -->
 <section class="layer">
   <div class="layer-tag">If you have 30 seconds</div>
-  <p>AI tools that fetch information — search engines, recommendation systems, the part of ChatGPT that finds source articles — are graded on how often they return the right document for a given question. Some of them get a high grade not by understanding the question, but by exploiting which answers happen to be most popular in the test. We built a <strong>30-second check</strong> that spots that pattern. It's free, open-source, and works on any AI fetcher you point it at.</p>
+  <p>AI tools fetch information. Search engines. Recommendation systems. The part of ChatGPT that finds source articles. They get graded on how often they return the right document for a given question.</p>
+
+  <p>Some of them get a high grade by exploiting which answers happen to be most popular in the test, not by understanding the question. We built a 30-second check that spots that pattern.</p>
+
+  <p>Free. Open source. Works on any AI fetcher you point it at.</p>
+
   <div class="tldr"><strong>If you stop reading here</strong>That's all you really need. The rest of this page is for people who want to see how it actually works, what doesn't work, and what we still don't know.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 3 — read time: 2 minutes                                   -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 3, two minutes -->
 <section class="layer">
-  <div class="layer-tag">If you have 2 minutes — the school story</div>
+  <div class="layer-tag">If you have 2 minutes</div>
   <h2>How a student who didn't study can score 80%.</h2>
 
-  <p>Imagine you give a hundred students a multiple-choice exam. Most questions are about French history. Roughly 80% of the correct answers happen to be "C" — maybe the teacher who wrote the test had a habit. It happens.</p>
+  <p>Imagine a multiple-choice exam on French history. You give it to a hundred students. Most questions are about Napoleon. Roughly 80% of the correct answers happen to be "C." Maybe the teacher who wrote the test had a habit. It happens.</p>
 
-  <p>One student, Mira, didn't study. She doesn't speak French. She doesn't know what Napoleon did. But she figured out from looking at past tests that "C" is the most common answer. So she just writes C for every single question. <strong>Mira scores 80%.</strong></p>
+  <p>One student, Mira, didn't study. She doesn't speak French. She doesn't know what Napoleon did. But she figured out from looking at past tests that "C" is the most common answer. So she just writes C for every question.</p>
+
+  <p>Mira scores 80%.</p>
 
   <p>If you only see her score, you'll think Mira is a French history expert. She isn't. She figured out the test, not the subject.</p>
 
-  <div class="callout">
-  This is happening to a lot of AI systems right now. Their published scores look brilliant. Some of them are doing the AI equivalent of "always pick C."
-  </div>
+  <div class="callout">This is happening to a lot of AI systems right now. Their published scores look brilliant. Some are doing the AI equivalent of "always pick C."</div>
 
-  <h3>Why this matters in the real world</h3>
-  <ul>
-  <li><strong>Resume screening AI</strong> that "matches the right candidate 87% of the time" — sometimes really just recommending people from the three universities most past hires came from, regardless of what the job needs.</li>
-  <li><strong>Medical search tools</strong> claiming to find "the most relevant paper" — sometimes just returning the most-cited paper in that specialty.</li>
-  <li><strong>The retrieval part of ChatGPT</strong> ("here are my sources") — sometimes just returning the most popular document in the database.</li>
-  </ul>
+  <h3>Where this is happening in the real world</h3>
 
-  <p>In all three cases, the system <em>looks</em> like it's reasoning. It's actually exploiting that some answers are popular. Nobody can tell from the score alone.</p>
+  <p><strong>Resume screening AI</strong> claims to "match the right candidate 87% of the time." Sometimes it just recommends people from the three universities most past hires came from, regardless of the job description.</p>
+
+  <p><strong>Medical search tools</strong> claim to find "the most relevant paper" for a patient's symptoms. Sometimes they just return the most-cited paper in that specialty, regardless of the actual symptoms.</p>
+
+  <p><strong>The retrieval part of ChatGPT</strong> ("here are my sources") sometimes just returns the most popular document in the database, ignoring what you asked.</p>
+
+  <p>In all three cases the system looks like it's reasoning. It's actually exploiting that some answers are popular. Nobody can tell from the score alone.</p>
 
   <div class="tldr"><strong>If you stop reading here</strong>You understand the problem. Mira gets 80% because she figured out the test. Some AI systems do the same thing. We built a way to spot it. Done.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 4 — read time: 5 minutes                                   -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 4, five minutes -->
 <section class="layer">
-  <div class="layer-tag">If you have 5 minutes — try it yourself</div>
+  <div class="layer-tag">If you have 5 minutes</div>
   <h2>Four imaginary students. The exam tells you which one your AI is.</h2>
 
-  <p>Our tool gives the same exam to four <em>imaginary</em> students who can't possibly know the real subject, then compares the AI's score to theirs:</p>
+  <p>Our tool gives the same exam to four imaginary students who can't possibly know the real subject. Then it compares the AI's score to theirs.</p>
+
   <ol>
-  <li><strong>Imaginary Student A — "Shuffled answers."</strong> Takes the answer key and randomly rearranges it. Beating this means the AI isn't just memorising answer positions.</li>
-  <li><strong>Imaginary Student B — "Roll a dice."</strong> Random for each question. Beating this means the AI isn't just guessing.</li>
-  <li><strong>Imaginary Student C — "Random multi-pick."</strong> Picks five random answers per question. Beating this means the AI's narrowing-down is meaningful.</li>
-  <li><strong>Imaginary Student D — "Mira."</strong> Always picks the most common answer. <strong>Beating this means the AI is actually using the question — not exploiting popularity.</strong> This one is the new contribution. Most published AI evaluations forget about it.</li>
+  <li><strong>Imaginary Student A.</strong> Takes the answer key and randomly rearranges it. Beating this means the AI isn't just memorising answer positions.</li>
+  <li><strong>Imaginary Student B.</strong> Random for each question. Beating this means the AI isn't just guessing.</li>
+  <li><strong>Imaginary Student C.</strong> Picks five random answers per question. Beating this means the AI's narrowing-down is meaningful.</li>
+  <li><strong>Imaginary Student D, "Mira."</strong> Always picks the most common answer. Beating this means the AI is actually using the question rather than exploiting popularity. This is the new contribution. Most published AI evaluations forget about it.</li>
   </ol>
 
-  <p>Pick a student type below. The third button is the killer demo: it shows what happens when an AI is doing what Mira does.</p>
+  <p>Pick a student type below. The third button is the killer demo. It shows what happens when an AI is doing what Mira does.</p>
 
   <div class="demo">
     <div class="demo-controls">
@@ -158,119 +262,112 @@ footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;color:var(--gold
   <div class="tldr"><strong>If you stop reading here</strong>You've now seen the methodology in one click. The Mira button shows the exact failure mode the tool was built to catch. That's the contribution.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 5 — read time: 8 minutes                                   -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 5, eight minutes -->
 <section class="layer">
-  <div class="layer-tag">If you have 8 minutes — see real numbers</div>
+  <div class="layer-tag">If you have 8 minutes</div>
   <h2>What it actually says when you point it at a real engine.</h2>
 
-  <p>The tool was developed and validated on a real Sanskrit-and-Tamil literary search engine over <strong>10,000 test questions</strong>. Here are the actual numbers from the v0.1 release. Each row is a different "student" graded by all four imaginary tests:</p>
+  <p>The tool was developed and validated on a real Sanskrit and Tamil literary search engine over 10,000 test questions. Here are the actual numbers from the v0.1 release. Each row is a different "student" graded by all four imaginary tests.</p>
 
   <table>
-  <thead><tr><th>Student type</th><th class="right">Exam score</th><th class="right">vs A</th><th class="right">vs B</th><th class="right">vs C</th><th class="right">vs Mira</th><th>Verdict</th></tr></thead>
+  <thead><tr><th>Student type</th><th class="right">Score</th><th class="right">vs A</th><th class="right">vs B</th><th class="right">vs C</th><th class="right">vs Mira</th><th>Verdict</th></tr></thead>
   <tbody>
-  <tr><td>Anti-oracle (always wrong)</td><td class="right">0%</td><td class="right">−25</td><td class="right">−25</td><td class="right">−25</td><td class="right">−25</td><td><span style="color:var(--red)">FAIL</span> (correct)</td></tr>
-  <tr><td>Constant predictor</td><td class="right">18%</td><td class="right">+9</td><td class="right">+10</td><td class="right">−7</td><td class="right">+0</td><td><span style="color:var(--red)">FAIL</span> on Mira</td></tr>
-  <tr><td>Mira-style (most popular)</td><td class="right">34%</td><td class="right">+19</td><td class="right">+19</td><td class="right">+19</td><td class="right">+0</td><td><span style="color:var(--red)">FAIL</span> on Mira only</td></tr>
-  <tr><td>Real engine (the one we built)</td><td class="right">79%</td><td class="right">+55</td><td class="right">+55</td><td class="right">+55</td><td class="right">+52</td><td><span style="color:var(--green)">PASS</span></td></tr>
+  <tr><td>Anti-oracle (always wrong)</td><td class="right">0%</td><td class="right">−25</td><td class="right">−25</td><td class="right">−25</td><td class="right">−25</td><td><span style="color:var(--red)">FAIL</span></td></tr>
+  <tr><td>Constant predictor</td><td class="right">18%</td><td class="right">+9</td><td class="right">+10</td><td class="right">−7</td><td class="right">+0</td><td><span style="color:var(--red)">FAIL</span></td></tr>
+  <tr><td>Mira-style</td><td class="right">34%</td><td class="right">+19</td><td class="right">+19</td><td class="right">+19</td><td class="right">+0</td><td><span style="color:var(--red)">FAIL</span></td></tr>
+  <tr><td>Real engine</td><td class="right">79%</td><td class="right">+55</td><td class="right">+55</td><td class="right">+55</td><td class="right">+52</td><td><span style="color:var(--green)">PASS</span></td></tr>
   <tr><td>Oracle (perfect)</td><td class="right">100%</td><td class="right">+75</td><td class="right">+75</td><td class="right">+75</td><td class="right">+74</td><td><span style="color:var(--green)">PASS</span></td></tr>
   </tbody>
   </table>
 
-  <p>Look at the third row. The Mira-style student gets 34% — that's positive. It beats imaginary students A, B, and C by 19 percentage points each. Without the Mira test, you'd say this student passed.</p>
+  <p>Look at the third row. The Mira-style student gets 34%. That's positive. It beats imaginary students A, B, and C by 19 percentage points each. Without the Mira test, you'd say this student passed.</p>
 
-  <p><strong>But the Mira test gives a margin of zero.</strong> The fourth check is what proves: this student isn't really studying — it's just exploiting the popular-answer pattern.</p>
+  <p>But the Mira test gives a margin of zero. The fourth check proves this student isn't really studying. It's just exploiting the popular-answer pattern.</p>
 
-  <p>This isn't a hypothetical. The first numbers we ourselves published were inflated by a programming bug that produced exactly this pattern. We <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/CHANGELOG.md">retracted them publicly</a>. That retraction is what gave the validated numbers their weight.</p>
+  <p>This isn't hypothetical. Our own first published numbers were inflated by a programming bug that produced exactly this pattern. We <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/CHANGELOG.md">retracted them publicly</a>. That retraction is what gave the validated numbers their weight.</p>
 
-  <div class="tldr"><strong>If you stop reading here</strong>You've seen the methodology applied to real numbers and seen us catch our own mistake. That's about as honest as a research project can be in public.</div>
+  <div class="tldr"><strong>If you stop reading here</strong>You've seen the methodology applied to real numbers, and seen us catch our own mistake. That's about as honest as a research project can be in public.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 6 — read time: 12 minutes                                  -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 6, twelve minutes -->
 <section class="layer">
-  <div class="layer-tag">If you have 12 minutes — what didn't work</div>
-  <h2>Things I tried that failed (and what they teach).</h2>
+  <div class="layer-tag">If you have 12 minutes</div>
+  <h2>Things I tried that failed.</h2>
 
-  <p>I'm telling you these so you know I'm not selling a magic box. I'm selling something that's been honestly tested and has visible flaws.</p>
+  <p>I'm telling you these because you should know I'm not selling a magic box. I'm selling something that has been honestly tested and has visible flaws.</p>
 
-  <h3>1 · The fancy maths feature that turned out negative</h3>
-  <p>I tried adding a sophisticated analysis technique to make the AI better. After running it on 10,000 test questions, the result was <em>statistically significant — and slightly worse than not using it</em>. I disabled the feature. The whole point of this kind of testing is to catch yourself when you're wrong; that was the catch.</p>
+  <h3>1. The fancy maths feature that turned out negative.</h3>
+  <p>I tried adding a sophisticated analysis technique to make the AI better. After running it on 10,000 test questions, the result was statistically significant, and slightly worse than not using it. I disabled the feature. The whole point of this kind of testing is to catch yourself when you're wrong. That was the catch.</p>
 
-  <h3>2 · The programming bug that inflated my first numbers</h3>
-  <p>A subtle Python issue meant some of my settings were silently using old values. The published numbers were higher than the real ones. When I found the bug, I retracted the inflated numbers <em>publicly</em>. The corrected numbers were lower but real.</p>
+  <h3>2. The programming bug that inflated my first numbers.</h3>
+  <p>A subtle Python issue meant some of my settings were silently using old values. The published numbers were higher than the real ones. When I found the bug, I retracted the inflated numbers publicly. The corrected numbers were lower but real.</p>
 
-  <h3>3 · A friend in India broke the install in 90 seconds</h3>
-  <p>Akosh tried to install my tool last week. Three things in the README were wrong. The "pip install" command pointed to a package that doesn't exist. The demo command had a typo. The clone URL was a placeholder I forgot to fill in. He got "failed basic bench tests" — exactly the kind of report that would normally mean my whole library is broken. It wasn't broken; my install instructions were. Forty-five minutes after he reported it, the fixed version was live. He's named in the project's changelog as the v0.1.2 reporter.</p>
+  <h3>3. A friend in India broke the install in 90 seconds.</h3>
+  <p>Akosh tried to install my tool last week. Three things in the README were wrong. The "pip install" command pointed to a package that doesn't exist. The demo command had a typo. The clone URL was a placeholder I forgot to fill in. He got "failed basic bench tests," exactly the kind of report that would normally mean my whole library is broken. It wasn't broken. My install instructions were. Forty-five minutes after he reported it, the fixed version was live. He's named in the project's changelog as the v0.1.2 reporter.</p>
 
-  <h3>4 · I had a $2,000 bug bounty. I suspended it.</h3>
+  <h3>4. I had a $2,000 bug bounty. I suspended it.</h3>
   <p>The original methodology paper offered $2,000 cash to anyone who could break the methodology in specific ways. After the install bugs surfaced, I suspended the bounty pending broader validation. Until the implementation has been validated by an external lab, paying for breakage when I haven't yet hardened the entry doors is the wrong order.</p>
 
   <h3>What this list is not</h3>
-  <p>It is not a list of fatal flaws — every active research project has these. It is a list of moments where the system caught itself. That's what you're looking for in any methodology: not "did it have problems" but "did it surface them."</p>
+  <p>It is not a list of fatal flaws. Every active research project has these. It is a list of moments where the system caught itself. That's what you're looking for in any methodology. Not "did it have problems," but "did it surface them."</p>
 
   <div class="tldr"><strong>If you stop reading here</strong>You've seen the failure history. The next layer is about what's still genuinely uncertain.</div>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 7 — read time: 15 minutes                                  -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 7, fifteen minutes -->
 <section class="layer">
-  <div class="layer-tag">If you have 15 minutes — limits, prior work, who's checked it</div>
-  <h2>What this tool cannot tell you, and who has actually verified it.</h2>
+  <div class="layer-tag">If you have 15 minutes</div>
+  <h2>What this tool cannot tell you, and who has actually checked it.</h2>
 
   <h3>Five honest limits</h3>
   <ol>
-  <li><strong>It only checks AI systems that fetch documents or rank options.</strong> Not the part of ChatGPT that writes paragraphs of text. Different problem; different test we haven't built.</li>
-  <li><strong>It can't tell you the AI is "smart" — only that it isn't faking.</strong> Green light = doing real work. Doesn't mean good enough for your specific job.</li>
+  <li><strong>It only checks AI systems that fetch documents or rank options.</strong> Not the part of ChatGPT that writes paragraphs of text. Different problem. Different test we haven't built.</li>
+  <li><strong>It can't tell you the AI is "smart," only that it isn't faking.</strong> Green light means doing real work. It does not mean good enough for your specific job.</li>
   <li><strong>You bring the questions and answers.</strong> Garbage exam, garbage verdict.</li>
   <li><strong>It assumes test questions are independent.</strong> If half your questions are basically the same question rephrased, the tool's confidence will be too high. Known limit.</li>
   <li><strong>It doesn't catch plagiarism, training-data leakage, or AI hallucinations.</strong> Those are different problems.</li>
   </ol>
 
   <h3>Who has independently checked this</h3>
-  <p>Honest answer as of today: <strong>almost nobody, yet.</strong> The methodology paper is public. The code is public. The math is undergraduate-level statistics packaged so you don't need to be a statistician.</p>
-  <p>The independent validation step — having a major AI research lab (EleutherAI, METR, Allen Institute / AI2, HuggingFace, or Anthropic) run the tool against their own published results and confirm the methodology works — is the <em>highest priority</em> next step. It has not happened yet. If you're at one of those labs and reading this, that's what I most need.</p>
+  <p>Honest answer as of today: almost nobody, yet. The methodology paper is public. The code is public. The math is undergraduate-level statistics packaged so you don't need to be a statistician.</p>
+
+  <p>The independent validation step (having a major AI research lab run the tool against their own published results and confirm the methodology works) is the highest-priority next step. It has not happened yet. If you're at one of those labs and reading this, that's what I most need.</p>
 
   <h3>What we're not the first to do</h3>
   <p>Other people have built similar things. We stand on:</p>
   <ul>
-  <li><strong>BEIR</strong> (Thakur et al, 2021) — diversifies the bench. We diversify the imaginary students.</li>
-  <li><strong>MTEB</strong> (Muennighoff et al, 2022) — leaderboard infrastructure. We are a per-system audit.</li>
-  <li><strong>OLMES</strong> (AI2, 2024) — open evaluation standards. We add the missing fourth check.</li>
-  <li><strong>RAGAS</strong> (Es et al, 2023) — evaluates the answer-generation side. We evaluate the document-fetching side.</li>
-  <li><strong>The whole TREC tradition</strong> going back to Voorhees, 1998 — meta-evaluation as a discipline.</li>
+  <li><strong>BEIR</strong> (Thakur et al, 2021). Diversifies the bench. We diversify the imaginary students.</li>
+  <li><strong>MTEB</strong> (Muennighoff et al, 2022). Leaderboard infrastructure. We are a per-system audit.</li>
+  <li><strong>OLMES</strong> (AI2, 2024). Open evaluation standards. We add the missing fourth check.</li>
+  <li><strong>RAGAS</strong> (Es et al, 2023). Evaluates the answer-generation side. We evaluate the document-fetching side.</li>
+  <li><strong>The TREC tradition</strong> going back to Voorhees, 1998. Meta-evaluation as a discipline.</li>
   </ul>
-  <p>The contribution here is narrow and specific: <strong>the Mira-style imaginary student, packaged as a 30-second four-test gate that anyone can run.</strong> Everything else is lineage.</p>
+  <p>The contribution here is narrow and specific. The Mira-style imaginary student, packaged as a 30-second four-test gate that anyone can run. Everything else is lineage.</p>
 </section>
 
-<!-- ════════════════════════════════════════════════════════════════ -->
-<!-- LAYER 8 — what to do                                             -->
-<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- LAYER 8, action -->
 <section class="layer">
-  <div class="layer-tag">What you can do, in three sizes</div>
+  <div class="layer-tag">What you can do</div>
   <h2>Three actions, smallest to largest.</h2>
   <ol>
-  <li><strong>Smallest:</strong> share this page with one person who works in AI, science, healthcare, or finance. Ask whether the systems they trust have been checked this way.</li>
-  <li><strong>Medium:</strong> if you know someone at a research lab (EleutherAI, METR, AI2, HuggingFace, Anthropic, Cohere), forward the <a href="EXPLAINER.html">technical version</a> and ask them to run the 30-second verification.</li>
-  <li><strong>Largest:</strong> if you build software yourself, the project lives at <a href="https://github.com/spalsh-spec/falsify-eval">github.com/spalsh-spec/falsify-eval</a>. Run <code style="background:var(--paper-deep);padding:.1rem .35rem;border-radius:2px;font-family:Menlo,monospace;font-size:.85em">falsify-eval doctor</code>. Takes 30 seconds. Tell us if it doesn't work.</li>
+  <li><strong>Smallest.</strong> Share this page with one person who works in AI, science, healthcare, or finance. Ask whether the systems they trust have been checked this way.</li>
+  <li><strong>Medium.</strong> If you know someone at a research lab (EleutherAI, METR, AI2, HuggingFace, Anthropic, Cohere), forward the <a href="EXPLAINER.html">technical version</a> and ask them to run the 30-second verification.</li>
+  <li><strong>Largest.</strong> If you build software yourself, the project lives at <a href="https://github.com/spalsh-spec/falsify-eval">github.com/spalsh-spec/falsify-eval</a>. Run <code style="background:var(--paper-deep);padding:.1rem .35rem;border-radius:2px;font-family:Menlo,monospace;font-size:.85em">falsify-eval doctor</code>. Takes 30 seconds. Tell us if it doesn't work.</li>
   </ol>
 </section>
 
 <footer>
 <span class="deva">सत्यमेव जयते &nbsp;·&nbsp; satyameva jayate &nbsp;·&nbsp; truth alone triumphs.</span>
-Released by Bhardwaj &amp; Sons under Apache 2.0 · <em>A house of standards.</em><br>
+Released by Bhardwaj &amp; Sons under Apache 2.0. <em>A house of standards.</em><br>
 Technical version: <a href="EXPLAINER.html">EXPLAINER.html</a> · Repo: <a href="https://github.com/spalsh-spec/falsify-eval">github.com/spalsh-spec/falsify-eval</a>
 </footer>
 
 <script>
 const STUDENTS = {
-  real:    {score: 79, vsA: 22, vsB: 23, vsC: 22, vsMira: 21, label: "real student"},
-  oracle:  {score: 100, vsA: 75, vsB: 75, vsC: 75, vsMira: 74, label: "class genius"},
-  mira:    {score: 80, vsA: 12, vsB: 13, vsC: -7, vsMira: 0, label: "Mira"},
-  random:  {score: 24, vsA: -1, vsB: 0, vsC: 0, vsMira: 0, label: "random guesser"},
+  real:    {score: 79, vsA: 22, vsB: 23, vsC: 22, vsMira: 21},
+  oracle:  {score: 100, vsA: 75, vsB: 75, vsC: 75, vsMira: 74},
+  mira:    {score: 80, vsA: 12, vsB: 13, vsC: -7, vsMira: 0},
+  random:  {score: 24, vsA: -1, vsB: 0, vsC: 0, vsMira: 0},
 };
 const TAU = 5;
 const TESTS = [
@@ -305,9 +402,9 @@ function render(key){
     gate.className = "gate-result gate-fail";
     gate.textContent = "VERDICT: ✗ Something is off about this score.";
     if (lostMira) {
-      explain.innerHTML = `This student's score looks fine on most checks, but they did not clearly beat <em>Mira</em> — the student who just picks "C" without studying. That means the score is probably coming from the same trick Mira uses: exploiting which answers are most popular. <strong>This is exactly the failure mode the new test was designed to catch.</strong>`;
+      explain.innerHTML = `This student's score looks fine on most checks. But they did not clearly beat <em>Mira</em>, the student who just picks "C" without studying. That means the score is probably coming from the same trick Mira uses: exploiting which answers are most popular. <strong>This is exactly the failure mode the new test was designed to catch.</strong>`;
     } else {
-      explain.textContent = `This student failed at least one of the four checks. Look at which "imaginary student" they couldn't beat — that tells you what trick they were using.`;
+      explain.textContent = `This student failed at least one of the four checks. Look at which "imaginary student" they couldn't beat. That tells you what trick they were using.`;
     }
   }
 }
