@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>falsify-eval — what, how, why · Bhardwaj &amp; Sons</title>
+<meta name="description" content="A 10-minute first-principles explainer of the four-null gate for retrieval evaluation. Worked example, interactive demo, honest limits, and how to verify the claim in 30 seconds.">
+<style>
+:root{--paper:#f3eee5;--paper-deep:#ebe2d2;--ink:#1c1611;--ink-mute:#6b5e4f;--rule:#d4c8b2;--accent:#9c4a1a;--gold:#9d8147;--green:#3d7a4a;--red:#a8341c;--blue:#2a5e8a}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Garamond,"EB Garamond",Georgia,serif;line-height:1.6;padding:2rem 1.5rem 4rem;max-width:820px;margin:0 auto;font-size:18px}
+.ui{font-family:"Helvetica Neue","SF Pro Text",Arial,sans-serif}
+
+/* Header */
+header{border-bottom:1px solid var(--rule);padding-bottom:1.25rem;margin-bottom:2rem}
+.eyebrow{font-family:"Helvetica Neue",sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.5rem}
+h1{font-size:2.2rem;font-weight:400;font-style:italic;line-height:1.15;margin-bottom:.75rem}
+h1 em{color:var(--accent);font-style:italic}
+.lede{font-size:1.05rem;color:var(--ink-mute);max-width:600px}
+.meta{font-family:"Helvetica Neue",sans-serif;font-size:.7rem;letter-spacing:.15em;color:var(--ink-mute);margin-top:1rem;text-transform:uppercase}
+
+/* Sections */
+section{margin:3rem 0}
+h2{font-family:"Garamond",serif;font-size:1.6rem;font-weight:400;font-style:italic;color:var(--ink);margin-bottom:1rem;border-bottom:1px solid var(--rule);padding-bottom:.4rem}
+h3{font-family:"Helvetica Neue",sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin:1.5rem 0 .5rem;font-weight:600}
+p{margin-bottom:1rem}
+em{font-style:italic;color:var(--ink)}
+strong{font-weight:600;color:var(--ink)}
+.callout{background:var(--paper-deep);border-left:3px solid var(--accent);padding:1rem 1.25rem;margin:1.5rem 0;font-family:"Garamond",serif;font-style:italic;color:var(--ink)}
+.note{background:#fef9e7;border-left:3px solid var(--gold);padding:.75rem 1rem;margin:1rem 0;font-family:"Helvetica Neue",sans-serif;font-size:.85rem;color:var(--ink)}
+code{font-family:"SF Mono","Menlo",monospace;font-size:.85em;background:var(--paper-deep);padding:.1rem .35rem;border-radius:2px;color:var(--ink)}
+pre{background:var(--ink);color:var(--paper);padding:1rem 1.25rem;border-radius:3px;overflow-x:auto;font-family:"SF Mono","Menlo",monospace;font-size:.82rem;line-height:1.5;margin:1rem 0}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:1.25rem 0;font-family:"Helvetica Neue",sans-serif;font-size:.9rem}
+th{text-align:left;padding:.5rem .75rem;font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-mute);border-bottom:1px solid var(--rule);font-weight:600}
+td{padding:.55rem .75rem;border-bottom:1px solid var(--paper-deep);vertical-align:top}
+td.right{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:none}
+
+/* Interactive demo */
+.demo{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:1.5rem;margin:1.5rem 0;font-family:"Helvetica Neue",sans-serif}
+.demo-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.demo-btn{background:var(--paper-deep);border:1px solid var(--rule);padding:.5rem .85rem;cursor:pointer;font-family:"Helvetica Neue",sans-serif;font-size:.8rem;border-radius:2px;color:var(--ink)}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.demo-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.demo-results{margin-top:1rem}
+.null-row{display:grid;grid-template-columns:50px 1fr 80px 50px;gap:.75rem;align-items:center;padding:.4rem 0;font-size:.85rem}
+.null-name{font-weight:600;color:var(--ink-mute);letter-spacing:.05em}
+.bar{background:var(--paper-deep);height:1.2rem;border-radius:2px;position:relative;overflow:hidden}
+.bar .fill{position:absolute;left:50%;top:0;bottom:0;background:var(--accent);transition:all .3s;transform-origin:left}
+.bar .fill.pos{background:var(--green);left:50%}
+.bar .fill.neg{background:var(--red);right:50%;left:auto}
+.bar .midline{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ink-mute);opacity:.3}
+.delta{font-variant-numeric:tabular-nums;text-align:right;font-weight:600;font-size:.85rem}
+.verdict{text-align:center;font-size:1.1rem}
+.gate-result{margin-top:1rem;padding:.85rem 1rem;border-radius:3px;font-family:"Garamond",serif;font-style:italic;font-size:1.1rem;text-align:center}
+.gate-pass{background:#e8f5e9;color:var(--green);border:1px solid var(--green)}
+.gate-fail{background:#ffebee;color:var(--red);border:1px solid var(--red)}
+.gate-explain{font-family:"Helvetica Neue",sans-serif;font-size:.78rem;color:var(--ink-mute);text-align:center;margin-top:.5rem;font-style:normal}
+
+/* Misc */
+ul,ol{margin:.5rem 0 1rem 1.5rem}
+li{margin-bottom:.4rem}
+a{color:var(--accent);border-bottom:1px solid var(--accent);text-decoration:none}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+hr{border:none;border-top:1px solid var(--rule);margin:2rem 0}
+.deva{font-family:"Sanskrit Text","Adobe Devanagari",serif;color:var(--gold);letter-spacing:.05em}
+
+/* Footer */
+footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--rule);text-align:center;font-family:"Helvetica Neue",sans-serif;font-size:.75rem;color:var(--ink-mute);letter-spacing:.05em}
+footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;letter-spacing:.05em}
+
+@media(max-width:600px){
+  body{padding:1.5rem 1rem 3rem;font-size:17px}
+  h1{font-size:1.8rem}
+  .null-row{grid-template-columns:40px 1fr 60px 40px;gap:.5rem;font-size:.78rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">A first-principles explainer · 10 min read</div>
+  <h1>falsify-eval, in plain English. <em>What it does, what it doesn't, what to verify.</em></h1>
+  <p class="lede">A small open-source library that catches a class of false positive that the standard way of grading retrieval systems silently accepts. This page exists so a sharp critic can decide in ten minutes whether to engage.</p>
+  <div class="meta">v0.1.4 · 2026-05-04 · <a href="https://github.com/spalsh-spec/falsify-eval">github.com/spalsh-spec/falsify-eval</a></div>
+</header>
+
+<!-- ── 1. WHAT ─────────────────────────────────────────────────────────── -->
+<section>
+<h2>1 · What this is, in thirty seconds.</h2>
+
+<p>If you build a retrieval system — a search engine, a recommender, the retriever inside a RAG pipeline — you usually grade it with one number: <code>nDCG@10</code> or <code>recall@5</code> or similar. <strong>The number does not tell you whether your engine is using the query at all.</strong> A "predictor" that ignores every query and always returns the most-frequent class can score above a sensible threshold on every metric in standard use. That's the failure mode falsify-eval catches.</p>
+
+<p>The library runs your engine's output against four hypothetical baselines (we call them <em>nulls</em>) and reports which baselines your engine beats by enough to matter. The fourth baseline is the contribution: a marginal-matched random predictor that simulates "the system that exploits gold-label distribution without using the query." If your engine doesn't beat that one, it's not really retrieving — it's pattern-matching the test.</p>
+
+<div class="callout">
+"Most retrieval-system papers report a single aggregate metric and call it a contribution. Three failure modes make this practice unsafe at any benchmark size, and dangerous on small ones. This library closes one of them."
+</div>
+</section>
+
+<!-- ── 2. THE PROBLEM ─────────────────────────────────────────────────── -->
+<section>
+<h2>2 · The hidden failure: why a high benchmark score can mean nothing.</h2>
+
+<p>Imagine a corpus where 80% of the gold answers are "Document A" and 20% are split across "Documents B–F." A predictor that <em>always</em> returns "Document A" without reading the query will score around 0.80 recall@1 — well above the noise floor of any benchmark. It is not retrieving. It is exploiting that the gold-label distribution is skewed.</p>
+
+<p>This sounds contrived. It is not. Real-world retrieval benchmarks routinely have skewed gold distributions because some documents are queried more often than others, some categories dominate the corpus, and some questions have many equivalent answers. The published numbers <em>look</em> impressive against a uniform-random baseline. They are sometimes barely above the marginal-matched baseline — meaning the engine is doing little more than knowing the popularity distribution.</p>
+
+<p>Three nulls in standard use will <em>fail to detect this</em>:</p>
+<ul>
+<li><strong>Permuted gold (Null A):</strong> swap the gold labels around at random. A constant predictor still beats this null because permuting doesn't change which label is most common.</li>
+<li><strong>Uniform-random gold (Null B):</strong> draw gold from a uniform distribution over labels. A constant predictor crushes this null because the constant is matched to the empirical (skewed) distribution, not the uniform one.</li>
+<li><strong>Random retrieval (Null C):</strong> ignore the engine and return K random items. A constant predictor that returns the most-frequent class beats this null trivially because most queries' golds are that class.</li>
+</ul>
+<p>The fourth null fixes it.</p>
+</section>
+
+<!-- ── 3. THE FOUR-NULL GATE ─────────────────────────────────────────── -->
+<section>
+<h2>3 · The four-null gate, with an interactive demo.</h2>
+
+<p>The gate runs your engine's output and four null-distribution outputs through the same metric. Your engine "passes" each null if its score exceeds the null's score by at least τ (default 0.05). The gate as a whole passes only if all four nulls pass.</p>
+
+<p>Below: pick a predictor type. The bars show how each predictor scores against each null. Watch <strong>Null D</strong> in particular.</p>
+
+<div class="demo">
+  <div class="demo-controls">
+    <button class="demo-btn active" data-pred="oracle">Oracle (always correct)</button>
+    <button class="demo-btn" data-pred="real">Real engine (~70% top-1 hit)</button>
+    <button class="demo-btn" data-pred="constant">Constant (always most-frequent class)</button>
+    <button class="demo-btn" data-pred="marginal">Marginal-rank (top-K most-frequent classes)</button>
+    <button class="demo-btn" data-pred="random">Random</button>
+  </div>
+
+  <div id="real-mean" style="font-size:.9rem;margin:1rem 0;color:var(--ink-mute)">Real predictor mean nDCG@5: <strong id="rm-val" style="color:var(--ink)">1.000</strong></div>
+
+  <div class="demo-results" id="results"></div>
+
+  <div id="gate-result" class="gate-result gate-pass">GATE: ✓ PASS</div>
+  <div class="gate-explain" id="gate-explain">All four Δ values exceed the threshold τ=0.05.</div>
+</div>
+
+<div class="note">
+This demo uses simulated values calibrated to a 50-query, 12-label synthetic bench (the same one in <code>examples/synthetic_demo.py</code>). Δ values are the per-null deltas after 100 trials. Real numbers from your own bench will look similar in shape but different in magnitude.
+</div>
+
+<h3>The fourth null in formal terms</h3>
+<p><strong>Null D — gold-marginal-matched random.</strong> For each query, draw the gold label from the empirical frequency distribution of gold labels in the bench, then score the engine's output against that drawn gold. Repeat for n_trials, average. A predictor that exploits the marginal distribution will produce a Δ_D near zero — exactly what we want it to flag.</p>
+</section>
+
+<!-- ── 4. WORKED EXAMPLE ──────────────────────────────────────────────── -->
+<section>
+<h2>4 · Worked example: a real engine on 10,000 queries.</h2>
+
+<p>The methodology was developed against and validated on Vāk-Kaṇaja, a private retrieval engine over a 6,309-chunk Sanskrit and Tamil literary corpus. The bench: <strong>10,000 queries</strong>, top-K = 10, metric nDCG@10. Here are the actual numbers from the v0.1 release validation:</p>
+
+<table>
+<thead><tr><th>System</th><th class="right">real mean</th><th class="right">Δ_A</th><th class="right">Δ_B</th><th class="right">Δ_C</th><th class="right">Δ_D</th><th>verdict</th></tr></thead>
+<tbody>
+<tr><td>Anti-oracle (returns wrong)</td><td class="right">0.000</td><td class="right">−0.25</td><td class="right">−0.25</td><td class="right">−0.25</td><td class="right">−0.25</td><td><span style="color:var(--red)">FAIL</span> (correctly)</td></tr>
+<tr><td>Constant predictor</td><td class="right">0.180</td><td class="right">+0.09</td><td class="right">+0.10</td><td class="right">−0.07</td><td class="right">+0.00</td><td><span style="color:var(--red)">FAIL</span> (Null C, D)</td></tr>
+<tr><td>Marginal-rank (top-K freq)</td><td class="right">0.343</td><td class="right">+0.19</td><td class="right">+0.19</td><td class="right">+0.19</td><td class="right">+0.00</td><td><span style="color:var(--red)">FAIL</span> (Null D only)</td></tr>
+<tr><td>Vāk-Kaṇaja v0.1</td><td class="right">0.789</td><td class="right">+0.55</td><td class="right">+0.55</td><td class="right">+0.55</td><td class="right">+0.52</td><td><span style="color:var(--green)">PASS</span></td></tr>
+<tr><td>Oracle</td><td class="right">1.000</td><td class="right">+0.75</td><td class="right">+0.75</td><td class="right">+0.75</td><td class="right">+0.74</td><td><span style="color:var(--green)">PASS</span></td></tr>
+</tbody>
+</table>
+
+<p>The marginal-rank row is the gate's contribution: a predictor that <em>looks</em> good on Nulls A, B, C (Δ ≈ +0.19) but is unmasked by Null D (Δ ≈ +0.00). Without the fourth null, you would conclude marginal-rank is a real retrieval system. It is not. It is the gold-distribution rank order, returned without reading the query.</p>
+
+<p>This isn't a hypothetical. We discovered our own first published number had this exact shape and <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/CHANGELOG.md">retracted it publicly</a>. That retraction is what gave the validated numbers their weight.</p>
+</section>
+
+<!-- ── 5. WHAT IT DOESN'T DO ─────────────────────────────────────────── -->
+<section>
+<h2>5 · What this library does <em>not</em> do.</h2>
+
+<p>Five honest non-claims:</p>
+<ol>
+<li><strong>It does not grade LLM text generation.</strong> The four-null gate is calibrated for retrieval and ranking — search, recommendation top-K, RAG retrieval-side, classification-as-retrieval. Grading the LLM's <em>generated answer</em> requires different null distributions designed for free-text output. That is v0.3+ work.</li>
+<li><strong>It does not detect plagiarism, training-data leakage, or memorisation.</strong> Those are different problems requiring different methods.</li>
+<li><strong>It does not promise statistical significance with default settings.</strong> The default n_trials=50 gives noisy Δ estimates. For publishable claims use n_trials ≥ 200 and the bootstrap CI helpers in <code>falsify_eval.stats</code>.</li>
+<li><strong>It does not handle clustered queries correctly.</strong> Bootstrap CIs assume queries are i.i.d. If your bench has paraphrase clusters, near-duplicates, or temporally correlated queries, the CIs are anti-conservative by roughly √(cluster size). Known limit. Documented in <code>STRESS_TEST_LADDER.md</code> Tier 5d.</li>
+<li><strong>It does not replace your judgment about whether the bench itself is meaningful.</strong> Garbage-in still gives garbage verdicts. The gate detects whether your engine is gaming the bench; it cannot detect whether the bench is a faithful proxy for the task you care about.</li>
+</ol>
+</section>
+
+<!-- ── 6. FAILURES ────────────────────────────────────────────────────── -->
+<section>
+<h2>6 · What I tried that didn't work.</h2>
+
+<p>Three honest failures from the development of this work, in chronological order:</p>
+
+<h3>The fractal channel that turned out negative</h3>
+<p>Multifractal-detrended-fluctuation features (MFDFA) over the Sanskrit corpus were a hypothesised reranking signal. After a stratified sweep at N=10,000 the result was a <em>statistically significant small negative</em> Δ at the optimal weight. The methodology let us catch this rather than ship it. The feature was disabled in production. Documented in the v6 preprint §5.8.c.</p>
+
+<h3>The closure-capture defect</h3>
+<p>The first published validation numbers were inflated because of a Python closure-capture bug — default arguments were being evaluated at module-import time, causing some configurations to be silently shadowed by older values. The fix produced a +0.0154 lift at the corrected weight, which was the first <em>validated</em> positive lift. Public retraction of the pre-fix numbers came with the fix. This is what every methodology of this type promises and few deliver.</p>
+
+<h3>The Akosh install bugs (2026-05-04)</h3>
+<p>An external user in India, Akosh, tried to follow the README's install instructions and reported "failed basic bench tests." Reproducing on a fresh clone revealed three bugs <em>in the README</em>: <code>pip install falsify-eval</code> referenced an unpublished PyPI package, the demo command used the wrong import path, and the Quick-demo URL had a literal <code>&lt;your-handle&gt;</code> placeholder. The library code was fine. v0.1.2 shipped 45 minutes after the report. <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/CHANGELOG.md">Akosh credited in changelog.</a></p>
+
+<h3>The bug bounty I suspended</h3>
+<p>The original methodology paper offered a $2,000 cash bounty for any of three classes of counterexample. After the install-path bugs surfaced, I suspended the bounty pending broader internal validation. The suspension is documented in the README, CONTRIBUTING, SECURITY, and the preprint section 10. Suspending a public reward is the calibrated move when the implementation isn't yet hardened to the level the offer implied.</p>
+</section>
+
+<!-- ── 7. PRIOR WORK ──────────────────────────────────────────────────── -->
+<section>
+<h2>7 · Prior work, properly attributed.</h2>
+
+<p>The four-null gate is not the first attempt to discipline retrieval evaluation. It builds on three lines of work:</p>
+
+<ul>
+<li><strong>BEIR</strong> (Thakur, Reimers, Rücklé et al., 2021) — heterogeneous benchmark suite for zero-shot retrieval. Establishes the practice of evaluating retrievers across many corpora, not one. <em>Different from us:</em> BEIR diversifies the bench; we diversify the null hypotheses.</li>
+<li><strong>MTEB</strong> (Muennighoff et al., 2022) — Massive Text Embedding Benchmark. Standardised evaluation across 8 task categories. <em>Different from us:</em> MTEB is a leaderboard infrastructure; we are a per-system audit.</li>
+<li><strong>OLMES</strong> (Gu et al., AI2, 2024) — open evaluation standard with explicit reproducibility checks. Closest in spirit to our work. <em>Different from us:</em> OLMES standardises <em>what</em> to measure; we add <em>which baselines to compare against</em>, particularly Null D.</li>
+<li><strong>RAGAS</strong> (Es et al., 2023) — reference-free RAG evaluation. <em>Different from us:</em> RAGAS evaluates the generation side; we evaluate the retrieval side.</li>
+<li><strong>Voorhees, "Variations in relevance judgments and the measurement of retrieval effectiveness"</strong> (1998) — the original meta-evaluation paper from TREC, foundational to all of this.</li>
+</ul>
+
+<p>The contribution of falsify-eval is narrow and specific: <strong>the marginal-matched null (Null D) and its packaging as a four-test gate that any retrieval evaluator can run in ~30 seconds.</strong> Everything else is lineage.</p>
+</section>
+
+<!-- ── 8. WHY NOT JUST INTEGRATE EVERY TEST? ─────────────────────────── -->
+<section>
+<h2>8 · "Why not just integrate it with every existing eval suite?"</h2>
+
+<p>You should. The library is designed to drop into any existing pipeline because it is metric-agnostic, engine-agnostic, and corpus-agnostic. The MCP server (<code>python -m falsify_eval.mcp_server</code>) means Claude Code or any MCP client can call it on any retriever's output, including those wrapped by BEIR/MTEB/OLMES.</p>
+
+<p>What this library is, specifically, is the missing fourth null. If you already use BEIR or MTEB or OLMES, the right move is to add the four-null gate as a <em>per-system pre-flight check</em> before publishing your numbers. It takes one Python import.</p>
+
+<p>It is not a competitor to existing suites. It is the verification gate they don't currently include.</p>
+</section>
+
+<!-- ── 9. TIMELINE ───────────────────────────────────────────────────── -->
+<section>
+<h2>9 · Timeline of progress and challenges.</h2>
+
+<table>
+<thead><tr><th>When</th><th>What</th></tr></thead>
+<tbody>
+<tr><td><strong>2026-02</strong></td><td>Vāk-Kaṇaja retrieval engine drafted; first naive nDCG numbers published internally</td></tr>
+<tr><td><strong>2026-03</strong></td><td>Suspicion that nDCG was misleading. First three nulls (A/B/C) drafted</td></tr>
+<tr><td><strong>2026-03 (mid)</strong></td><td>Constant predictor passed three-null gate. The gap that became Null D.</td></tr>
+<tr><td><strong>2026-04 (early)</strong></td><td>Closure-capture bug found; pre-fix numbers retracted publicly</td></tr>
+<tr><td><strong>2026-04 (mid)</strong></td><td>N=21 → N=141 → N=10,000 bench expansion. UNDER-NS verdict confirmed.</td></tr>
+<tr><td><strong>2026-04 (late)</strong></td><td>Industrial v6 release — broken-predictor suite, sensitivity grid, bench-size curve, isolated baselines, all PASS</td></tr>
+<tr><td><strong>2026-05-01</strong></td><td>v0.1.0 → public GitHub release as Apache 2.0 standalone library</td></tr>
+<tr><td><strong>2026-05-04</strong></td><td>Akosh report → v0.1.2 fix → v0.1.3 input validation + CLI + MCP → v0.1.4 doctor + LLM-RAG example. <strong>Current.</strong></td></tr>
+</tbody>
+</table>
+</section>
+
+<!-- ── 10. OPEN PROBLEMS ─────────────────────────────────────────────── -->
+<section>
+<h2>10 · Open problems &amp; what needs further research.</h2>
+
+<ol>
+<li><strong>Generalisation to LLM text generation.</strong> The four nulls assume top-K retrieval output. Free-text generation needs different null constructions. Likely candidates: prompt-permuted, instruction-uniform, response-marginal-matched. v0.3+.</li>
+<li><strong>Clustered-query CIs.</strong> Bootstrap assumes i.i.d. queries. A correction for paraphrase clusters and temporal correlation needs to be designed and validated. Probably block-bootstrap.</li>
+<li><strong>Adaptive τ selection.</strong> The default τ=0.05 is a heuristic. A principled procedure for choosing τ as a function of bench size and label-set complexity is open.</li>
+<li><strong>Multi-class extensions.</strong> Currently the gate is calibrated for retrieval where each query has one gold answer. Multi-relevance grading (rel ∈ {0,1,2,3}) is supported but not deeply validated.</li>
+<li><strong>Independent third-party validation.</strong> The N=10,000 result has been replicated only by the original author. Independent replication by EleutherAI, METR, AI2, or HuggingFace's leaderboard team is the highest-value missing piece. Outreach to these groups is the active next step.</li>
+</ol>
+</section>
+
+<!-- ── 11. FAQ ───────────────────────────────────────────────────────── -->
+<section>
+<h2>11 · Five hard questions.</h2>
+
+<h3>"Is this just a wrapper over standard statistical testing?"</h3>
+<p>No. Bootstrap CIs and permutation tests exist in scipy and statsmodels. The contribution is the specific construction of the marginal-matched null and the packaging of all four nulls as a single PASS/FAIL gate that runs in 30 seconds without statistical expertise on the user's part. The math is undergraduate. The discipline is the product.</p>
+
+<h3>"Can't I get the same result by running multiple existing benchmarks?"</h3>
+<p>Sometimes, but with much more effort and no guarantee. Diversifying benchmarks (BEIR's approach) catches some failures the four-null gate misses. The four-null gate catches some failures benchmark-diversification misses. The two are complementary.</p>
+
+<h3>"Why should I trust a one-person open-source project?"</h3>
+<p>Because the library is small enough to audit in an afternoon (~1,000 lines of pure Python + numpy), the math is in a public preprint, the implementation is Apache-2.0, and every published claim has a one-command reproduction path. Trust the verifiability, not the person.</p>
+
+<h3>"Who has independently validated this?"</h3>
+<p>As of 2026-05-04, no one. Akosh in India found install-path bugs; that's the only external interaction so far. Independent validation by an external lab is the highest-priority pending milestone, not a finished one.</p>
+
+<h3>"Is the author trying to get rich quick by selling false info?"</h3>
+<p>Pricing for commercial audit work is published at <a href="https://spalsh-spec.github.io/bhardwaj-and-sons/#services">bhardwajandsons.com/#services</a> with explicit promotion criteria (e.g. external validation lifts the price 20%). Zero clients today. The library is free. The methodology is in a public preprint. The brand exists in part to <em>protect</em> the methodology from the pressure to inflate. If any specific claim on this page is unverifiable, name it and I will retract it.</p>
+</section>
+
+<!-- ── 12. VERIFY YOURSELF ───────────────────────────────────────────── -->
+<section>
+<h2>12 · Verify the claim in 30 seconds.</h2>
+
+<pre>git clone https://github.com/spalsh-spec/falsify-eval.git
+cd falsify-eval
+python3 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -e .
+falsify-eval doctor</pre>
+
+<p>Expected output: "All systems green" with the embedded synthetic bench passing all four nulls. If you see anything else, that is a bug; <a href="https://github.com/spalsh-spec/falsify-eval/issues/new">file an issue</a> and I will fix it within 24 hours per the incident-response runbook.</p>
+
+<p>To grade your own pipeline:</p>
+<pre>falsify-eval grade --input bench.jsonl --pool labels.txt --metric ndcg@5</pre>
+</section>
+
+<footer>
+<span class="deva">सत्यमेव जयते</span>
+Released by Bhardwaj &amp; Sons under Apache 2.0 · <em>A house of standards.</em>
+</footer>
+
+<!-- ── Interactive demo logic ─────────────────────────────────────── -->
+<script>
+const PREDICTORS = {
+  oracle:   {real:1.000, A:0.255, B:0.249, C:0.255, D:0.262, label:"Oracle"},
+  real:     {real:0.789, A:0.241, B:0.245, C:0.255, D:0.273, label:"Real engine"},
+  constant: {real:0.180, A:0.090, B:0.082, C:0.250, D:0.180, label:"Constant"},
+  marginal: {real:0.343, A:0.155, B:0.155, C:0.155, D:0.341, label:"Marginal-rank"},
+  random:   {real:0.245, A:0.245, B:0.247, C:0.250, D:0.252, label:"Random"},
+};
+const TAU = 0.05;
+const NULLS = ["A","B","C","D"];
+
+function render(predKey){
+  const p = PREDICTORS[predKey];
+  document.getElementById("rm-val").textContent = p.real.toFixed(3);
+
+  let html = "";
+  let allPass = true;
+  for (const n of NULLS){
+    const delta = p.real - p[n];
+    const pass = delta >= TAU;
+    if (!pass) allPass = false;
+    const w = Math.min(50, Math.abs(delta) * 100);
+    const cls = delta >= 0 ? "pos" : "neg";
+    const verdict = pass ? "✓" : "✗";
+    const verdictColor = pass ? "var(--green)" : "var(--red)";
+    html += `<div class="null-row">
+      <div class="null-name">Null ${n}</div>
+      <div class="bar"><div class="midline"></div><div class="fill ${cls}" style="width:${w}%"></div></div>
+      <div class="delta">${delta >= 0 ? "+" : ""}${delta.toFixed(3)}</div>
+      <div class="verdict" style="color:${verdictColor}">${verdict}</div>
+    </div>`;
+  }
+  document.getElementById("results").innerHTML = html;
+
+  const gate = document.getElementById("gate-result");
+  const explain = document.getElementById("gate-explain");
+  if (allPass){
+    gate.className = "gate-result gate-pass";
+    gate.textContent = "GATE: ✓ PASS";
+    explain.textContent = `All four Δ values exceed the threshold τ=${TAU}.`;
+  } else {
+    const failed = NULLS.filter(n => (p.real - p[n]) < TAU);
+    gate.className = "gate-result gate-fail";
+    gate.textContent = "GATE: ✗ FAIL";
+    explain.textContent = `Failed Null${failed.length>1?"s":""} ${failed.join(", ")} (Δ < τ=${TAU}). ${failed.includes("D") ? "Failing Null D specifically suggests this predictor is matching the gold marginal without using the query." : "The engine is not beating the relevant baseline by a meaningful margin."}`;
+  }
+}
+
+document.querySelectorAll(".demo-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".demo-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    render(btn.dataset.pred);
+  });
+});
+
+render("oracle");
+</script>
+
+</body>
+</html>
