@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Is the AI actually any good? — a 7-minute explainer</title>
+<meta name="description" content="A plain-English explanation of why high AI scores can be fake, told through a school analogy. No technical background required.">
+<style>
+:root{--paper:#f3eee5;--paper-deep:#ebe2d2;--ink:#1c1611;--ink-mute:#6b5e4f;--rule:#d4c8b2;--accent:#9c4a1a;--gold:#9d8147;--green:#3d7a4a;--red:#a8341c;--blue:#2a5e8a}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Garamond,"EB Garamond",Georgia,serif;line-height:1.7;padding:2rem 1.5rem 4rem;max-width:740px;margin:0 auto;font-size:19px}
+
+header{border-bottom:1px solid var(--rule);padding-bottom:1.25rem;margin-bottom:2rem}
+.eyebrow{font-family:"Helvetica Neue",sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;color:var(--ink-mute);margin-bottom:.5rem}
+h1{font-size:2.4rem;font-weight:400;font-style:italic;line-height:1.15;margin-bottom:.75rem}
+h1 em{color:var(--accent);font-style:italic}
+.lede{font-size:1.1rem;color:var(--ink-mute);max-width:600px}
+.who{font-family:"Helvetica Neue",sans-serif;font-size:.75rem;letter-spacing:.1em;color:var(--ink-mute);margin-top:1rem;text-transform:uppercase}
+.who a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent)}
+
+section{margin:2.5rem 0}
+h2{font-family:"Garamond",serif;font-size:1.7rem;font-weight:400;font-style:italic;color:var(--ink);margin-bottom:1rem;border-bottom:1px solid var(--rule);padding-bottom:.4rem}
+p{margin-bottom:1.1rem}
+em{font-style:italic;color:var(--ink)}
+strong{font-weight:600;color:var(--ink)}
+
+.callout{background:var(--paper-deep);border-left:4px solid var(--accent);padding:1.1rem 1.4rem;margin:1.5rem 0;font-family:"Garamond",serif;font-style:italic;color:var(--ink);font-size:1.05rem;line-height:1.5}
+.aside{background:#fef9e7;border-left:3px solid var(--gold);padding:.85rem 1.1rem;margin:1.25rem 0;font-family:"Helvetica Neue",sans-serif;font-size:.9rem}
+
+ul,ol{margin:.5rem 0 1.1rem 1.5rem}
+li{margin-bottom:.6rem}
+a{color:var(--accent);border-bottom:1px solid var(--accent);text-decoration:none}
+a:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+/* Demo */
+.demo{background:#fff;border:1px solid var(--rule);border-radius:3px;padding:1.5rem;margin:1.5rem 0;font-family:"Helvetica Neue",sans-serif}
+.demo-intro{font-family:"Garamond",serif;font-style:italic;font-size:1.05rem;color:var(--ink);margin-bottom:1rem;line-height:1.5}
+.demo-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.demo-btn{background:var(--paper-deep);border:1px solid var(--rule);padding:.55rem .9rem;cursor:pointer;font-family:"Helvetica Neue",sans-serif;font-size:.82rem;border-radius:2px;color:var(--ink)}
+.demo-btn:hover{border-color:var(--accent);color:var(--accent)}
+.demo-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+.test-row{display:grid;grid-template-columns:1fr 70px 60px;gap:.75rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--paper-deep);font-size:.92rem}
+.test-row:last-child{border-bottom:none}
+.test-name{font-family:"Garamond",serif;font-style:italic;color:var(--ink);font-size:1rem;line-height:1.3}
+.test-name small{display:block;font-style:normal;font-family:"Helvetica Neue",sans-serif;font-size:.72rem;color:var(--ink-mute);margin-top:.15rem}
+.test-score{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+.test-verdict{text-align:center;font-size:1.3rem;font-weight:600}
+.test-verdict.beat{color:var(--green)}
+.test-verdict.lose{color:var(--red)}
+.real-score{font-family:"Garamond",serif;font-style:italic;font-size:1.1rem;color:var(--ink);margin:1rem 0;text-align:center;padding:.5rem;background:var(--paper-deep);border-radius:3px}
+.real-score strong{font-style:normal;font-weight:600}
+
+.gate-result{margin-top:1rem;padding:1rem;border-radius:3px;font-family:"Garamond",serif;font-style:italic;font-size:1.2rem;text-align:center}
+.gate-pass{background:#e8f5e9;color:var(--green);border:1px solid var(--green)}
+.gate-fail{background:#ffebee;color:var(--red);border:1px solid var(--red)}
+.gate-explain{font-family:"Helvetica Neue",sans-serif;font-size:.85rem;color:var(--ink);margin-top:.6rem;font-style:normal;line-height:1.4}
+
+footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--rule);text-align:center;font-family:"Helvetica Neue",sans-serif;font-size:.75rem;color:var(--ink-mute);letter-spacing:.05em}
+footer .deva{display:block;margin-bottom:.5rem;font-size:.95rem;color:var(--gold);font-family:"Sanskrit Text",serif}
+
+@media(max-width:600px){
+  body{padding:1.5rem 1rem 3rem;font-size:18px}
+  h1{font-size:2rem}
+  .test-row{grid-template-columns:1fr 60px 50px;gap:.5rem;font-size:.85rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">A 7-minute plain-English explainer</div>
+  <h1>Is the AI actually any good? <em>A way to tell.</em></h1>
+  <p class="lede">A school-test analogy that explains why a lot of "AI is amazing" claims aren't quite what they seem — and what we built to spot the fakes.</p>
+  <div class="who">For readers who have used ChatGPT once · technical version <a href="EXPLAINER.html">here</a></div>
+</header>
+
+<!-- ── 1. THE PROBLEM ─────────────────────────────────────────── -->
+<section>
+<h2>1 · The school-test problem.</h2>
+
+<p>Imagine you give a hundred students a multiple-choice exam. The questions are mostly about French history. Roughly 80% of the correct answers happen to be "C." (Why? Maybe the teacher who wrote the test had a habit. It happens.)</p>
+
+<p>Now imagine one student in the class — call her Mira — who didn't study at all. She didn't read the textbook. She doesn't speak French. But she figured out, from looking at past tests, that "C" is the most common answer. So she just writes C for every single question.</p>
+
+<p>Mira scores about 80%.</p>
+
+<p>If you only look at her score, you'll think Mira understands French history at a serious level. <strong>She doesn't understand anything.</strong> She figured out the test, not the subject.</p>
+
+<div class="callout">
+This is exactly what is happening to a lot of AI systems right now. Their published scores look brilliant. Some of them are doing the AI equivalent of "always pick C."
+</div>
+</section>
+
+<!-- ── 2. WHY THIS MATTERS ────────────────────────────────────── -->
+<section>
+<h2>2 · Why this matters in real life.</h2>
+
+<p>Three places where the "always pick C" problem is happening right now in production AI systems:</p>
+
+<ul>
+<li><strong>Resume screening.</strong> A company brags that its AI "matches the right candidate to the right job 87% of the time." Sometimes the AI has noticed that 87% of historical hires came from three universities, and it's just recommending people from those three universities — regardless of the actual job description.</li>
+<li><strong>Medical search.</strong> A doctor's AI tool says "the most relevant paper for your patient's symptoms is X" with high confidence. Sometimes it's just returning the most-cited paper in that medical category, regardless of whether the patient's specific symptoms match.</li>
+<li><strong>Web search and RAG (the system that fetches sources before ChatGPT-style answers).</strong> The AI claims it found the perfect document for your question. Sometimes it just returned the most popular document in the database, ignoring what you actually asked.</li>
+</ul>
+
+<p>In all three cases, the system <em>looks</em> like it's reasoning. It's actually just exploiting that some answers are popular. The user can't tell from the score alone.</p>
+</section>
+
+<!-- ── 3. WHAT WE BUILT ───────────────────────────────────────── -->
+<section>
+<h2>3 · What we built — four imaginary test-takers.</h2>
+
+<p>Our tool does something simple: it gives the same exam to four <em>imaginary</em> students who can't possibly know the real subject, and compares the AI's score to theirs.</p>
+
+<ol>
+<li><strong>Imaginary student A: "Shuffle the answers."</strong> We take the actual answer key and randomly rearrange it. If the AI still beats this scrambled version by a meaningful margin, we know the AI isn't just memorising answer positions.</li>
+<li><strong>Imaginary student B: "Roll a dice for each question."</strong> Picks completely random answers, ignoring patterns. Beating this proves the AI isn't just guessing.</li>
+<li><strong>Imaginary student C: "Pick five answers at random for each question."</strong> Like a multiple-pick version of B. Beating this proves the AI's narrowing-down is meaningful.</li>
+<li><strong>Imaginary student D: "Mira." The student who picks 'C' because 'C' is most common.</strong> This is the new one. <strong>This is the student most published AI evaluations forget to compare against.</strong> If the AI doesn't beat Mira, the AI is doing what Mira does: exploiting the popularity distribution, not understanding the question.</li>
+</ol>
+
+<p>Our tool runs all four comparisons automatically. If the real AI beats <em>all four</em> imaginary students by a clear margin, the AI gets a green light. If it fails to beat even one — especially Mira — it gets a red flag with an explanation of which trick it was probably playing.</p>
+</section>
+
+<!-- ── 4. INTERACTIVE DEMO ────────────────────────────────────── -->
+<section>
+<h2>4 · Try it yourself — the four-student game.</h2>
+
+<div class="demo">
+  <p class="demo-intro">Pick a student type to see how they score against our four imaginary students. The trick is the third button: "Mira-style." Watch what happens.</p>
+
+  <div class="demo-controls">
+    <button class="demo-btn active" data-pred="real">A real student who studied</button>
+    <button class="demo-btn" data-pred="oracle">The class genius (always right)</button>
+    <button class="demo-btn" data-pred="mira">Mira (always picks "C")</button>
+    <button class="demo-btn" data-pred="random">Random guesser</button>
+  </div>
+
+  <div class="real-score">This student's exam score: <strong id="realscore">79%</strong></div>
+
+  <div id="results"></div>
+
+  <div id="gate-result" class="gate-result gate-pass">VERDICT: ✓ This student really studied.</div>
+  <div class="gate-explain" id="gate-explain">They beat all four imaginary students by a clear margin (more than 5 percentage points). The score reflects real knowledge.</div>
+</div>
+
+<div class="aside">
+This is a simplified version of the actual gate, with simulated numbers calibrated to a 50-question exam. The real tool uses the same logic on AI retrieval systems with thousands of test questions and proper statistical comparisons.
+</div>
+</section>
+
+<!-- ── 5. WHAT WE CAN AND CANNOT TELL YOU ─────────────────── -->
+<section>
+<h2>5 · What this tool <em>cannot</em> tell you.</h2>
+
+<p>It is not magic. Five honest limits:</p>
+<ol>
+<li><strong>It only checks AI systems that "fetch documents" or "rank options."</strong> Search engines, recommendation systems, the part of ChatGPT that finds source articles. It does <em>not</em> check the part that writes paragraphs of text. That's a different kind of test we haven't built yet.</li>
+<li><strong>It can't tell you the AI is "smart" — only that it isn't faking.</strong> A green light means "this AI is doing real work." It does not mean "this AI is good enough for your specific job."</li>
+<li><strong>It needs you to bring the questions and answers.</strong> We don't decide what counts as the right answer. You do. Garbage exam, garbage verdict.</li>
+<li><strong>It assumes your test questions are independent.</strong> If half your test questions are basically the same question rephrased, the tool's confidence will be too high. We're working on a fix.</li>
+<li><strong>It doesn't catch plagiarism, training-data leakage, or AI lying about what it knows.</strong> Those are different problems with different tools. We're solving one specific problem.</li>
+</ol>
+</section>
+
+<!-- ── 6. WHAT DIDN'T WORK ───────────────────────────────────── -->
+<section>
+<h2>6 · Things I tried that didn't work.</h2>
+
+<p>I'm telling you these because you should know I'm not selling a magic box. I'm selling something that has been honestly tested and has visible flaws.</p>
+
+<ol>
+<li><strong>I tried adding a "fancy maths feature" called fractal analysis to make the AI better.</strong> After running it on 10,000 test questions, the result was <em>statistically significant — and slightly worse than not using it</em>. I disabled the feature. The whole point of this kind of testing is to catch yourself when you're wrong; that was the catch.</li>
+<li><strong>My first published numbers were inflated by a programming bug.</strong> A subtle Python issue meant some of my settings were silently using old values. When I found the bug and fixed it, I retracted the inflated numbers <em>publicly</em>. The corrected numbers were lower but real.</li>
+<li><strong>A friend in India named Akosh tried to install my tool last week and three things in the README were wrong.</strong> The "pip install" command pointed to a package that doesn't exist. The demo command had a typo. The clone URL was a placeholder I forgot to fill in. Akosh got "failed basic bench tests" — exactly the kind of report that would normally mean my whole library is broken. It wasn't broken; my install instructions were. Forty-five minutes after he reported it, the fixed version was live. He's credited in the project's changelog as the v0.1.2 reporter.</li>
+<li><strong>I had a $2,000 cash bug bounty offered for anyone who could break the methodology. I suspended it.</strong> Until the implementation has been validated by an external lab, paying for breakage when I haven't yet hardened the entry doors is the wrong order of operations.</li>
+</ol>
+</section>
+
+<!-- ── 7. WHO HAS CHECKED THIS ────────────────────────────────── -->
+<section>
+<h2>7 · Who has checked this so far.</h2>
+
+<p>Honest answer: <strong>almost nobody, yet</strong>. The methodology paper is public. The code is public. The math is undergraduate-level statistics packaged so you don't need to be a statistician to use it.</p>
+
+<p>The independent validation step — having a major AI research lab (one of EleutherAI, METR, AI2, HuggingFace, or Anthropic) run the tool against their own published results and confirm the methodology works — is the <em>highest priority</em> next step. It has not happened yet.</p>
+
+<p>If you are reading this and you are at one of those labs, that is what I most need.</p>
+</section>
+
+<!-- ── 8. WHY YOU SHOULD CARE EVEN IF YOU AREN'T A RESEARCHER ── -->
+<section>
+<h2>8 · Why you might care even if you don't work in AI.</h2>
+
+<p>The AI industry is now claiming, in product marketing, healthcare deployments, hiring tools, finance, and legal services, that its systems pass certain bars of capability. Some of those claims are real. Some are the equivalent of Mira's 80%.</p>
+
+<p>You — as a customer, a patient, a job applicant, or a regulator — currently have <strong>no quick way to tell which is which</strong>. The published scores don't help, because they're the scores being inflated.</p>
+
+<p>What we built is an honest, free, open-source way for anyone with the technical skills to grade an AI system on whether it's really doing what it claims. It runs in 30 seconds. It is small enough to audit completely. It has caught fake-looking results in our own work, more than once.</p>
+
+<p>The single biggest thing this project will not do is make AI worse. It will not slow down responsible companies. It will only make it harder for irresponsible ones to claim numbers they didn't earn.</p>
+</section>
+
+<!-- ── 9. WHAT YOU CAN DO ────────────────────────────────────── -->
+<section>
+<h2>9 · What you can do.</h2>
+
+<p>Three concrete things, in increasing technical commitment:</p>
+<ol>
+<li><strong>Share this page</strong> with one person who works in AI, science, healthcare, or finance — anyone whose job involves trusting an AI system's score. Ask them whether the systems they rely on have been checked this way.</li>
+<li><strong>If you know someone at a research lab</strong> (EleutherAI, METR, Allen Institute / AI2, HuggingFace, Anthropic, Cohere, etc.), forward the technical version of this explainer (<a href="EXPLAINER.html">here</a>) and ask them to run the 30-second verification.</li>
+<li><strong>If you build software yourself,</strong> the project is on GitHub at <a href="https://github.com/spalsh-spec/falsify-eval">github.com/spalsh-spec/falsify-eval</a>. The first command to run is <code>falsify-eval doctor</code>. Takes 30 seconds. Tell us if it doesn't work.</li>
+</ol>
+</section>
+
+<footer>
+<span class="deva">सत्यमेव जयते &nbsp;·&nbsp; satyameva jayate &nbsp;·&nbsp; truth alone triumphs.</span>
+Released by Bhardwaj &amp; Sons under Apache 2.0 · <em>A house of standards.</em><br>
+Technical version of this explainer: <a href="EXPLAINER.html">EXPLAINER.html</a>
+</footer>
+
+<script>
+const STUDENTS = {
+  real:    {score: 79, vsA: 22, vsB: 23, vsC: 22, vsMira: 21, label: "real student"},
+  oracle:  {score: 100, vsA: 75, vsB: 75, vsC: 75, vsMira: 74, label: "class genius"},
+  mira:    {score: 80, vsA: 12, vsB: 13, vsC: -7, vsMira: 0, label: "Mira"},
+  random:  {score: 24, vsA: -1, vsB: 0, vsC: 0, vsMira: 0, label: "random guesser"},
+};
+const TAU = 5; // 5 percentage points
+const TESTS = [
+  {key:"vsA",    name:"vs Imaginary Student A", desc:"shuffled answer key"},
+  {key:"vsB",    name:"vs Imaginary Student B", desc:"random for each question"},
+  {key:"vsC",    name:"vs Imaginary Student C", desc:"random multi-pick"},
+  {key:"vsMira", name:"vs Mira",                desc:"always picks the most common answer"},
+];
+
+function render(key){
+  const s = STUDENTS[key];
+  document.getElementById("realscore").textContent = s.score + "%";
+
+  let html = "";
+  let allBeat = true;
+  for (const t of TESTS){
+    const margin = s[t.key];
+    const beat = margin >= TAU;
+    if (!beat) allBeat = false;
+    const verdict = beat ? "✓" : "✗";
+    const cls = beat ? "beat" : "lose";
+    html += `<div class="test-row">
+      <div class="test-name">${t.name}<small>${t.desc}</small></div>
+      <div class="test-score">${margin >= 0 ? "+" : ""}${margin} pts</div>
+      <div class="test-verdict ${cls}">${verdict}</div>
+    </div>`;
+  }
+  document.getElementById("results").innerHTML = html;
+
+  const gate = document.getElementById("gate-result");
+  const explain = document.getElementById("gate-explain");
+  if (allBeat){
+    gate.className = "gate-result gate-pass";
+    gate.textContent = "VERDICT: ✓ This student really studied.";
+    explain.textContent = `They beat all four imaginary students by a clear margin (more than ${TAU} percentage points). The score reflects real knowledge.`;
+  } else {
+    const lost = TESTS.filter(t => s[t.key] < TAU);
+    const lostMira = lost.some(t => t.key === "vsMira");
+    gate.className = "gate-result gate-fail";
+    gate.textContent = "VERDICT: ✗ Something is off about this score.";
+    if (lostMira) {
+      explain.innerHTML = `This student's score looks fine on most checks, but they did not clearly beat <em>Mira</em> — the student who just picks "C" without studying. That means the score is probably coming from the same trick Mira uses: exploiting which answers are most popular. <strong>This is exactly the failure mode the new test was designed to catch.</strong>`;
+    } else {
+      explain.textContent = `This student failed at least one of the four checks. Look at which "imaginary student" they couldn't beat — that tells you what trick they were using.`;
+    }
+  }
+}
+
+document.querySelectorAll(".demo-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".demo-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    render(btn.dataset.pred);
+  });
+});
+
+render("real");
+</script>
+
+</body>
+</html>
