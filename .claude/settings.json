@@ -1,0 +1,31 @@
+{
+  "_comment_top": "falsify-eval public library scope. Allows library work; denies broad enumeration. Push allowed because this IS a public repo.",
+  "permissions": {
+    "deny": [
+      "Read(./.git/**)",
+      "Read(./.venv/**)",
+      "Read(./.pytest_cache/**)",
+      "Read(./*.egg-info/**)",
+      "Read(./build/**)",
+      "Read(./dist/**)",
+      "Bash(rm -rf:*)",
+      "Bash(find ./.git:*)",
+      "Bash(find ./.venv:*)",
+      "Read(/Users/sparshsharma/bhardwaj-private/**)",
+      "Bash(cat /Users/sparshsharma/bhardwaj-private/**)",
+      "Read(/Users/sparshsharma/vak_engine/**)"
+    ],
+    "ask": [
+      "Edit(./pyproject.toml)",
+      "Edit(./CHANGELOG.md)",
+      "Edit(./SECURITY.md)",
+      "Edit(./CLAUDE.md)",
+      "Edit(./PREPRINT.md)",
+      "Bash(git push:*)",
+      "Bash(twine upload:*)",
+      "Bash(python -m build:*)"
+    ]
+  },
+  "_in_scope_paths": ["./CLAUDE.md", "./README.md", "./pyproject.toml", "./CHANGELOG.md", "./PREPRINT.md", "./SUPPLEMENTARY.md", "./CONTRIBUTING.md", "./CODE_OF_CONDUCT.md", "./SECURITY.md", "./STRESS_TEST_LADDER.md", "./falsify_eval/*.py", "./tests/**/*.py", "./examples/*.py", "./.github/**"],
+  "_out_of_scope_paths": ["/Users/sparshsharma/bhardwaj-private/**", "/Users/sparshsharma/vak_engine/**", "./.git/**", "./.venv/**"]
+}

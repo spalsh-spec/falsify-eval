@@ -1,0 +1,26 @@
+# .claudeignore — falsify-eval public library
+# Tells Claude Code what NOT to enumerate or read.
+
+# Git internals
+.git/
+
+# Virtual environment + Python build artifacts
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Editor
+.DS_Store
+.idea/
+.vscode/
+
+# Private cross-project paths — never read from the public repo
+/Users/sparshsharma/bhardwaj-private/
+/Users/sparshsharma/vak_engine/
+
+# OS / system
+node_modules/
