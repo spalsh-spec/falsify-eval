@@ -264,6 +264,48 @@ def test_d14_length_mismatch_raises_with_lengths():
 # same seed. This locks down everything Mayank's battery touched at once.   #
 # --------------------------------------------------------------------------- #
 
+def test_d1b_tuple_labels_no_crash_oracle_passes_cheater_fails():
+    """v0.1.5 left null_a passing labels to rng.permutation, which converts
+    list-of-tuples to a 2D numpy array and breaks the comparator inside the
+    user metric. v0.1.5.1 closes the third null with the same index-based
+    pattern as null_b/null_d."""
+    import numpy as np
+    labels = [(i, i + 1) for i in range(8)]
+    gold = [labels[i % 8] for i in range(80)]
+
+    oracle = [[g] + [labels[(i + 1) % 8]] * 4 for i, g in enumerate(gold)]
+    cheater = [[labels[0]] * 5 for _ in gold]
+
+    r_oracle = four_null_gate(oracle, gold, [3] * 80, _exact_match,
+                              item_pool=labels, k=5, n_trials=15, tau=0.05, seed=1)
+    r_cheat = four_null_gate(cheater, gold, [3] * 80, _exact_match,
+                             item_pool=labels, k=5, n_trials=15, tau=0.05, seed=1)
+    assert r_oracle["gate_passes"], f"tuple oracle must pass, deltas={r_oracle['deltas']}"
+    assert not r_cheat["gate_passes"], "tuple constant cheater must FAIL the gate"
+
+
+def test_d1c_dataclass_labels_no_crash_oracle_passes_cheater_fails():
+    """Frozen dataclasses without order=True don't support `<`. v0.1.4 and v0.1.5
+    crashed inside null_a's naked sorted(). v0.1.5.1 uses (type, repr) sort key."""
+    from dataclasses import dataclass
+
+    @dataclass(frozen=True)
+    class Lbl:
+        name: str
+
+    labels = [Lbl(f"x{i}") for i in range(8)]
+    gold = [labels[i % 8] for i in range(80)]
+    oracle = [[g] + [labels[(i + 1) % 8]] * 4 for i, g in enumerate(gold)]
+    cheater = [[labels[0]] * 5 for _ in gold]
+
+    r_oracle = four_null_gate(oracle, gold, [3] * 80, _exact_match,
+                              item_pool=labels, k=5, n_trials=15, tau=0.05, seed=1)
+    r_cheat = four_null_gate(cheater, gold, [3] * 80, _exact_match,
+                             item_pool=labels, k=5, n_trials=15, tau=0.05, seed=1)
+    assert r_oracle["gate_passes"], f"dataclass oracle must pass, deltas={r_oracle['deltas']}"
+    assert not r_cheat["gate_passes"], "dataclass constant cheater must FAIL the gate"
+
+
 def test_full_gate_determinism():
     LABELS = [f"L{i}" for i in range(10)]
     GOLD = [LABELS[i % 10] for i in range(60)]

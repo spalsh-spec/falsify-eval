@@ -78,14 +78,25 @@ def null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
                     *, n_trials: int = 50, seed: int = 2026) -> np.ndarray:
     """G_A: permute gold labels via a bijection π over distinct labels.
 
+    Type-preserving: permutes INDICES into the sorted label list rather than
+    passing the labels to ``rng.permutation`` directly. Critical for tuple,
+    dataclass, and any container-like label types — numpy auto-converts
+    list-of-tuples into a 2D array, which silently changes the comparator
+    semantics inside the user-supplied metric (same defect class as Mayank #1
+    in null_b/null_d; closed for null_a in v0.1.5.1).
+
+    Sort key is ``(type(x).__name__, repr(x))`` so mixed-type and unorderable
+    label sets (frozen dataclasses without ``order=True``) are handled.
+
     Returns the array of N_trials null mean values.
     """
     rng = np.random.default_rng(seed)
-    labels = sorted(set(gold_list))
+    labels = sorted(set(gold_list), key=lambda x: (type(x).__name__, repr(x)))
+    n = len(labels)
     means = np.empty(n_trials)
     for i in range(n_trials):
-        perm = rng.permutation(labels)
-        mapping = dict(zip(labels, perm))
+        perm_idx = rng.permutation(n)
+        mapping = {labels[j]: labels[int(perm_idx[j])] for j in range(n)}
         new_gold = [mapping[g] for g in gold_list]
         means[i] = _grade(retrieved_lists, new_gold, rel_list, metric_fn)
     return means

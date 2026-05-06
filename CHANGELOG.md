@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5.1] — 2026-05-06
+
+### Fixed — same defect class as Mayank #1, third null
+
+- `null_a_permuted` was the last null still passing the label list directly
+  to `np.random.default_rng().permutation()`. For tuple labels, numpy
+  silently converts list-of-tuples to a 2D array; for frozen dataclass labels
+  without `order=True`, the prerequisite `sorted(set(...))` raised TypeError.
+  Both cases crashed the whole gate. Fix: same index-based permutation +
+  `(type(x).__name__, repr(x))` sort key already used in null_b/null_d.
+- Two new regression tests (`test_d1b_*`, `test_d1c_*`) cover tuple and
+  frozen-dataclass labels end-to-end (oracle passes, constant cheater fails).
+
 ## [0.1.5] — 2026-05-06
 
 ### Fixed — Mayank Singh adversarial battery (14 defects, headline #1 catastrophic)
