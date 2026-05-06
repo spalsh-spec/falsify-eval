@@ -1,0 +1,28 @@
+# gitleaks config — falsify-eval public repo
+# Run: gitleaks git --no-banner    (history)
+#      gitleaks dir --no-banner .  (working tree)
+#
+# This config layers ON TOP of gitleaks' default ruleset (~150 detectors)
+# and adds project-specific allowlist entries so demo data and academic
+# bibtex don't trip false positives.
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "demo data, fixtures, public BibTeX, and SHA-256 examples are not secrets"
+paths = [
+    '''examples/.*\.json$''',
+    '''examples/.*\.jsonl$''',
+    '''tests/.*\.py$''',
+    '''CHANGELOG\.md''',
+    '''CITATION\.cff''',
+    '''PREPRINT\.md''',
+    '''SUPPLEMENTARY\.md''',
+]
+regexes = [
+    # Bench fixture seeds and example commit hashes are not secrets.
+    '''seed=\d+''',
+    '''commit `[0-9a-f]{7,40}`''',
+]
+

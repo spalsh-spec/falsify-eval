@@ -72,13 +72,23 @@ Three systems graded on a 50-query synthetic bench:
 ## How it works
 
 ```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {
+    'fontFamily': 'Garamond, EB Garamond, Georgia, serif',
+    'primaryColor': '#f3eee5',
+    'primaryTextColor': '#1c1611',
+    'primaryBorderColor': '#9c4a1a',
+    'lineColor': '#9d8147',
+    'tertiaryColor': '#faf6ed',
+    'tertiaryBorderColor': '#d4c8b2',
+    'edgeLabelBackground': '#f3eee5'
+}}}%%
 flowchart LR
-    R[your retriever] -->|top-K per query| S[real score]
-    G[gold labels] --> S
-    G -->|permute π| A[Null A<br/>label-permuted]
-    G -->|iid uniform| B[Null B<br/>uniform random]
-    P[item pool] -->|sample K| C[Null C<br/>random retrieval]
-    G -->|sample by class freq| D[Null D<br/>marginal-matched]
+    R([your retriever]) -->|top-K per query| S[real score]
+    G([gold labels]) --> S
+    G -->|permute π| A[Null A · label-permuted]
+    G -->|iid uniform| B[Null B · uniform random]
+    P([item pool]) -->|sample K| C[Null C · random retrieval]
+    G -->|sample by class freq| D[Null D · marginal-matched ★]
     S --> Δ{Δ ≥ τ on<br/>all four?}
     A --> Δ
     B --> Δ
@@ -86,12 +96,14 @@ flowchart LR
     D --> Δ
     Δ -->|yes| PASS([✓ PASS])
     Δ -->|no| FAIL([✗ FAIL])
-    classDef ok    fill:#e8f3e8,stroke:#3d7a4a,color:#1a3d22;
-    classDef fail  fill:#fbe9e3,stroke:#a8341c,color:#5a1c0c;
-    classDef novel fill:#fef9e7,stroke:#9d8147,color:#5a4720;
+    classDef ok    fill:#eef3e8,stroke:#3d7a4a,color:#1a3d22,stroke-width:1.5px;
+    classDef fail  fill:#f7e9e3,stroke:#9c4a1a,color:#5a1c0c,stroke-width:1.5px;
+    classDef novel fill:#fef9e7,stroke:#9d8147,color:#5a4720,stroke-width:2px;
+    classDef gate  fill:#f3eee5,stroke:#1c1611,color:#1c1611,stroke-width:2px;
     class PASS ok
     class FAIL fail
     class D novel
+    class Δ gate
 ```
 
 | Null | What it tests | Catches |
