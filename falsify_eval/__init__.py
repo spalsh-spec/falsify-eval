@@ -27,7 +27,7 @@ from .stats import (
     power_n_required,
 )
 
-__version__ = "0.1.5.1"
+__version__ = "0.1.5.2"
 __all__ = [
     "null_a_permuted", "null_b_uniform", "null_c_random_retrieval",
     "null_d_marginal_matched", "four_null_gate",

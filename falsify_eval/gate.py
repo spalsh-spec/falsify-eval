@@ -194,8 +194,23 @@ def four_null_gate(retrieved_lists,
                    k: int = 5,
                    n_trials: int = 50,
                    tau: float = 0.05,
-                   seed: int = 2026) -> dict:
+                   seed: int = 2026,
+                   progress: bool = False) -> dict:
     """Run all four nulls; return structured verdict.
+
+    Args:
+        progress: if True, prints per-stage timing to stderr so a user can
+            tell whether a long-running gate is genuinely making progress or
+            stuck. Critical for benches where ``metric_fn`` is expensive
+            (e.g., calls an LLM-judge at ~200 ms / call).
+
+    A note on runtime cost (added in v0.1.5.2 after Akosh-AI 5-hour incident):
+    the gate calls ``metric_fn`` exactly ``N * (1 + 4 * n_trials)`` times.
+    For an LLM-judge metric at 200 ms / call, that is ~6 hours on N=500
+    with default n_trials=50. The library cannot speed up a slow metric, but
+    ``progress=True`` will tell you per-stage where the time is going so you
+    can decide to lower n_trials, cache calls, or parallelise outside the
+    library.
 
     Returns:
         {
@@ -206,6 +221,8 @@ def four_null_gate(retrieved_lists,
           "gate_passes":       bool,        # all 4 must pass
           "tau":               float,
           "n_trials":          int,
+          "warnings":          list[str],
+          "stage_seconds":     dict | None,   # only if progress=True
         }
     """
     _validate_inputs(retrieved_lists, gold_list, rel_list,
@@ -225,19 +242,41 @@ def four_null_gate(retrieved_lists,
             f"is noisy when N < 2·|pool| — Δ_D may behave like Δ_B"
         )
 
-    real = _grade(retrieved_lists, gold_list, rel_list, metric_fn)
-    a = null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
-                        n_trials=n_trials, seed=seed).mean()
-    b = null_b_uniform(retrieved_lists, gold_list, rel_list, metric_fn,
-                       n_trials=n_trials, seed=seed + 1).mean()
-    c = null_c_random_retrieval(gold_list, rel_list, metric_fn,
-                                k=k, item_pool=item_pool,
-                                n_trials=n_trials, seed=seed + 2).mean()
-    d = null_d_marginal_matched(retrieved_lists, gold_list, rel_list, metric_fn,
-                                n_trials=n_trials, seed=seed + 3).mean()
+    import sys
+    import time as _time
+    stage_seconds: dict[str, float] = {}
+
+    def _stage(label: str, fn):
+        if not progress:
+            return fn()
+        t0 = _time.time()
+        N = len(gold_list)
+        n_calls = N if label == "real" else N * n_trials
+        print(f"[falsify-eval] {label}: starting "
+              f"({n_calls:,} metric_fn calls expected)",
+              file=sys.stderr, flush=True)
+        result = fn()
+        elapsed = _time.time() - t0
+        stage_seconds[label] = elapsed
+        rate = n_calls / elapsed if elapsed > 0 else float("inf")
+        print(f"[falsify-eval] {label}: done in {elapsed:7.2f}s "
+              f"({rate:,.0f} calls/s)",
+              file=sys.stderr, flush=True)
+        return result
+
+    real = _stage("real",   lambda: _grade(retrieved_lists, gold_list, rel_list, metric_fn))
+    a    = _stage("null_a", lambda: null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
+                                                    n_trials=n_trials, seed=seed).mean())
+    b    = _stage("null_b", lambda: null_b_uniform(retrieved_lists, gold_list, rel_list, metric_fn,
+                                                   n_trials=n_trials, seed=seed + 1).mean())
+    c    = _stage("null_c", lambda: null_c_random_retrieval(gold_list, rel_list, metric_fn,
+                                                            k=k, item_pool=item_pool,
+                                                            n_trials=n_trials, seed=seed + 2).mean())
+    d    = _stage("null_d", lambda: null_d_marginal_matched(retrieved_lists, gold_list, rel_list, metric_fn,
+                                                            n_trials=n_trials, seed=seed + 3).mean())
     deltas = {"A": real - a, "B": real - b, "C": real - c, "D": real - d}
     passes = {x: deltas[x] >= tau for x in "ABCD"}
-    return {
+    result = {
         "real_mean":   real,
         "null_means":  {"A": a, "B": b, "C": c, "D": d},
         "deltas":      deltas,
@@ -247,3 +286,6 @@ def four_null_gate(retrieved_lists,
         "n_trials":    n_trials,
         "warnings":    warnings,
     }
+    if progress:
+        result["stage_seconds"] = stage_seconds
+    return result

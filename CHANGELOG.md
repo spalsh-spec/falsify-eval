@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5.2] — 2026-05-06
+
+### Added — `progress=True` flag (Akosh-AI 5-hour incident)
+
+Mayank reported the gate had been running 5 hours under Akosh AI's harness
+with no visible progress. Profiling confirmed the gate itself is fast
+(N=5,000 × pool=100k × n_trials=50 finishes in <2s with a cheap metric).
+The 5-hour runtime is fully explained by an LLM-judge metric at ~200 ms /
+call: ``N * (1 + 4 * n_trials)`` calls = ~100k for N=500, n_trials=50,
+which at 200 ms each is ~5.6 hours.
+
+The library can't speed up a slow user metric, but it can stop running
+silently. v0.1.5.2 adds:
+
+- `four_null_gate(..., progress=True)` — prints per-stage timing to stderr
+  with the expected number of `metric_fn` calls, so the user can tell
+  whether the run is making progress, see which stage is the bottleneck,
+  and decide whether to lower `n_trials` or kill the run.
+- `result["stage_seconds"]` — populated when `progress=True`. Lets
+  downstream tooling collect timing without reparsing stderr.
+- README "Why is my run taking so long?" troubleshooting section with the
+  exact `N * (1 + 4 * n_trials)` formula.
+
 ## [0.1.5.1] — 2026-05-06
 
 ### Fixed — same defect class as Mayank #1, third null
