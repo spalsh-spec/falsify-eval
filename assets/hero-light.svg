@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-label="falsify-eval — four nulls, one gate, zero inflation">
+  <defs>
+    <linearGradient id="rule" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#d4c8b2" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#d4c8b2" stop-opacity="1"/>
+      <stop offset="1" stop-color="#d4c8b2" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="360" fill="#f3eee5"/>
+  <!-- four-null mark: 4 squares of decreasing opacity = A, B, C, D -->
+  <g transform="translate(420, 80)">
+    <rect width="58" height="58" rx="10" fill="#9c4a1a" opacity="1.00"/>
+    <rect x="76" width="58" height="58" rx="10" fill="#9c4a1a" opacity="0.72"/>
+    <rect x="152" width="58" height="58" rx="10" fill="#9c4a1a" opacity="0.46"/>
+    <rect x="228" width="58" height="58" rx="10" fill="#9c4a1a" opacity="0.22"/>
+    <text x="29"  y="92" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="600" fill="#6b5e4f" text-anchor="middle" letter-spacing="2">A</text>
+    <text x="105" y="92" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="600" fill="#6b5e4f" text-anchor="middle" letter-spacing="2">B</text>
+    <text x="181" y="92" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="600" fill="#6b5e4f" text-anchor="middle" letter-spacing="2">C</text>
+    <text x="257" y="92" font-family="Helvetica Neue, Arial, sans-serif" font-size="13" font-weight="600" fill="#6b5e4f" text-anchor="middle" letter-spacing="2">D</text>
+  </g>
+  <!-- wordmark -->
+  <text x="600" y="245" font-family="Garamond, EB Garamond, Georgia, serif" font-size="78" font-weight="400" font-style="italic" fill="#1c1611" text-anchor="middle" letter-spacing="-1">falsify-eval</text>
+  <!-- tagline -->
+  <text x="600" y="285" font-family="Helvetica Neue, Arial, sans-serif" font-size="14" font-weight="400" fill="#6b5e4f" text-anchor="middle" letter-spacing="6">FOUR NULLS · ONE GATE · ZERO INFLATION</text>
+  <!-- subtle rule -->
+  <rect x="350" y="315" width="500" height="1" fill="url(#rule)"/>
+  <!-- version pill -->
+  <text x="600" y="338" font-family="Helvetica Neue, Arial, sans-serif" font-size="10" font-weight="500" fill="#9d8147" text-anchor="middle" letter-spacing="3">V0.1.5.2 · APACHE 2.0 · BHARDWAJ &amp; SONS</text>
+</svg>
