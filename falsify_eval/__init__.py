@@ -1,8 +1,8 @@
 """falsify-eval — calibrated falsification harness for retrieval evaluation.
 
-A Python library implementing the four-null Δ-metric gate, cryptographic
-state-locking, side-effect suppression, and statistical-reporting pattern
-described in:
+A Python library implementing the four-null Δ-metric gate, SHA-256 +
+git-commit integrity locking, side-effect suppression, and statistical-
+reporting pattern described in:
 
   Sharma, S. (2026). "Calibrated Falsification Harnesses for Retrieval
   Evaluation: A Methodology-First Case Study." (Preprint.)
@@ -27,7 +27,7 @@ from .stats import (
     power_n_required,
 )
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 __all__ = [
     "null_a_permuted", "null_b_uniform", "null_c_random_retrieval",
     "null_d_marginal_matched", "four_null_gate",

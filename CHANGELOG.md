@@ -7,6 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] — 2026-05-06
+
+### Fixed — Mayank Singh adversarial battery (14 defects, headline #1 catastrophic)
+
+Credit: **Mayank Singh / Indian AI Lab** ran a 47-test stress battery against
+v0.1.4 and surfaced 14 real defects. Every fix below is paired with a
+regression test in `tests/test_mayank_battery.py`.
+
+- **CRITICAL — `str()` cast catastrophe (Defect #1):** `null_b_uniform` and
+  `null_d_marginal_matched` wrapped each random gold draw in `str(label)`.
+  For any non-string label type (`int`, `float`, `np.int64`, tuple, dataclass)
+  the comparator inside the user-supplied metric never matched, the null mean
+  collapsed toward zero, Δ inflated to ≈ real_mean, and the gate's central
+  guarantee was silently void. **Constant-most-frequent predictors PASSED
+  the gate** for any non-string label set. Fix: type-preserving index-based
+  sampling (sample indices into the sorted label list, then look up the
+  original label object). Verified across `str`, `int`, `np.int64`, `float`.
+- **Null C silently used the gold-label set as the pool (Defect #2):** v0.1.4
+  defaulted `item_pool=None` to "use the gold set". On a real corpus this
+  makes Null C ~|gold| / |pool| ≈ 1000× weaker than honest. v0.1.5 raises
+  `ValueError` when `item_pool` is omitted; the caller must pass the actual
+  chunk-id pool.
+- **`k > len(item_pool)` raised raw numpy error (Defect #3):** now raises a
+  contextual `ValueError` with the offending sizes.
+- **"Cryptographic" overselling (Defect #4):** the lock primitive is SHA-256 +
+  git-commit binding, an *integrity check* that catches accidental drift,
+  not a tamper-proof seal against an adversary with write access to the
+  artifacts and the lock. README and `lock.py` docstring corrected; explicit
+  threat-model paragraph added.
+- **`DEFAULT_TRACKED` extension list (Defect #5):** intentionally excludes
+  `.py`, `.md`, `.csv`, `.yaml` because git already tracks them and the
+  git-commit binding covers them — but v0.1.4 didn't say so. Docstring now
+  documents the choice and shows the opt-in pattern
+  (`tracked_extensions=DEFAULT_TRACKED | {".py", ".md"}`).
+- **Empty inputs (Defect #6):** clean `ValueError` instead of RuntimeWarning + NaN.
+- **Version drift (Defect #7):** `__init__.py` and `pyproject.toml` now sync-tested.
+- **Single-class bench (Defect #8):** Null A and Null D collapse to identical
+  distributions; v0.1.5 emits a warning so the caller knows ΔA and ΔD are one
+  test, not two.
+- **Sparse marginal (Defect #9):** when N < 2·|pool|, Null D's marginal estimator
+  degenerates toward Null B; v0.1.5 emits a warning.
+- **Order-stable label set across runs (Defect #10):** sort key is
+  `(type(x).__name__, repr(x))` — total order even with mixed types.
+- **`k` validation (Defect #11):** must be a positive integer; floats / zero /
+  negative / strings / None all rejected up front.
+- **`tau` validation (Defect #12):** must be in `[0, 1]`; values outside the
+  interval rejected up front.
+- **Gold not in pool (Defect #13):** previously produced silent all-zero
+  output because Null C could never sample the gold. Now raises with a
+  preview of the offending labels.
+- **Length mismatch (Defect #14):** previously truncated to the shortest of
+  the three lists. Now raises with all three lengths in the error message.
+
+### Added
+- `tests/test_mayank_battery.py` — 24 regression tests covering every defect
+  above, parametrised across label types where relevant.
+- `four_null_gate` result now includes a `warnings: list[str]` field for the
+  single-class and sparse-marginal flags.
+
 ## [0.1.4] — 2026-05-04
 
 ### Added — terminal UX overhaul (Claude-Code-style hints)

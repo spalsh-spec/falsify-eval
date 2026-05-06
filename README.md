@@ -206,7 +206,7 @@ result = four_null_gate(
 assert result["gate_passes"], f"Engine failed gate: {result['deltas']}"
 
 
-# 2. Cryptographic state lock
+# 2. Integrity-check state lock (SHA-256 + git commit; not tamper-proof)
 import json
 lock = lock_state("./corpus", git_repo=".", bench_score=result["real_mean"])
 with open("corpus.lock.json", "w") as f:

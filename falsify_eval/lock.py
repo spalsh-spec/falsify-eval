@@ -1,7 +1,21 @@
-"""Cryptographic state lock — pure-stdlib, vendor-free.
+"""Integrity-check state lock — pure-stdlib, vendor-free.
 
-Walk a directory, hash every binary artifact, write/verify a JSON lock.
-Bind the lock to a git commit and (optionally) a verified bench score.
+Walk a directory, hash every tracked artifact with SHA-256, write/verify a JSON
+lock; bind the lock to a git commit and (optionally) a verified bench score.
+
+Threat model (per Mayank-defect #4): this is an integrity-check primitive,
+NOT a tamper-proof cryptographic seal. SHA-256 + git-commit binding detect
+*accidental* drift (file mutated, regenerated, partially overwritten) and
+catch *honest* reproducibility failures. They do not defend against an
+adversary with write access to both the artifacts and the lock file — such
+an adversary regenerates both. For tamper-proof attestation, sign the lock
+JSON externally (gpg, sigstore, in-toto) and store the signature out-of-band.
+
+Default tracked extensions cover binary scientific artifacts (.db, .bin,
+.json, .pkl, .npy, .npz, .parquet). Source files (.py, .md, .txt, .csv,
+.yaml, .yml) are intentionally NOT tracked by default — they live in git
+already and the git-commit binding covers them. To track those explicitly,
+pass `tracked_extensions=DEFAULT_TRACKED | {".py", ".md", ".csv"}` etc.
 """
 from __future__ import annotations
 

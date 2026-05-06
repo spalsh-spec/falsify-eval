@@ -93,12 +93,20 @@ def null_a_permuted(retrieved_lists, gold_list, rel_list, metric_fn,
 
 def null_b_uniform(retrieved_lists, gold_list, rel_list, metric_fn,
                    *, n_trials: int = 50, seed: int = 2026) -> np.ndarray:
-    """G_B: per-query iid uniform draw of gold from the label set."""
+    """G_B: per-query iid uniform draw of gold from the label set.
+
+    Type-preserving: draws indices into the label list rather than letting
+    numpy coerce the labels themselves. This is the fix for Mayank's
+    catastrophic-defect #1 (v0.1.4 wrapped each draw in str(), which
+    silently disabled the gate for any non-string label type).
+    """
     rng = np.random.default_rng(seed)
-    labels = sorted(set(gold_list))
+    labels = sorted(set(gold_list), key=lambda x: (type(x).__name__, repr(x)))
+    n = len(labels)
     means = np.empty(n_trials)
     for i in range(n_trials):
-        new_gold = [str(rng.choice(labels)) for _ in gold_list]
+        idx = rng.integers(0, n, size=len(gold_list))
+        new_gold = [labels[j] for j in idx]
         means[i] = _grade(retrieved_lists, new_gold, rel_list, metric_fn)
     return means
 
@@ -108,15 +116,34 @@ def null_c_random_retrieval(gold_list, rel_list, metric_fn,
                             n_trials: int = 50, seed: int = 2026) -> np.ndarray:
     """G_C: replace engine output with K random items from item_pool.
 
-    If item_pool is None, defaults to the set of distinct labels (which
-    measures "random retrieval over the label space" rather than the chunk
-    pool — caller should pass the actual chunk-id pool for the strict version).
+    item_pool is REQUIRED for an honest Null C. Per Mayank-defect #2:
+    defaulting to the gold-label set makes Null C ~1000× weaker than honest
+    on a real corpus. The caller must pass the actual chunk-id / item pool;
+    otherwise we raise rather than silently produce a misleading number.
+
+    Type-preserving via index-based sampling.
     """
+    if item_pool is None:
+        raise ValueError(
+            "null_c_random_retrieval requires item_pool. Defaulting to the "
+            "gold-label set (as v0.1.4 did) makes Null C ~1000x weaker than "
+            "an honest random-retrieval baseline. Pass item_pool=<your chunk "
+            "pool> explicitly."
+        )
     rng = np.random.default_rng(seed)
-    pool = list(item_pool) if item_pool is not None else sorted(set(gold_list))
+    pool = list(item_pool)
+    n_pool = len(pool)
+    if k > n_pool:
+        raise ValueError(
+            f"k={k} > len(item_pool)={n_pool}; Null C samples k items "
+            f"without replacement from item_pool."
+        )
     means = np.empty(n_trials)
     for i in range(n_trials):
-        rand_lists = [list(rng.choice(pool, size=k, replace=False)) for _ in gold_list]
+        rand_lists = []
+        for _ in gold_list:
+            idx = rng.choice(n_pool, size=k, replace=False)
+            rand_lists.append([pool[j] for j in idx])
         means[i] = _grade(rand_lists, gold_list, rel_list, metric_fn)
     return means
 
@@ -127,14 +154,22 @@ def null_d_marginal_matched(retrieved_lists, gold_list, rel_list, metric_fn,
     gold-frequency distribution. Catches predictors matched to the gold
     marginal (e.g., constant predictor of the most-frequent class) which
     A and B can false-positive.
+
+    Type-preserving: draws indices into the label list rather than letting
+    numpy coerce the labels themselves. This is the central fix for
+    Mayank's catastrophic-defect #1 — without it, the headline guarantee
+    of the gate is silently void for any non-string label type.
     """
     rng = np.random.default_rng(seed)
     counts = Counter(gold_list)
-    labels = sorted(counts.keys())
-    p = np.array([counts[t] / sum(counts.values()) for t in labels])
+    labels = sorted(counts.keys(), key=lambda x: (type(x).__name__, repr(x)))
+    n = len(labels)
+    total = sum(counts.values())
+    p = np.array([counts[t] / total for t in labels])
     means = np.empty(n_trials)
     for i in range(n_trials):
-        new_gold = [str(rng.choice(labels, p=p)) for _ in gold_list]
+        idx = rng.choice(n, size=len(gold_list), p=p)
+        new_gold = [labels[j] for j in idx]
         means[i] = _grade(retrieved_lists, new_gold, rel_list, metric_fn)
     return means
 
