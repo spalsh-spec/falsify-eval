@@ -7,21 +7,34 @@
 
 <br>
 
-**A small, free library that catches the class of false-positives the standard retrieval and ranking evaluation pipeline silently accepts.**
+## Some search engines pretend to be smart.
 
-**Scope honesty:** falsify-eval grades *retrieval and ranking systems* — search, RAG retrieval-side, recommendation top-K, classification-as-retrieval. It does **not** grade generative LLM outputs (free-text, summarisation, open-ended QA). Those are different failure-mode classes that need their own null distributions and are planned for v0.3+; we will not claim coverage before shipping the work.
+They look like they understand your question.<br>
+They actually just return whatever's most popular in their database.
 
-<br>
+A student named **Mira** would do the same on her French exam.<br>
+She'd score 80% by always picking "C". She doesn't speak French.
 
-[![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-43%20passing-brightgreen)](tests/)
-[![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
-[![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
-[![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+**This is a 30-second test that catches them.**
 
 ```bash
 pip install git+https://github.com/spalsh-spec/falsify-eval
 ```
+
+Free. Open source. Runs on your laptop. Works on any search system.
+
+Built for **search engines, recommendation systems, the retrieval side of RAG.**<br>
+*Not* built for the part of ChatGPT that writes paragraphs — that's a different problem we haven't built a test for.
+
+→ **The actual numbers on a real benchmark:** [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) ·  **5 minutes to reproduce.**
+
+<br>
+
+[![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-58%20passing-brightgreen)](tests/)
+[![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
+[![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
+[![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
 [**30-second demo**](#30-second-demo) · [**The Mira test**](#the-mira-test) · [**How it works**](#how-it-works) · [**Three surfaces**](#three-surfaces) · [**Preprint**](#preprint)
 
