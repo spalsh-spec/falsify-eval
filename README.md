@@ -17,6 +17,18 @@ She'd score 80% by always picking "C". She doesn't speak French.
 
 **This is a 30-second test that catches them.**
 
+### → Try it without installing anything
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/spalsh-spec/falsify-eval/blob/main/notebooks/quickstart.ipynb)
+[![Play with sliders](https://img.shields.io/badge/play%20with%20sliders-▶-9c4a1a?style=for-the-badge)](https://spalsh-spec.github.io/falsify-eval/play.html)
+[![Real-data case study](https://img.shields.io/badge/real%20data-CS01%20NFCorpus-3d7a4a?style=for-the-badge)](case_studies/cs01_nfcorpus/CS01_REPORT.md)
+
+The **Colab** runs the actual library on a synthetic bench (60 seconds, no install).<br>
+The **Playground** lets you pick a strategy with sliders and watch the gate verdict update live in your browser.<br>
+The **Case study** shows the same gate working on a peer-reviewed BEIR benchmark.
+
+### → Or install and run locally
+
 ```bash
 pip install git+https://github.com/spalsh-spec/falsify-eval
 ```
@@ -26,12 +38,10 @@ Free. Open source. Runs on your laptop. Works on any search system.
 Built for **search engines, recommendation systems, the retrieval side of RAG.**<br>
 *Not* built for the part of ChatGPT that writes paragraphs — that's a different problem we haven't built a test for.
 
-→ **The actual numbers on a real benchmark:** [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) ·  **5 minutes to reproduce.**
-
 <br>
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-58%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)](tests/)
 [![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)

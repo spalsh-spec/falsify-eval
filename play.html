@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Mira Playground · falsify-eval</title>
+<meta name="description" content="An interactive playground. Pick a search-engine strategy, watch the four-null gate decide whether it's actually smart or just gaming popularity.">
+<meta property="og:title" content="The Mira Playground · falsify-eval">
+<meta property="og:description" content="Pick a strategy. Beat the four nulls. Or get caught.">
+<meta property="og:image" content="assets/social-preview.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{
+  --paper:#f3eee5; --paper-deep:#ebe2d2; --ink:#1c1611; --ink-mute:#6b5e4f;
+  --rule:#d4c8b2; --accent:#9c4a1a; --gold:#9d8147;
+  --green:#3d7a4a; --red:#a8341c; --green-bg:#eef3e8; --red-bg:#f7e9e3;
+}
+@media (prefers-color-scheme: dark){
+  :root{--paper:#0e0c09;--paper-deep:#161210;--ink:#f3eee5;--ink-mute:#a39580;
+    --rule:#3a342a;--accent:#d8702f;--gold:#c9a973;
+    --green:#7fc28e;--red:#e58168;--green-bg:#152a18;--red-bg:#2a1410;}
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:Garamond,"EB Garamond",Georgia,serif;
+  line-height:1.5;padding:1.5rem;max-width:880px;margin:0 auto}
+.deva{font-family:"Sanskrit Text",serif;color:var(--gold);letter-spacing:.05em;font-size:1rem}
+.kicker{font-family:Helvetica Neue,Arial,sans-serif;font-size:.65rem;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--gold);font-weight:600}
+h1{font-size:2.4rem;font-weight:400;font-style:italic;line-height:1.1;margin:.5rem 0}
+h1 span{color:var(--accent)}
+.sub{font-family:Helvetica Neue,Arial,sans-serif;font-size:.85rem;color:var(--ink-mute);margin-bottom:2rem}
+section{background:var(--paper-deep);border:1px solid var(--rule);border-radius:3px;
+  padding:1.25rem 1.5rem;margin-bottom:1.5rem}
+h2{font-family:Helvetica Neue,Arial,sans-serif;font-size:.7rem;letter-spacing:.25em;
+  text-transform:uppercase;color:var(--accent);font-weight:600;
+  border-bottom:1px solid var(--rule);padding-bottom:.5rem;margin-bottom:1rem}
+.row{display:flex;align-items:center;gap:.75rem;margin:.45rem 0;font-family:Helvetica Neue,Arial,sans-serif;font-size:.95rem}
+.row label{flex:1;cursor:pointer;display:flex;align-items:center;gap:.6rem}
+input[type=radio]{accent-color:var(--accent);width:1rem;height:1rem;cursor:pointer}
+.label-name{font-weight:600;color:var(--ink)}
+.label-desc{color:var(--ink-mute);font-size:.85rem;margin-left:auto;text-align:right}
+.slider-row{display:flex;align-items:center;gap:1rem;margin-top:.5rem;font-family:Helvetica Neue,Arial,sans-serif;font-size:.85rem}
+.slider-row label{flex:0 0 12rem;color:var(--ink-mute)}
+input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-val{font-family:"SF Mono",Menlo,monospace;font-size:.85rem;color:var(--ink);min-width:3.5rem;text-align:right}
+.scoreboard{display:grid;grid-template-columns:9rem 1fr 5rem 2rem;gap:.75rem;
+  align-items:center;margin:.55rem 0;font-family:Helvetica Neue,Arial,sans-serif;font-size:.9rem}
+.score-label{font-weight:500}
+.score-label.real{color:var(--ink);font-weight:700}
+.score-label.novel{color:var(--gold);font-weight:600}
+.bar{height:14px;background:var(--paper);border:1px solid var(--rule);border-radius:2px;overflow:hidden;position:relative}
+.bar-fill{height:100%;transition:width .25s ease}
+.bar-fill.real{background:var(--ink)}
+.bar-fill.pos{background:var(--green)}
+.bar-fill.neg{background:var(--red)}
+.score-num{font-family:"SF Mono",Menlo,monospace;font-size:.85rem;text-align:right}
+.tick{font-size:1.1rem;text-align:center}
+.tick.ok{color:var(--green)}.tick.bad{color:var(--red)}
+.verdict{margin:1.25rem 0 .5rem;padding:1rem 1.25rem;border-radius:3px;border-left:3px solid;font-size:1.1rem}
+.verdict.pass{background:var(--green-bg);border-left-color:var(--green);color:var(--green)}
+.verdict.fail{background:var(--red-bg);border-left-color:var(--red);color:var(--red)}
+.verdict-tag{font-family:Helvetica Neue,Arial,sans-serif;font-size:.65rem;letter-spacing:.25em;text-transform:uppercase;font-weight:600;display:block;margin-bottom:.4rem}
+.verdict-msg{font-style:italic;font-size:.95rem;color:var(--ink-mute);margin-top:.5rem}
+.share{display:flex;gap:.75rem;margin-top:1rem;flex-wrap:wrap}
+.btn{font-family:Helvetica Neue,Arial,sans-serif;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+  font-weight:600;padding:.6rem 1rem;border-radius:2px;text-decoration:none;border:1px solid var(--rule);
+  background:var(--paper);color:var(--ink);cursor:pointer;transition:.15s}
+.btn:hover{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.btn.primary:hover{background:var(--ink);border-color:var(--ink)}
+.note{background:var(--paper);border-left:2px solid var(--gold);padding:.75rem 1rem;
+  font-family:Helvetica Neue,Arial,sans-serif;font-size:.82rem;color:var(--ink-mute);margin-top:1rem;border-radius:2px}
+footer{text-align:center;font-family:Helvetica Neue,Arial,sans-serif;font-size:.7rem;
+  letter-spacing:.15em;color:var(--ink-mute);margin-top:2rem;padding-top:1rem;border-top:1px solid var(--rule)}
+footer a{color:var(--ink-mute);text-decoration:none;border-bottom:1px solid var(--rule)}
+footer a:hover{color:var(--accent)}
+.legend-d{display:inline-block;background:var(--gold);color:var(--paper);padding:.05rem .35rem;border-radius:2px;font-size:.7rem;font-weight:700}
+.achievement{margin-top:.75rem;padding:.5rem .75rem;background:var(--paper);
+  border:1px dashed var(--gold);font-family:Helvetica Neue,Arial,sans-serif;font-size:.82rem;color:var(--gold);border-radius:2px;display:none}
+.achievement.show{display:block}
+@media (max-width:600px){
+  body{padding:1rem}
+  .scoreboard{grid-template-columns:7rem 1fr 4.5rem 1.5rem}
+  .label-desc{display:none}
+  h1{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<div class="deva">सत्यमेव जयते</div>
+<div class="kicker">The Mira Playground · falsify-eval</div>
+<h1>Pick a strategy. <span>Beat the four nulls.</span></h1>
+<div class="sub">Live demo — change anything below; the gate verdict updates in real time.</div>
+
+<section>
+<h2>1 · Pick a student strategy</h2>
+<div class="row"><label><input type="radio" name="strategy" value="oracle"><span class="label-name">Real student</span><span class="label-desc">always knows the answer (100% accurate)</span></label></div>
+<div class="row"><label><input type="radio" name="strategy" value="mira" checked><span class="label-name">Mira</span><span class="label-desc">always writes "C" — never studied</span></label></div>
+<div class="row"><label><input type="radio" name="strategy" value="slacker"><span class="label-name">Slacker</span><span class="label-desc">picks one of A/B/C/D/E at random</span></label></div>
+<div class="row"><label><input type="radio" name="strategy" value="popularity"><span class="label-name">Popularity-only</span><span class="label-desc">picks each label proportional to its frequency</span></label></div>
+<div class="row"><label><input type="radio" name="strategy" value="studied"><span class="label-name">Mostly studied</span><span class="label-desc">accuracy slider below — partial real knowledge</span></label></div>
+<div class="slider-row">
+  <label>Studied accuracy <em>p</em>:</label>
+  <input type="range" id="studied-p" min="0" max="100" value="70">
+  <span class="slider-val" id="studied-p-val">70%</span>
+</div>
+</section>
+
+<section>
+<h2>2 · Test setup</h2>
+<div class="slider-row">
+  <label>Number of questions <em>N</em>:</label>
+  <input type="range" id="n-q" min="20" max="500" value="120" step="20">
+  <span class="slider-val" id="n-q-val">120</span>
+</div>
+<div class="slider-row">
+  <label>Class C frequency:</label>
+  <input type="range" id="c-freq" min="20" max="80" value="40" step="5">
+  <span class="slider-val" id="c-freq-val">40%</span>
+</div>
+<div class="slider-row">
+  <label>Gate threshold <em>τ</em>:</label>
+  <input type="range" id="tau" min="1" max="20" value="5">
+  <span class="slider-val" id="tau-val">0.05</span>
+</div>
+<div class="slider-row">
+  <label>Trials per null:</label>
+  <input type="range" id="trials" min="10" max="100" value="30" step="10">
+  <span class="slider-val" id="trials-val">30</span>
+</div>
+</section>
+
+<section>
+<h2>3 · Live results <span style="float:right;font-family:'SF Mono',Menlo,monospace;font-size:.7rem;color:var(--ink-mute);font-weight:400;letter-spacing:0;text-transform:none" id="seed-tag">seed = 2026</span></h2>
+
+<div class="scoreboard"><div class="score-label real">Student score</div><div class="bar"><div class="bar-fill real" id="bar-real" style="width:0%"></div></div><div class="score-num" id="num-real">—</div><div class="tick"></div></div>
+
+<div style="margin:1rem 0 .5rem;font-family:Helvetica Neue,Arial,sans-serif;font-size:.7rem;letter-spacing:.2em;color:var(--ink-mute);text-transform:uppercase">vs the four nulls (Δ = student − null)</div>
+
+<div class="scoreboard"><div class="score-label">Δ_A · gold permuted</div><div class="bar"><div class="bar-fill" id="bar-A" style="width:0%"></div></div><div class="score-num" id="num-A">—</div><div class="tick" id="tick-A"></div></div>
+<div class="scoreboard"><div class="score-label">Δ_B · uniform random</div><div class="bar"><div class="bar-fill" id="bar-B" style="width:0%"></div></div><div class="score-num" id="num-B">—</div><div class="tick" id="tick-B"></div></div>
+<div class="scoreboard"><div class="score-label">Δ_C · random retrieval</div><div class="bar"><div class="bar-fill" id="bar-C" style="width:0%"></div></div><div class="score-num" id="num-C">—</div><div class="tick" id="tick-C"></div></div>
+<div class="scoreboard"><div class="score-label novel">Δ_D · marginal-matched <span class="legend-d">NEW</span></div><div class="bar"><div class="bar-fill" id="bar-D" style="width:0%"></div></div><div class="score-num" id="num-D">—</div><div class="tick" id="tick-D"></div></div>
+
+<div id="verdict" class="verdict pass">
+  <span class="verdict-tag" id="verdict-tag">GATE: PASS</span>
+  <span id="verdict-headline">Computing…</span>
+  <div class="verdict-msg" id="verdict-msg"></div>
+</div>
+
+<div class="achievement" id="achievement"></div>
+
+<div class="share">
+  <button class="btn" id="reseed">↻ Re-seed (new dice)</button>
+  <button class="btn primary" id="share">Copy shareable link</button>
+  <a class="btn" href="https://github.com/spalsh-spec/falsify-eval">View the library →</a>
+</div>
+
+<div class="note">
+The numbers above run the four-null gate algorithm in your browser, exactly the way the
+Python library does on a real benchmark — just with a tiny synthetic exam instead of
+3,633 documents. <strong>Δ_D (marginal-matched random)</strong> is the new contribution
+of this work; the other three nulls are standard. Try Mira first, then the Studied
+slider, and watch which Δ collapses for which strategy.
+</div>
+</section>
+
+<footer>
+<a href="index.html">Home</a> · <a href="EXPLAINER.html">Technical explainer</a> · <a href="EXPLAINER_simple.html">Plain-English explainer</a> · <a href="https://github.com/spalsh-spec/falsify-eval">Code on GitHub</a>
+<br><br>
+BHARDWAJ &amp; SONS · APACHE 2.0 · A HOUSE OF STANDARDS
+</footer>
+
+<script>
+'use strict';
+
+// ─── deterministic RNG (mulberry32) for shareable, reproducible results ──
+function rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+
+const LABELS = ['A','B','C','D','E'];
+
+function makeFreq(cFreqPct){
+  // C is the popular class, others split the rest evenly-ish.
+  const c = cFreqPct / 100;
+  const rest = (1 - c) / 4;
+  return {A: rest, B: rest * 1.05, C: c, D: rest * 0.95, E: rest};
+}
+
+function normalize(freq){
+  const s = Object.values(freq).reduce((a,b)=>a+b,0);
+  const out = {};
+  for (const k in freq) out[k] = freq[k] / s;
+  return out;
+}
+
+function sampleFreq(freq, r){
+  const x = r();
+  let acc = 0;
+  for (const k of LABELS){ acc += freq[k]; if (x < acc) return k; }
+  return LABELS[LABELS.length - 1];
+}
+
+function generateGold(N, freq, r){
+  return Array.from({length: N}, () => sampleFreq(freq, r));
+}
+
+function uniformLabel(r){
+  return LABELS[Math.floor(r() * LABELS.length)];
+}
+
+// student answer for one query, given strategy
+function studentAnswer(strategy, gold, freq, p, r){
+  if (strategy === 'oracle')      return gold;
+  if (strategy === 'mira')        return 'C';
+  if (strategy === 'slacker')     return uniformLabel(r);
+  if (strategy === 'popularity')  return sampleFreq(freq, r);
+  if (strategy === 'studied')     return r() < p ? gold : uniformLabel(r);
+  return uniformLabel(r);
+}
+
+// metric: simple match
+function score(student, gold){
+  let m = 0;
+  for (let i = 0; i < gold.length; i++) if (student[i] === gold[i]) m++;
+  return m / gold.length;
+}
+
+// nulls
+function nullA_permuted(student, gold, r){
+  // random bijection π over LABELS
+  const labels = LABELS.slice();
+  for (let i = labels.length - 1; i > 0; i--){
+    const j = Math.floor(r() * (i + 1));
+    [labels[i], labels[j]] = [labels[j], labels[i]];
+  }
+  const map = {};
+  LABELS.forEach((k, i) => map[k] = labels[i]);
+  const newGold = gold.map(g => map[g]);
+  return score(student, newGold);
+}
+
+function nullB_uniform(student, gold, r){
+  const newGold = Array.from({length: gold.length}, () => uniformLabel(r));
+  return score(student, newGold);
+}
+
+function nullC_randomStudent(student, gold, r){
+  const newStudent = Array.from({length: student.length}, () => uniformLabel(r));
+  return score(newStudent, gold);
+}
+
+function nullD_marginal(student, gold, freq, r){
+  // freq here is the *empirical* gold frequency of THIS run
+  const newGold = Array.from({length: gold.length}, () => sampleFreq(freq, r));
+  return score(student, newGold);
+}
+
+function empiricalFreq(gold){
+  const c = {A:0,B:0,C:0,D:0,E:0};
+  for (const g of gold) c[g]++;
+  return normalize(c);
+}
+
+function runGate(opts){
+  const {strategy, N, cFreq, tau, nTrials, p, seed} = opts;
+  const r = rng(seed);
+  const freq = makeFreq(cFreq);
+  const gold = generateGold(N, freq, r);
+  const empFreq = empiricalFreq(gold);
+  const student = gold.map(g => studentAnswer(strategy, g, freq, p, r));
+
+  const real = score(student, gold);
+  const meanOver = (n, fn) => {
+    let s = 0;
+    for (let i = 0; i < n; i++) s += fn();
+    return s / n;
+  };
+  const a = meanOver(nTrials, () => nullA_permuted(student, gold, r));
+  const b = meanOver(nTrials, () => nullB_uniform(student, gold, r));
+  const c = meanOver(nTrials, () => nullC_randomStudent(student, gold, r));
+  const d = meanOver(nTrials, () => nullD_marginal(student, gold, empFreq, r));
+
+  const deltas = {A: real - a, B: real - b, C: real - c, D: real - d};
+  const passes = {A: deltas.A >= tau, B: deltas.B >= tau, C: deltas.C >= tau, D: deltas.D >= tau};
+  const gatePass = passes.A && passes.B && passes.C && passes.D;
+  return {real, nulls: {A:a, B:b, C:c, D:d}, deltas, passes, gatePass};
+}
+
+// ─── UI ─────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+let SEED = 2026;
+
+function readState(){
+  const strat = document.querySelector('input[name=strategy]:checked').value;
+  return {
+    strategy: strat,
+    N: +$('n-q').value,
+    cFreq: +$('c-freq').value,
+    tau: +$('tau').value / 100,
+    nTrials: +$('trials').value,
+    p: +$('studied-p').value / 100,
+    seed: SEED,
+  };
+}
+
+function fmtPct(x){ return (100 * x).toFixed(1) + '%'; }
+function fmtDelta(x){ const s = x >= 0 ? '+' : ''; return s + (100 * x).toFixed(1) + '%'; }
+function barWidth(x){ return Math.max(0, Math.min(100, x * 100)) + '%'; }
+function deltaBar(x){
+  // map [-0.5, +0.5] → 0..100, centered
+  const pct = Math.max(0, Math.min(100, 50 + x * 100));
+  return pct + '%';
+}
+
+function render(){
+  const opts = readState();
+  $('seed-tag').textContent = `seed = ${SEED} · N = ${opts.N} · τ = ${opts.tau.toFixed(2)}`;
+  const res = runGate(opts);
+  $('num-real').textContent = fmtPct(res.real);
+  $('bar-real').style.width = barWidth(res.real);
+  for (const k of ['A','B','C','D']){
+    const d = res.deltas[k], pass = res.passes[k];
+    $('num-' + k).textContent = fmtDelta(d);
+    $('bar-' + k).style.width = barWidth(Math.abs(d));
+    $('bar-' + k).className = 'bar-fill ' + (d >= 0 ? 'pos' : 'neg');
+    const tick = $('tick-' + k);
+    tick.textContent = pass ? '✓' : '✗';
+    tick.className = 'tick ' + (pass ? 'ok' : 'bad');
+  }
+  const v = $('verdict'); const tag = $('verdict-tag');
+  const head = $('verdict-headline'); const msg = $('verdict-msg');
+  if (res.gatePass){
+    v.className = 'verdict pass';
+    tag.textContent = 'GATE: ✓ PASS';
+    head.textContent = 'This student really studied.';
+    msg.textContent = `They beat all four nulls by Δ ≥ ${(opts.tau * 100).toFixed(1)}% — score reflects real knowledge.`;
+  } else {
+    v.className = 'verdict fail';
+    tag.textContent = 'GATE: ✗ FAIL';
+    const failed = ['A','B','C','D'].filter(k => !res.passes[k]);
+    if (failed.length === 1 && failed[0] === 'D'){
+      head.textContent = 'Caught — by Null D.';
+      msg.textContent = 'The student passes the standard nulls but fails the new marginal-matched null. Classic Mira: looks smart on aggregate, exploits popularity. This is the failure mode the previous nulls miss.';
+    } else if (opts.strategy === 'oracle' && opts.tau > 0.4){
+      head.textContent = 'τ is unrealistically strict.';
+      msg.textContent = 'A perfect oracle still cannot beat the gate at τ this high. Realistic τ values are 0.05 – 0.15.';
+    } else {
+      head.textContent = `Failed ${failed.length} of 4 nulls (${failed.map(k => 'Δ_' + k).join(', ')}).`;
+      msg.textContent = 'This strategy does not beat the cheaters by enough margin on at least one null. Try the Real student or raise the Studied slider.';
+    }
+  }
+  // achievement banner
+  const ach = $('achievement');
+  let achText = '';
+  if (opts.strategy === 'mira' && !res.gatePass && res.passes.A && res.passes.B && res.passes.C && !res.passes.D){
+    achText = '★ Achievement: caught a Mira-style cheater that beat the three standard nulls. This is the headline contribution of falsify-eval.';
+  } else if (opts.strategy === 'oracle' && res.gatePass){
+    achText = '★ Achievement: a true oracle passes all four nulls cleanly. This is the upper bound.';
+  } else if (opts.strategy === 'studied' && opts.p < 0.30 && !res.gatePass){
+    achText = '★ Achievement: caught a half-studied student. Below ~30% real knowledge, the gate refuses to call it learned.';
+  } else if (opts.strategy === 'popularity' && !res.passes.D){
+    achText = '★ Achievement: caught a popularity-only ranker — the closest analogue to a real Mira-style search engine.';
+  }
+  if (achText){ ach.textContent = achText; ach.classList.add('show'); }
+  else { ach.classList.remove('show'); }
+}
+
+// ─── shareable URL state ────────────────────────────────────────────────
+function encodeState(){
+  const s = readState();
+  const params = new URLSearchParams({
+    strat: s.strategy, n: s.N, c: s.cFreq, t: Math.round(s.tau * 100),
+    tr: s.nTrials, p: Math.round(s.p * 100), seed: SEED,
+  });
+  return location.origin + location.pathname + '#' + params.toString();
+}
+
+function loadStateFromHash(){
+  if (!location.hash || location.hash.length < 2) return;
+  const params = new URLSearchParams(location.hash.slice(1));
+  const set = (id, val, suffix='') => { if (val !== null){ $(id).value = val; const v = $(id + '-val'); if (v) v.textContent = val + suffix; } };
+  if (params.get('strat')){
+    document.querySelectorAll('input[name=strategy]').forEach(r => r.checked = (r.value === params.get('strat')));
+  }
+  set('n-q', params.get('n'));
+  set('c-freq', params.get('c'), '%');
+  if (params.get('t')) { $('tau').value = params.get('t'); $('tau-val').textContent = (params.get('t')/100).toFixed(2); }
+  set('trials', params.get('tr'));
+  set('studied-p', params.get('p'), '%');
+  if (params.get('seed')) SEED = +params.get('seed');
+}
+
+// wire up
+document.querySelectorAll('input[type=radio]').forEach(el => el.addEventListener('change', render));
+const sliders = [
+  ['n-q', '', v=>v],
+  ['c-freq', '%', v=>v],
+  ['tau', '', v=>(v/100).toFixed(2)],
+  ['trials', '', v=>v],
+  ['studied-p', '%', v=>v],
+];
+for (const [id, suffix, fn] of sliders){
+  $(id).addEventListener('input', () => {
+    $(id + '-val').textContent = fn($(id).value) + suffix;
+    render();
+  });
+}
+$('reseed').addEventListener('click', () => { SEED = Math.floor(Math.random()*1e6); render(); });
+$('share').addEventListener('click', () => {
+  const url = encodeState();
+  navigator.clipboard.writeText(url).then(() => {
+    const b = $('share'); const t = b.textContent;
+    b.textContent = '✓ Copied'; setTimeout(() => b.textContent = t, 1500);
+  });
+});
+
+// initial paint
+loadStateFromHash();
+sliders.forEach(([id, suffix, fn]) => $(id + '-val').textContent = fn($(id).value) + suffix);
+render();
+</script>
+</body>
+</html>
