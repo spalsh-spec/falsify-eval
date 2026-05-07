@@ -7,7 +7,9 @@
 
 <br>
 
-**A small, free library that catches the class of false-positives the standard retrieval-evaluation pipeline silently accepts.**
+**A small, free library that catches the class of false-positives the standard retrieval and ranking evaluation pipeline silently accepts.**
+
+**Scope honesty:** falsify-eval grades *retrieval and ranking systems* — search, RAG retrieval-side, recommendation top-K, classification-as-retrieval. It does **not** grade generative LLM outputs (free-text, summarisation, open-ended QA). Those are different failure-mode classes that need their own null distributions and are planned for v0.3+; we will not claim coverage before shipping the work.
 
 <br>
 
@@ -31,11 +33,13 @@ pip install git+https://github.com/spalsh-spec/falsify-eval
 
 Imagine a student named Mira who never studied. She noticed that on past exams, *"C"* is the most common correct answer. So she writes *C* every time and scores 80%. She looks smart on paper. She has zero actual knowledge — she gamed the pattern.
 
-A lot of AI retrieval systems do the same thing. If the most popular document in a corpus happens to be the correct answer for most queries, a system that always returns that popular document will score very well — without understanding any of the questions.
+A retrieval or ranking system can do the same thing. If the most popular document in a corpus happens to be relevant for most queries, a system that always returns that popular document will score well on aggregate metrics — without using the query at all. (This is not a hypothetical: see the [CS01 NFCorpus case study](case_studies/cs01_nfcorpus/CS01_REPORT.md) where this exact predictor scores nDCG@10 = 0.066 on a published BEIR benchmark while ignoring every query.)
 
 The published number looks great. It does not mean what you think it means.
 
-**falsify-eval is a Mira-check.** It compares your retrieval system's score against four "fake students" — four null distributions, including one (*Null D*, the marginal-matched random) that is original to this work and that the previous standard nulls miss. If your system can't beat all four by a calibrated margin, the gate fails. The published number was Mira.
+**falsify-eval is a Mira-check for retrieval and ranking systems.** It compares your system's score against four "fake students" — four null distributions, including one (*Null D*, the marginal-matched random) that is original to this work and that the previous standard nulls miss. If your system can't beat all four by a calibrated margin, the gate fails.
+
+→ **Case study (real numbers, public benchmark):** [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md). On 323 BEIR queries: Mira and popularity-only fail at Δ_D ≈ 0; BM25 and dense MiniLM pass at Δ_D ≈ +0.14 to +0.18. Reproducible in 5 minutes on M1 laptop.
 
 ---
 
@@ -310,11 +314,11 @@ Submission to arXiv is pending. The DOI will be added to `CITATION.cff` on accep
 
 ## Status
 
-- **v0.1.5.2** — current. 43 tests passing on a fresh clone.
+- **v0.1.5.2** — current. 43 tests passing on a fresh clone. **First real-data case study published**: [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) with reproducible numbers and locked manifest.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
-- **v0.2 (next)** — PyPI publish; `progress=` callback API; broken-predictor zoo as a public artifact.
-- **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling; positive-control validation harness.
+- **v0.2 (next)** — PyPI publish; case studies CS02–CS04 across SciFact, FiQA, Quora; broken-predictor zoo as a public artifact.
+- **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling; positive-control validation harness. *(Not yet shipped — do not claim coverage.)*
 
 Issues and PRs welcome. The reference implementation is intentionally minimal; the goal is for the protocol to be small enough that adopters audit the entire library before depending on it.
 

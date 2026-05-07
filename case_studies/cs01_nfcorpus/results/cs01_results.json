@@ -1,0 +1,203 @@
+{
+  "benchmark": "BEIR / NFCorpus (test split)",
+  "case_study": "CS01",
+  "manifest": {
+    "corpus_hash16": "12f78ddf3560314d",
+    "corpus_size": 3633,
+    "qrels_count": 12334,
+    "queries_hash16": "217d0fce60d1f95b",
+    "queries_size": 323
+  },
+  "n_trials": 30,
+  "results_by_metric": {
+    "ndcg@10": [
+      {
+        "deltas": {
+          "A": -0.00035176199465512814,
+          "B": -0.0004219489414850064,
+          "C": 0.05601138851286284,
+          "D": -0.00021008836413273502
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": true,
+          "D": false
+        },
+        "real_score": 0.06559337654118676,
+        "seconds": 0.14,
+        "system": "1_mira_constant",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": -0.00035176199465512814,
+          "B": -0.0004219489414850064,
+          "C": 0.05601138851286284,
+          "D": -0.00021008836413273502
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": true,
+          "D": false
+        },
+        "real_score": 0.06559337654118676,
+        "seconds": 0.14,
+        "system": "2_popularity_topk",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": 0.01058215437891974,
+          "B": 0.01057364347415829,
+          "C": 0.2571190758401378,
+          "D": 0.010583388762025359
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": true,
+          "D": false
+        },
+        "real_score": 0.26670106386846176,
+        "seconds": 0.14,
+        "system": "3_bm25",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": 0.012657011309037736,
+          "B": 0.012361480506362987,
+          "C": 0.30979268751181943,
+          "D": 0.012696752889100549
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": true,
+          "D": false
+        },
+        "real_score": 0.31937467554014337,
+        "seconds": 0.14,
+        "system": "4_dense_minilm",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      }
+    ],
+    "recall@5_top1": [
+      {
+        "deltas": {
+          "A": -0.0012383900928792562,
+          "B": -0.0005159958720330226,
+          "C": 0.001754385964912281,
+          "D": 0.00020639834881321008
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": false,
+          "D": false
+        },
+        "real_score": 0.0030959752321981426,
+        "seconds": 0.06,
+        "system": "1_mira_constant",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": -0.0012383900928792562,
+          "B": -0.0005159958720330226,
+          "C": 0.001754385964912281,
+          "D": 0.00020639834881321008
+        },
+        "gate_passes": false,
+        "n_trials": 30,
+        "passes": {
+          "A": false,
+          "B": false,
+          "C": false,
+          "D": false
+        },
+        "real_score": 0.0030959752321981426,
+        "seconds": 0.06,
+        "system": "2_popularity_topk",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": 0.1393188854489164,
+          "B": 0.14024767801857585,
+          "C": 0.1410732714138287,
+          "D": 0.13962848297213623
+        },
+        "gate_passes": true,
+        "n_trials": 30,
+        "passes": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true
+        },
+        "real_score": 0.14241486068111456,
+        "seconds": 0.06,
+        "system": "3_bm25",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      },
+      {
+        "deltas": {
+          "A": 0.17791537667698656,
+          "B": 0.17667698658410733,
+          "C": 0.1782249742002064,
+          "D": 0.17750257997936017
+        },
+        "gate_passes": true,
+        "n_trials": 30,
+        "passes": {
+          "A": true,
+          "B": true,
+          "C": true,
+          "D": true
+        },
+        "real_score": 0.17956656346749225,
+        "seconds": 0.06,
+        "system": "4_dense_minilm",
+        "tau": 0.05,
+        "warnings": [
+          "sparse marginal: N=323 queries over 3633 pool items; Null D's marginal estimator is noisy when N < 2\u00b7|pool| \u2014 \u0394_D may behave like \u0394_B"
+        ]
+      }
+    ]
+  },
+  "tau": 0.05
+}
