@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.1] — 2026-05-07
+
+### Fixed — Mayank Singh round-2 review (CLI stdin sentinel)
+
+- `falsify-eval grade --input -` now reads JSONL from stdin (UNIX convention).
+  v0.1.5.1 wrapped `args.input` in `Path()` before opening, which turned `-`
+  into a literal filename and crashed with `FileNotFoundError: '-'`. v0.1.6.1
+  threads `-` through `load_jsonl()` directly and dispatches to `sys.stdin`.
+- Error messages now label stdin as `<stdin>` (e.g. `<stdin>:2: invalid JSON`)
+  instead of leaking a misleading filename.
+- `--input` help text now documents the `-` sentinel.
+- 4 new regression tests in `tests/test_cli_stdin.py` exercise the fix via
+  subprocess against the actual CLI entry point: stdin streaming success,
+  empty-stdin clean failure (the v0.1.5.1 regression must not return),
+  malformed-stdin error labelling, and file-input no-regression.
+
+Credit: Mayank Singh — re-ran the full battery on v0.1.5.1 against the
+six round-2 surfaces and surfaced this one cleanly with a one-line repro.
+
+### Closed via v0.1.6 (Mayank's round-2 finding #2)
+
+Mayank's round-2 also flagged the PREPRINT abstract still naming features
+not shipped in the public library. v0.1.6 (shipped earlier today) already
+addressed this: the abstract was rewritten to clearly separate shipped
+vs methodology-spec items, and `bonferroni()` was added to the public
+`stats` API. Mayank tested v0.1.5.1, which predates that fix.
+
 ## [0.1.6] — 2026-05-07
 
 ### Added — Lewi gap closure (consolidation pass)

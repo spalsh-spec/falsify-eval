@@ -64,19 +64,33 @@ METRICS = {"ndcg": ndcg_at_k, "recall": recall_at_k, "mrr": mrr_at_k}
 
 
 # ── Loaders ───────────────────────────────────────────────────────────────
-def load_jsonl(path: Path):
-    rows = []
+def load_jsonl(source):
+    """Load JSONL rows from a path or from stdin.
+
+    `source` accepts:
+      - "-"             → read from sys.stdin (Mayank-defect 2026-05-07)
+      - str | Path      → open and read that path
+    """
+    import sys
+    if source == "-" or source == Path("-"):
+        return _parse_jsonl_stream(sys.stdin, "<stdin>")
+    path = Path(source) if not isinstance(source, Path) else source
     with path.open() as f:
-        for n, line in enumerate(f, 1):
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                rows.append(json.loads(line))
-            except json.JSONDecodeError as e:
-                raise SystemExit(red(f"{path}:{n}: invalid JSON ({e.msg})\n") +
-                                 dim(f"  hint: each line must be a complete JSON object like\n") +
-                                 dim('  {"retrieved":["A","B","C"], "gold":"A", "rel":3}'))
+        return _parse_jsonl_stream(f, str(path))
+
+
+def _parse_jsonl_stream(f, source_repr: str):
+    rows = []
+    for n, line in enumerate(f, 1):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError as e:
+            raise SystemExit(red(f"{source_repr}:{n}: invalid JSON ({e.msg})\n") +
+                             dim(f"  hint: each line must be a complete JSON object like\n") +
+                             dim('  {"retrieved":["A","B","C"], "gold":"A", "rel":3}'))
     return rows
 
 
@@ -163,10 +177,16 @@ def cmd_grade(args):
     else:
         if not args.input:
             raise SystemExit(red("error: --input required (or use --demo)\n") +
-                             dim("  hint: try `falsify-eval quickstart` to generate a sample bench file"))
-        rows = load_jsonl(Path(args.input))
+                             dim("  hint: try `falsify-eval quickstart` to generate a sample bench file\n") +
+                             dim("  hint: pass --input - to stream JSONL on stdin"))
+        # Pass args.input through unchanged so '-' can be detected as the stdin
+        # sentinel by load_jsonl. (Wrapping in Path() previously turned '-' into
+        # a literal filename, which crashed with FileNotFoundError — Mayank-defect
+        # 2026-05-07.)
+        rows = load_jsonl(args.input)
         if not rows:
-            raise SystemExit(red(f"{args.input}: no rows loaded"))
+            src = "<stdin>" if args.input == "-" else args.input
+            raise SystemExit(red(f"{src}: no rows loaded"))
         pool = load_pool(Path(args.pool)) if args.pool else None
 
     retrieved = [r["retrieved"] for r in rows]
@@ -338,7 +358,7 @@ def main(argv=None):
                        epilog="example: falsify-eval grade --input bench.jsonl --pool pool.txt --metric ndcg@5",
                        formatter_class=argparse.RawDescriptionHelpFormatter)
     g.add_argument("--input", "-i", default=None,
-                   help="JSONL file: one {retrieved, gold, rel} per line")
+                   help="JSONL file: one {retrieved, gold, rel} per line. Pass '-' to stream from stdin.")
     g.add_argument("--demo", action="store_true",
                    help="ignore --input and run against embedded synthetic bench (50 queries)")
     g.add_argument("--metric", "-m", default="ndcg@5",
