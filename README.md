@@ -39,7 +39,11 @@ The published number looks great. It does not mean what you think it means.
 
 **falsify-eval is a Mira-check for retrieval and ranking systems.** It compares your system's score against four "fake students" — four null distributions, including one (*Null D*, the marginal-matched random) that is original to this work and that the previous standard nulls miss. If your system can't beat all four by a calibrated margin, the gate fails.
 
-→ **Case study (real numbers, public benchmark):** [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md). On 323 BEIR queries: Mira and popularity-only fail at Δ_D ≈ 0; BM25 and dense MiniLM pass at Δ_D ≈ +0.14 to +0.18. Reproducible in 5 minutes on M1 laptop.
+→ **Case studies (real numbers, two public benchmarks):**
+  - [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) (323 BEIR queries, dense relevance ~38 docs/query)
+  - [CS02 — SciFact](case_studies/cs02_scifact/CS02_REPORT.md) (300 BEIR queries, sparse relevance ~1.1 docs/query)
+
+  Across both: Mira and popularity-only fail at Δ_D ≈ 0; BM25 and dense MiniLM pass at Δ_D = +0.14 to +0.73. Reproducible in 5 minutes each on M1 laptop. Joint finding: graded metrics (nDCG) on dense-relevance benchmarks can flatten the gate — pair them with single-gold strict metrics (recall@K against top-1).
 
 ---
 
@@ -314,11 +318,12 @@ Submission to arXiv is pending. The DOI will be added to `CITATION.cff` on accep
 
 ## Status
 
-- **v0.1.5.2** — current. 43 tests passing on a fresh clone. **First real-data case study published**: [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) with reproducible numbers and locked manifest.
+- **v0.1.6** — current. **58 tests** passing on a fresh clone (added 11 scipy cross-check tests + 4 hypothesis property-based tests). New `bonferroni()` helper honours the PREPRINT abstract promise of *Bonferroni-corrected paired tests*. **Two real-data case studies published**: [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) and [CS02 — SciFact](case_studies/cs02_scifact/CS02_REPORT.md). PREPRINT abstract rewritten to drop the *cryptographic* overselling and the AI / retrieval conflation Lewi flagged.
+- **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour Akosh-AI silent-run incident.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
-- **v0.2 (next)** — PyPI publish; case studies CS02–CS04 across SciFact, FiQA, Quora; broken-predictor zoo as a public artifact.
-- **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling; positive-control validation harness. *(Not yet shipped — do not claim coverage.)*
+- **v0.2 (next)** — PyPI publish; case studies CS03 (FiQA) and CS04 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact.
+- **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling. *(Not yet shipped — do not claim coverage.)*
 
 Issues and PRs welcome. The reference implementation is intentionally minimal; the goal is for the protocol to be small enough that adopters audit the entire library before depending on it.
 

@@ -7,6 +7,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-05-07
+
+### Added — Lewi gap closure (consolidation pass)
+
+Lewi Stone reviewed the brand site on 2026-05-07 and identified three real
+gaps: (1) the empirical case was missing — no demonstration of the gate
+working on a real, public benchmark; (2) the documentation promised evidence
+and delivered analogy; (3) the framing conflated *AI systems* broadly with
+*retrieval and ranking systems* specifically. This release closes all three.
+
+- **`bonferroni()` helper** in `falsify_eval.stats` — the PREPRINT abstract
+  has promised *Bonferroni-corrected paired tests* since v0.1.0 but the
+  public library did not ship the helper. It does now. Returns family-wise
+  adjusted p-values, per-test α, and a per-test reject decision.
+- **`tests/test_stats_vs_scipy.py`** — 11 cross-check tests that reconcile
+  our pure-numpy `bootstrap_ci`, `paired_permutation_p`, `cohens_d_paired`,
+  and `bonferroni` against scipy on identical fixed-seed inputs. Closes
+  Mayank attack-surface #4 ahead of his next round.
+- **`tests/test_property_based.py`** — 4 property-based tests via
+  `hypothesis`: determinism under same seed, oracle always passes,
+  constant cheater always fails Δ_D, query-order permutation invariance.
+  Each test runs ~15 randomly generated benches per property.
+
+### Changed — copy + scope honesty
+
+- `EXPLAINER_simple.html` — title, og tags, and three body sections rewritten
+  from "AI systems" to "search and ranking systems". Added explicit
+  **scope-honesty callout block** at the top: tests retrieval-and-ranking,
+  does NOT test generative LLM outputs. Both case-study links inline.
+- `PREPRINT.md` abstract — struck the *cryptographic record* framing
+  (corrected to *integrity-check record (SHA-256 + git commit)* per v0.1.5
+  calibration discipline). Added explicit shipped-vs-planned column for the
+  five-part harness so a reader knows exactly what is in the public library
+  vs what is methodology spec only. Replaced the *generalises to LLM
+  behavioural eval pipelines* claim with a sober *candidate research
+  direction* phrasing. Added a paragraph documenting the empirical CS01
+  result and the metric-sensitivity finding.
+- `README.md` — links to CS02 alongside CS01, status section updated.
+
+### Added — case study CS02 (SciFact triangulation)
+
+`case_studies/cs02_scifact/` — second BEIR slice, 300 queries × 5,183 docs,
+sparse relevance (~1.1 docs/query). Confirms the gate works AND triangulates
+the CS01 metric-sensitivity finding: on sparse-relevance benchmarks both
+metrics give clean separation, on dense-relevance only the single-gold
+metric does. Joint CS01+CS02 picture provides empirical foundation across
+two relevance regimes.
+
+### Tests
+- 58 passing on a fresh clone (was 43 in v0.1.5.2):
+  smoke 8 + validation 9 + Mayank battery 26 + scipy cross-check 11 +
+  property-based 4. All run in <3 seconds.
+
 ## [0.1.5.2] — 2026-05-06
 
 ### Added — `progress=True` flag (Akosh-AI 5-hour incident)

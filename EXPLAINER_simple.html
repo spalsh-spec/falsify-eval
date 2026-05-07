@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Is the AI actually any good?</title>
-<meta name="description" content="A plain-English explainer about catching AI systems that fake their benchmark scores. Read one sentence, one paragraph, or fifteen minutes. Your call.">
-<meta property="og:title" content="Is the AI actually any good?">
-<meta property="og:description" content="AI systems take exams. This catches the ones that didn't really study.">
+<title>Is the search engine actually any good?</title>
+<meta name="description" content="A plain-English explainer about catching retrieval and ranking systems that fake their benchmark scores. Read one sentence, one paragraph, or fifteen minutes. Your call.">
+<meta property="og:title" content="Is the search engine actually any good?">
+<meta property="og:description" content="Search and ranking systems take exams. This catches the ones that didn't really study.">
 <style>
 :root{
   --paper:#f3eee5; --paper-deep:#ebe2d2; --ink:#1c1611; --ink-mute:#6b5e4f;
@@ -182,18 +182,25 @@ footer .deva{
 <!-- LAYER 1, five seconds -->
 <section class="l1">
   <div class="eyebrow">Read as much as you have time for</div>
-  <h1 class="headline">AI systems take exams. <em>This catches the ones that didn't really study.</em></h1>
-  <div class="subhead">Free. Open source. 30-second self-check. Technical version <a href="EXPLAINER.html">here</a>.</div>
+  <h1 class="headline">Search and ranking systems take exams. <em>This catches the ones that didn't really study.</em></h1>
+  <div class="subhead">Free. Open source. 30-second self-check. Technical version <a href="EXPLAINER.html">here</a>. Real-data case study <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/case_studies/cs01_nfcorpus/CS01_REPORT.md">here</a>.</div>
+</section>
+
+<!-- SCOPE HONESTY -->
+<section class="layer" style="background:#fef9e7;border-left:3px solid #9d8147;padding:1rem 1.25rem;margin:1rem 0;">
+  <div class="layer-tag" style="color:#9d8147">SCOPE: WHAT THIS DOES AND DOES NOT TEST</div>
+  <p><strong>Tests:</strong> retrieval and ranking systems. Search engines. Recommendation top-K. The retrieval side of RAG (where the AI fetches source documents before generating an answer). Anything that picks <em>which items from a fixed corpus to show in what order</em>.</p>
+  <p><strong>Does NOT test:</strong> the part of ChatGPT, Claude, Gemini that <em>writes paragraphs of free-form text</em>. Those are generative language models — different failure modes, different mathematics, different test that we have not yet built. Anyone telling you this tool checks "AI in general" is overselling. We're not.</p>
 </section>
 
 <!-- LAYER 2, thirty seconds -->
 <section class="layer">
   <div class="layer-tag">If you have 30 seconds</div>
-  <p>AI tools fetch information. Search engines. Recommendation systems. The part of ChatGPT that finds source articles. They get graded on how often they return the right document for a given question.</p>
+  <p>Search and ranking systems fetch information. Search engines. Recommendation systems. The retrieval side of RAG. They get graded on how often they return the right document for a given query.</p>
 
-  <p>Some of them get a high grade by exploiting which answers happen to be most popular in the test, not by understanding the question. We built a 30-second check that spots that pattern.</p>
+  <p>Some of them get a high grade by exploiting which answers happen to be most popular in the test, not by understanding the query. We built a 30-second check that spots that pattern. We've now run it on a real public benchmark and shown it works (<a href="https://github.com/spalsh-spec/falsify-eval/blob/main/case_studies/cs01_nfcorpus/CS01_REPORT.md">CS01 / NFCorpus, 323 queries, 5 minutes on a laptop</a>).</p>
 
-  <p>Free. Open source. Works on any AI fetcher you point it at.</p>
+  <p>Free. Open source. Works on any retrieval or ranking system you point it at.</p>
 
   <div class="tldr"><strong>If you stop reading here</strong>That's all you really need. The rest of this page is for people who want to see how it actually works, what doesn't work, and what we still don't know.</div>
 </section>
@@ -211,36 +218,36 @@ footer .deva{
 
   <p>If you only see her score, you'll think Mira is a French history expert. She isn't. She figured out the test, not the subject.</p>
 
-  <div class="callout">This is happening to a lot of AI systems right now. Their published scores look brilliant. Some are doing the AI equivalent of "always pick C."</div>
+  <div class="callout">This is a documented failure mode in retrieval and ranking. Their published scores look brilliant. We've now demonstrated, on a real public benchmark (<a href="https://github.com/spalsh-spec/falsify-eval/blob/main/case_studies/cs01_nfcorpus/CS01_REPORT.md">CS01 / NFCorpus</a>), that a system doing the equivalent of "always pick C" scores nDCG@10 = 0.066 — non-trivial — without using the query at all. The four-null gate correctly fails it.</div>
 
-  <h3>Where this is happening in the real world</h3>
+  <h3>Where this matters in the real world</h3>
 
-  <p><strong>Resume screening AI</strong> claims to "match the right candidate 87% of the time." Sometimes it just recommends people from the three universities most past hires came from, regardless of the job description.</p>
+  <p><strong>Resume screening tools.</strong> A search-and-rank system that retrieves candidates can score well on offline metrics by always returning candidates from the most common training-set universities — regardless of the job description. We have not personally audited a named product; the failure mode is well-documented in academic IR literature.</p>
 
-  <p><strong>Medical search tools</strong> claim to find "the most relevant paper" for a patient's symptoms. Sometimes they just return the most-cited paper in that specialty, regardless of the actual symptoms.</p>
+  <p><strong>Medical literature search.</strong> A search system can score "highly relevant" by always returning the most-cited paper in a specialty, regardless of the actual symptoms in the query. Same mechanism as Mira.</p>
 
-  <p><strong>The retrieval part of ChatGPT</strong> ("here are my sources") sometimes just returns the most popular document in the database, ignoring what you asked.</p>
+  <p><strong>The retrieval side of RAG</strong> (the part of a Claude/GPT/Gemini answer that says "here are my sources"). If the retriever is biased toward popular documents, the LLM's answer will be too — even though the LLM itself is fine. <em>The four-null gate tests the retrieval side. The generative side is a separate failure-mode class.</em></p>
 
-  <p>In all three cases the system looks like it's reasoning. It's actually exploiting that some answers are popular. Nobody can tell from the score alone.</p>
+  <p>In all three cases the system looks like it's reasoning. It's actually exploiting that some answers are popular. Aggregate metrics alone cannot tell you which.</p>
 
-  <div class="tldr"><strong>If you stop reading here</strong>You understand the problem. Mira gets 80% because she figured out the test. Some AI systems do the same thing. We built a way to spot it. Done.</div>
+  <div class="tldr"><strong>If you stop reading here</strong>You understand the problem. Mira gets 80% because she figured out the test. Some search-and-rank systems do the same thing. We built a way to spot it, and we've shown it works on a public benchmark. Done.</div>
 </section>
 
 <!-- LAYER 4, five minutes -->
 <section class="layer">
   <div class="layer-tag">If you have 5 minutes</div>
-  <h2>Four imaginary students. The exam tells you which one your AI is.</h2>
+  <h2>Four imaginary students. The exam tells you which one your retriever is.</h2>
 
-  <p>Our tool gives the same exam to four imaginary students who can't possibly know the real subject. Then it compares the AI's score to theirs.</p>
+  <p>Our tool gives the same exam to four imaginary students who can't possibly know the real subject. Then it compares the system's score to theirs.</p>
 
   <ol>
-  <li><strong>Imaginary Student A.</strong> Takes the answer key and randomly rearranges it. Beating this means the AI isn't just memorising answer positions.</li>
-  <li><strong>Imaginary Student B.</strong> Random for each question. Beating this means the AI isn't just guessing.</li>
-  <li><strong>Imaginary Student C.</strong> Picks five random answers per question. Beating this means the AI's narrowing-down is meaningful.</li>
-  <li><strong>Imaginary Student D, "Mira."</strong> Always picks the most common answer. Beating this means the AI is actually using the question rather than exploiting popularity. This is the new contribution. Most published AI evaluations forget about it.</li>
+  <li><strong>Imaginary Student A.</strong> Takes the answer key and randomly rearranges it. Beating this means the system isn't just memorising answer positions.</li>
+  <li><strong>Imaginary Student B.</strong> Random for each question. Beating this means the system isn't just guessing.</li>
+  <li><strong>Imaginary Student C.</strong> Picks five random answers per question. Beating this means the system's narrowing-down is meaningful.</li>
+  <li><strong>Imaginary Student D, "Mira."</strong> Always picks the most common answer. Beating this means the system is actually using the query rather than exploiting popularity. This is the new contribution. Most published retrieval evaluations forget about it.</li>
   </ol>
 
-  <p>Pick a student type below. The third button is the killer demo. It shows what happens when an AI is doing what Mira does.</p>
+  <p>Pick a student type below. The third button is the killer demo. It shows what happens when a retrieval system is doing what Mira does.</p>
 
   <div class="demo">
     <div class="demo-controls">
@@ -256,7 +263,7 @@ footer .deva{
   </div>
 
   <div class="aside">
-  This demo uses simulated numbers calibrated to a 50-question exam. The real tool uses the same logic on AI retrieval systems with thousands of test questions and proper statistical comparisons.
+  This demo uses simulated numbers calibrated to a 50-question exam. The real tool uses the same logic on retrieval and ranking systems with hundreds-to-thousands of test queries and proper statistical comparisons. See the <a href="https://github.com/spalsh-spec/falsify-eval/blob/main/case_studies/cs01_nfcorpus/CS01_REPORT.md">CS01 NFCorpus case study</a> for the real numbers.
   </div>
 
   <div class="tldr"><strong>If you stop reading here</strong>You've now seen the methodology in one click. The Mira button shows the exact failure mode the tool was built to catch. That's the contribution.</div>
@@ -321,7 +328,7 @@ footer .deva{
 
   <h3>Five honest limits</h3>
   <ol>
-  <li><strong>It only checks AI systems that fetch documents or rank options.</strong> Not the part of ChatGPT that writes paragraphs of text. Different problem. Different test we haven't built.</li>
+  <li><strong>It only checks systems that fetch documents or rank options.</strong> Not the part of ChatGPT, Claude, or Gemini that writes paragraphs of free-form text — those are generative language models, a different problem with different mathematics, and a different test we haven't built.</li>
   <li><strong>It can't tell you the AI is "smart," only that it isn't faking.</strong> Green light means doing real work. It does not mean good enough for your specific job.</li>
   <li><strong>You bring the questions and answers.</strong> Garbage exam, garbage verdict.</li>
   <li><strong>It assumes test questions are independent.</strong> If half your questions are basically the same question rephrased, the tool's confidence will be too high. Known limit.</li>

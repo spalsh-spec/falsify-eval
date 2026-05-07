@@ -25,13 +25,15 @@ from .stats import (
     paired_permutation_p,
     cohens_d_paired,
     power_n_required,
+    bonferroni,
 )
 
-__version__ = "0.1.5.2"
+__version__ = "0.1.6"
 __all__ = [
     "null_a_permuted", "null_b_uniform", "null_c_random_retrieval",
     "null_d_marginal_matched", "four_null_gate",
     "lock_state", "verify_state",
     "bootstrap_ci", "bootstrap_diff_ci",
     "paired_permutation_p", "cohens_d_paired", "power_n_required",
+    "bonferroni",
 ]
