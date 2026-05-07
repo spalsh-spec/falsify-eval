@@ -306,6 +306,17 @@ def test_d1c_dataclass_labels_no_crash_oracle_passes_cheater_fails():
     assert not r_cheat["gate_passes"], "dataclass constant cheater must FAIL the gate"
 
 
+@pytest.mark.parametrize("bad_seed", [-1, -100, 0.5, "2026", None])
+def test_d15_negative_or_non_int_seed_raises_clean_error(bad_seed):
+    """Mayank round-3 polish (2026-05-07): negative seed values previously
+    fell through to numpy.random.default_rng(-1), which raises an unhelpful
+    internal error. v0.1.6.2 validates up-front with a contextual message."""
+    with pytest.raises(ValueError, match="seed must be a non-negative integer"):
+        four_null_gate([["A"]] * 5, ["A"] * 5, [3] * 5, _exact_match,
+                       item_pool=["A", "B"], k=1, n_trials=5, tau=0.05,
+                       seed=bad_seed)
+
+
 def test_full_gate_determinism():
     LABELS = [f"L{i}" for i in range(10)]
     GOLD = [LABELS[i % 10] for i in range(60)]

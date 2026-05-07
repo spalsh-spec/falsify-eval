@@ -26,7 +26,8 @@ def _grade(retrieved_lists, gold_list, rel_list, metric_fn):
 
 
 def _validate_inputs(retrieved_lists, gold_list, rel_list, *,
-                     item_pool, k: int, n_trials: int, tau: float) -> None:
+                     item_pool, k: int, n_trials: int, tau: float,
+                     seed: int = 0) -> None:
     """Raise ValueError early on common input mistakes.
 
     Catches the failure modes that previously produced silent all-zero output
@@ -46,6 +47,13 @@ def _validate_inputs(retrieved_lists, gold_list, rel_list, *,
         raise ValueError(f"n_trials must be a positive integer, got {n_trials!r}")
     if not (0.0 <= tau <= 1.0):
         raise ValueError(f"tau must be in [0, 1], got {tau}")
+    # Mayank round-3 polish (2026-05-07): negative seeds previously fell
+    # through to numpy.random.default_rng() which raised an unhelpful
+    # internal error. Validate up-front with a contextual message.
+    if not isinstance(seed, int) or seed < 0:
+        raise ValueError(
+            f"seed must be a non-negative integer, got {seed!r}"
+        )
 
     if item_pool is not None:
         pool = list(item_pool)
@@ -226,7 +234,8 @@ def four_null_gate(retrieved_lists,
         }
     """
     _validate_inputs(retrieved_lists, gold_list, rel_list,
-                     item_pool=item_pool, k=k, n_trials=n_trials, tau=tau)
+                     item_pool=item_pool, k=k, n_trials=n_trials, tau=tau,
+                     seed=seed)
 
     warnings: list[str] = []
     distinct_gold = len(set(gold_list))

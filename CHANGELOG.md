@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.2] — 2026-05-07
+
+### Fixed — Mayank Singh round-3 polish (negative-seed validation)
+
+Mayank ran a 25-probe round-3 review against v0.1.6.1 and reported 23/25 PASS.
+The two non-PASS items both traced to flaws in his own test fixtures, except
+one polish item we honour here: negative seed values fell through to
+`numpy.random.default_rng(-1)` which raises an unhelpful internal error.
+
+- `_validate_inputs` now rejects non-int and negative seeds up-front with a
+  contextual `ValueError: seed must be a non-negative integer, got <repr>`.
+- New regression test `test_d15_negative_or_non_int_seed_raises_clean_error`
+  parametrised across 5 bad seeds (-1, -100, 0.5, "2026", None).
+
+Credit: Mayank Singh — third clean round in 48 hours.
+
 ## [0.1.6.1] — 2026-05-07
 
 ### Fixed — Mayank Singh round-2 review (CLI stdin sentinel)
