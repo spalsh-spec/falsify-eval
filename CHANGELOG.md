@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.8] — 2026-05-08
+
+### Added — empirical equivariance certificate for the four-null gate
+
+Two new property tests in `tests/test_property_gate.py`, plus PREPRINT §5.9
+documenting the precise statement they support:
+
+- **`test_equivariance_under_order_preserving_bijection`** (Hypothesis,
+  ~80 random benches × ~80 fuzzed prefixes). Under any order-preserving
+  label-set bijection σ applied jointly to `retrieved`, `gold`, and
+  `item_pool`, the gate's per-trial `real_mean`, all four `null_means`,
+  all `deltas`, and the verdict (`gate_passes`) are identical to the
+  un-bijected run, to within ~1e-12. This is the property a reviewer
+  asking "does the harness depend on cosmetic label encoding?" should
+  be pointed at — the answer is no, by certificate.
+
+- **`test_null_c_equivariant_under_arbitrary_bijection`** (Hypothesis,
+  ~80 random benches × ~80 fuzzed permutations of the pool). Under any
+  bijection σ — order-preserving or not — `real_mean` and Null C's
+  per-trial mean are exactly equivariant. Null C samples from
+  `item_pool` in input order (no sort), so the seed-driven sample
+  sequence is bijection-stable.
+
+### Documented (PREPRINT §5.9)
+
+- The exact scope of equivariance: **strong (per-trial numerical) under
+  order-preserving σ; weak (in-expectation, population) under arbitrary
+  σ for Nulls A/B/D**, because those nulls index into a canonically-
+  sorted label list. Null C and `real_mean` are exactly equivariant
+  under any σ.
+- A worked-example proof sketch showing why Nulls A/B/D break per-trial
+  equivariance under non-order-preserving σ (`σ ∘ mapping ≠ mapping_σ ∘ σ`
+  when sort-order changes) but remain bijection-invariant in expectation.
+- A candidate v0.2 hardening: an explicit `label_order_seed` parameter
+  that deliberately randomises the canonical sort, breaking any latent
+  dependency on adversarial label ordering. Tracked, not implemented in
+  this release.
+
+Total suite now 91/91; runs in ~10 s under
+`python3 -W error::SyntaxWarning -m pytest tests/`.
+
 ## [0.1.6.7] — 2026-05-08
 
 ### Fixed

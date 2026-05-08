@@ -150,6 +150,33 @@ A reader who runs the overnight script can falsify or confirm the projection. If
 
 We do not claim the projection is empirical confirmation of N=10,000 results; we claim it is a *falsifiable prediction* that the v7 reader can independently test. This is itself an instance of the harness pattern applied to its own paper.
 
+### 5.9 Empirical equivariance certificate (NEW in v0.1.6.8)
+
+Surfaced incidentally by the property-based test suite added in v0.1.6.6: the four-null gate exhibits a clean equivariance under label-set bijections, with a precise scope worth stating because it explains *which* implementation choices in `gate.py` carry epistemic weight and which are cosmetic.
+
+**Empirical claim, Hypothesis-supported (~80 random benches × 80 fuzzed bijections per test, run on every CI push).** The four-null gate's per-trial numerical output (`real_mean`, all `null_means`, all `deltas`) is invariant under any **order-preserving** label-set bijection σ applied jointly to `retrieved_lists`, `gold_list`, and `item_pool`, to within floating-point precision (~1e-12).
+
+**Why the order-preserving qualifier matters.** Three of the four nulls draw labels by index into a canonically-sorted label list (`sorted(set(gold_list), key=(type.__name__, repr))`):
+
+  - **Null A** (gold-permutation): builds `mapping[labels[j]] = labels[π(j)]` with seed-driven π. Under non-order-preserving σ, the sorted label list re-orders, and `σ ∘ mapping ≠ mapping_σ ∘ σ` in general — so per-trial outputs differ even with the same seed.
+  - **Null B** (uniform-from-labels): draws indices into the sorted label list. Same dependency on canonical order.
+  - **Null D** (marginal-matched): draws indices weighted by the empirical gold-frequency vector indexed in sorted order. Same dependency.
+  - **Null C** (random-retrieval): samples from `item_pool` in **input order** (no sort), so any σ — order-preserving or not — leaves Null C's per-trial mean numerically invariant.
+
+For arbitrary σ the *population* (n_trials → ∞) means of Nulls A, B, D remain bijection-invariant by construction (uniform over the label set is a bijection-invariant distribution; the marginal frequencies are relabeled identically), so the gate verdict is invariant *in expectation*. For finite `n_trials` a borderline pass/fail can flip when σ re-orders the sort. Null C and `real_mean` are exactly equivariant.
+
+**Practical consequence.** Cosmetic relabeling of a benchmark — adding prefixes, switching from `str` to single-typed wrappers like `('lbl', s)`, shifting a numeric label range — does not change the gate verdict and is verified numerically to ~1e-12. Reordering the label set adversarially (e.g., reverse-sorting in an attempt to shift a borderline result) preserves the population verdict but can produce different per-trial numbers. The gate is therefore **strongly equivariant under order-preserving relabeling and weakly equivariant in expectation under arbitrary relabeling** — which is the exact statement a reviewer asking 'does the harness depend on cosmetic label encoding?' should be pointed at.
+
+The corresponding regression tests live at:
+
+```
+tests/test_property_gate.py::test_equivariance_under_order_preserving_bijection
+tests/test_property_gate.py::test_null_c_equivariant_under_arbitrary_bijection
+tests/test_property_gate.py::test_tuple_labels_behave_identically_to_string_labels
+```
+
+**Candidate v0.2 hardening, surfaced by writing this section.** Expose an explicit `label_order_seed` parameter so the canonical sort key in Nulls A/B/D can be deliberately randomised across runs, breaking any latent dependency on adversarial label ordering. Tracked but not implemented in 0.1.6.8.
+
 ---
 
 ## 6. Limitations
