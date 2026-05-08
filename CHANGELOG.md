@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.3] — 2026-05-08
+
+### Added — public priority announcement of companion engine Vāk-Kaṇaja
+
+This release is non-functional: it adds a "Companion engine" section to the
+README that establishes public priority on the engine name (Vāk-Kaṇaja),
+its two named contributions (Pramāṇa-aware query routing; Anupalabdhi
+non-perception confidence floor), and the calibration discipline applied
+to it (the negative result on the novel rerankers at bench expansion,
+documented as a contribution rather than buried). The full vak-kanaja
+code release follows the morning launch sequence in a separate repo
+(`bhardwaj-and-sons/vak-kanaja`, public release imminent).
+
+This is the "establish priority without releasing implementation" pattern
+that mathematicians, physicists, and patent-filers have used for 200 years.
+Anyone scooping the methodology now has the priority graph to contend with.
+
+- README updated with "Companion engine — Vāk-Kaṇaja" section above Status
+- Status section now references v0.1.6.3 and the test count of 67
+- Test badge updated 62 → 67
+
+### Tests
+- 67 passing on a fresh clone (no functional changes from v0.1.6.2):
+  Mayank-battery 31 + property-based 4 + scipy cross-check 11 + smoke 8 +
+  validation 9 + CLI stdin 4. Total runtime <4 seconds.
+
 ## [0.1.6.2] — 2026-05-07
 
 ### Fixed — Mayank Singh round-3 polish (negative-seed validation)

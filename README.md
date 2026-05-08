@@ -41,7 +41,7 @@ Built for **search engines, recommendation systems, the retrieval side of RAG.**
 <br>
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-62%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-67%20passing-brightgreen)](tests/)
 [![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -339,9 +339,24 @@ Submission to arXiv is pending. The DOI will be added to `CITATION.cff` on accep
 
 ---
 
+## Companion engine — Vāk-Kaṇaja (public release imminent)
+
+**Vāk-Kaṇaja** is the Sanskrit / Pāṇinian retrieval engine built alongside falsify-eval. It is the first retriever (to my knowledge) adversarially verified by the four-null gate via cross-falsification, and the first to wire the **6 classical Pramāṇas** of Nyāya / Mīmāṃsā into a retrieval engine as a **router** — detecting the query's epistemological type (*Pratyakṣa, Anumāna, Upamāna, Arthāpatti, Anupalabdhi, Śabda*) and routing evidence channels accordingly.
+
+It also implements an **Anupalabdhi (non-perception) confidence floor**: when the corpus does not contain the answer, the engine returns *"corpus does not contain this knowledge"* as a positive verdict, refusing to leak weak chunks. Pairs with falsify-eval's Null A naturally — the silent-failure failure mode that load-bearing AI-safety arguments rely on assuming away.
+
+The engine ships with a **calibrated negative result**: bench expansion N=21 → N=141 falsified the lift from the novel rerankers (Poincaré, topological persistence, fractal affinity), which now ship at production weight 0 and are documented as opt-in research components. The 3-channel φ-RRF baseline is the production default. This is the falsify-eval discipline applied to the authoring engine — same calibration that earned three clean rounds of adversarial review on this library.
+
+Public release imminent at `github.com/bhardwaj-and-sons/vak-kanaja`, Apache 2.0, under the **Bhardwaj &amp; Sons** brand. *Priority announcement dated 2026-05-08.*
+
+---
+
 ## Status
 
-- **v0.1.6** — current. **58 tests** passing on a fresh clone (added 11 scipy cross-check tests + 4 hypothesis property-based tests). New `bonferroni()` helper honours the PREPRINT abstract promise of *Bonferroni-corrected paired tests*. **Two real-data case studies published**: [CS01 — NFCorpus](case_studies/cs01_nfcorpus/CS01_REPORT.md) and [CS02 — SciFact](case_studies/cs02_scifact/CS02_REPORT.md). PREPRINT abstract rewritten to drop the *cryptographic* overselling and the AI / retrieval conflation Lewi flagged.
+- **v0.1.6.3** — current. Public priority announcement of companion engine **Vāk-Kaṇaja** added above (engine code release follows the morning launch sequence). **67 tests** passing on a fresh clone (Mayank-battery 31 + property-based 4 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4).
+- **v0.1.6.2** — Mayank round-3 polish: negative-seed validation in `_validate_inputs`.
+- **v0.1.6.1** — Mayank round-2: CLI `--input -` now reads from stdin (was `FileNotFoundError: '-'`).
+- **v0.1.6** — bonferroni helper, scipy cross-check tests, property-based tests, CS02 SciFact case study, PREPRINT scope-honesty rewrite, AI/retrieval conflation strike across surfaces.
 - **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour Akosh-AI silent-run incident.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
