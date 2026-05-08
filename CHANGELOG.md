@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.10] — 2026-05-08
+
+### Added — distribution + arXiv build prep
+
+Three coordinated infrastructure additions that get the package from
+"clone-from-git only" to "ready for arXiv + PyPI." Nothing in the gate's
+behaviour changes; this is plumbing.
+
+- **`.github/workflows/publish.yml`** — publishes to PyPI on every `v*`
+  tag push using **OIDC trusted publishing** (no API tokens stored as
+  repository secrets, no key rotation, no exfiltration risk if the
+  workflow is ever compromised). Workflow includes a tag-vs-version-sync
+  guard so a typo'd tag refuses to publish. One-time PyPI-side setup
+  documented in `docs/PYPI_PUBLISHING.md`. The package name `falsify-eval`
+  is verified available on PyPI at submission time.
+
+- **`tools/build_arxiv.sh`** — converts `PREPRINT.md` to an
+  arXiv-submittable LaTeX bundle via pandoc (`arxiv/preprint.tex` +
+  `arxiv/falsify-eval-arxiv-submission.tar.gz`). Optional local PDF
+  preview if `xelatex`/`pdflatex` is installed. Categorisation, abstract
+  guidance, endorsement notes, cover letter draft, and post-submission
+  checklist all in `docs/ARXIV_SUBMISSION.md`.
+
+- **`[tool.mutmut]` config in `pyproject.toml`** + `docs/MUTATION_TESTING.md`
+  documenting the deferred status: mutmut 3.x has a macOS regression
+  (`/.VolumeIcon.icns` filesystem-root copy attempt) and mutmut 2.x has
+  a Python 3.14 incompatibility (`cannot pickle 'itertools.count'`).
+  Neither is a defect in this package; both resolve when upstream ships
+  3.14 support OR when CI adds a 3.12-pinned `mutation-test` job. Tracked
+  for v0.2 with the exact configuration committed in `pyproject.toml`.
+
+- **`[project.optional-dependencies] dev`** bucket added alongside `test`,
+  pinning `mutmut`, `build`, and `twine` so a dev-environment install is
+  one command: `pip install -e ".[dev]"`.
+
+### Internal
+
+- `arxiv/`, `.mutmut-cache/`, and `mutants/` added to `.gitignore` —
+  these are regenerable artefacts that should not be committed.
+- Local wheel build verified: `python3 -m build` produces a 12-file,
+  ~100KB wheel that passes `twine check`. Installed in a fresh venv,
+  `falsify-eval doctor` exits 0 with the same numbers as the editable
+  install (`real_mean=0.8557`, all four nulls pass, GATE PASS).
+- 91/91 tests still pass under
+  `python3 -W error::SyntaxWarning -m pytest tests/`.
+
 ## [0.1.6.9] — 2026-05-08
 
 ### Added

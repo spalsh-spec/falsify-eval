@@ -1,0 +1,86 @@
+name: Publish to PyPI
+
+# Triggers when a new tag matching v* is pushed (e.g. `git push --follow-tags`).
+# Uses OIDC trusted publishing — no API tokens stored as repo secrets, no key
+# rotation, no exfiltration risk if the workflow is ever compromised.
+#
+# One-time setup on PyPI (see docs/PYPI_PUBLISHING.md):
+#   1. Create PyPI account → 2FA → email-verified.
+#   2. Visit https://pypi.org/manage/account/publishing/
+#   3. Add a Pending publisher:
+#        PyPI Project Name : falsify-eval
+#        Owner             : spalsh-spec
+#        Repository name   : falsify-eval
+#        Workflow filename : publish.yml
+#        Environment name  : pypi
+#   4. After the first successful publish, the pending publisher becomes
+#      a permanent trusted publisher.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build sdist + wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build deps
+        run: python -m pip install --upgrade pip build twine
+
+      - name: Build
+        run: python -m build
+
+      - name: Validate metadata
+        run: python -m twine check dist/*
+
+      - name: Verify version matches tag
+        run: |
+          set -e
+          TAG="${GITHUB_REF#refs/tags/v}"
+          PKG_VERSION=$(python -c "import falsify_eval; print(falsify_eval.__version__)")
+          if [ "$TAG" != "$PKG_VERSION" ]; then
+            echo "::error::tag v$TAG does not match falsify_eval.__version__ = $PKG_VERSION"
+            exit 1
+          fi
+          echo "tag v$TAG matches package version ✓"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/falsify-eval
+    permissions:
+      # Required for OIDC trusted publishing. No API token needed.
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish via OIDC
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # No `password:` field — trusted publisher OIDC auth instead.
+          packages-dir: dist/
+          verify-metadata: true
+          skip-existing: false

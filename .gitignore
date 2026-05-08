@@ -32,3 +32,10 @@ Thumbs.db
 
 # Anything intentionally kept local — never publish via this repo
 PRIVATE/
+
+# arXiv build artefacts (regenerable from PREPRINT.md via tools/build_arxiv.sh)
+arxiv/
+
+# Mutation testing cache (regenerable; pinned to mutmut 2.x v0.2 milestone)
+.mutmut-cache
+mutants/
