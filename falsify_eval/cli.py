@@ -24,6 +24,81 @@ from pathlib import Path
 from .gate import four_null_gate
 
 
+# ── I/O hardening (Windows console safety) ───────────────────────────────
+# Bug 2026-05-08 (Jasmeet, Win10/PowerShell, Py 3.14.3):
+#   `falsify-eval grade ...` crashed with
+#       UnicodeEncodeError: 'charmap' codec can't encode character 'Δ'
+#   because Windows' legacy console defaults to cp1252 and the pretty-printer
+#   emits Δ, ✓, ✗, ⚠, τ, ─. Two-layer fix:
+#     1) Reconfigure stdout/stderr to UTF-8 with errors='replace' at CLI entry,
+#        so a print() can NEVER crash regardless of the host console codepage.
+#     2) If the (post-reconfigure) stream still can't encode our glyphs, OR if
+#        the user passes --ascii / sets FALSIFY_ASCII=1, fall back to ASCII
+#        equivalents (e.g. "d=" instead of "Δ=", "[ok]" instead of "✓").
+def _reconfigure_utf8() -> None:
+    """Best-effort: switch stdout/stderr to UTF-8 with replacement.
+
+    On Python ≥3.7 TextIOWrapper exposes .reconfigure(); we use
+    errors='replace' so even an exotic downstream wrapper can't crash us.
+    Silently no-ops if the streams have been replaced with something that
+    doesn't support reconfigure (logging captures, pytest capsys, etc.).
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            # ValueError: stream not seekable / detached
+            # OSError:    underlying handle gone
+            pass
+
+
+def _stream_can_encode(stream, sample: str) -> bool:
+    enc = getattr(stream, "encoding", None) or "ascii"
+    try:
+        sample.encode(enc)
+        return True
+    except (UnicodeEncodeError, LookupError):
+        return False
+
+
+# Mutable so --ascii CLI flag can flip it after argparse runs.
+_GLYPH_STATE = {"ascii": False}
+
+# (unicode, ascii) pairs. Keep the unicode form short and the ascii form
+# semantically equivalent — never abbreviate to something ambiguous.
+_GLYPHS = {
+    "delta": ("Δ", "d"),       # Δ
+    "tau":   ("τ", "tau"),     # τ
+    "check": ("✓", "[ok]"),    # ✓
+    "cross": ("✗", "[x]"),     # ✗
+    "warn":  ("⚠", "!"),       # ⚠
+    "rule":  ("─", "-"),       # ─ (box-drawing dash)
+}
+
+
+def _ascii_mode() -> bool:
+    return _GLYPH_STATE["ascii"]
+
+
+def gl(name: str) -> str:
+    """Return the right glyph for the current output mode."""
+    uni, ascii_ = _GLYPHS[name]
+    return ascii_ if _ascii_mode() else uni
+
+
+def _init_io(force_ascii: bool = False) -> None:
+    """Idempotent CLI I/O setup — call once from main() before any print()."""
+    _reconfigure_utf8()
+    env_force = os.environ.get("FALSIFY_ASCII") == "1"
+    # If, even after UTF-8 reconfigure, stdout still can't encode our glyphs,
+    # auto-degrade rather than crash. Pipes into a non-UTF-8 logger hit this.
+    can_encode = _stream_can_encode(sys.stdout, "".join(u for u, _ in _GLYPHS.values()))
+    _GLYPH_STATE["ascii"] = bool(force_ascii or env_force or not can_encode)
+
+
 # ── ANSI helpers (auto-disable when not a TTY or NO_COLOR is set) ─────────
 _USE_COLOR = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
 
@@ -75,7 +150,7 @@ def load_jsonl(source):
     if source == "-" or source == Path("-"):
         return _parse_jsonl_stream(sys.stdin, "<stdin>")
     path = Path(source) if not isinstance(source, Path) else source
-    with path.open() as f:
+    with path.open(encoding="utf-8") as f:
         return _parse_jsonl_stream(f, str(path))
 
 
@@ -97,7 +172,7 @@ def _parse_jsonl_stream(f, source_repr: str):
 def load_pool(path: Path | None):
     if path is None:
         return None
-    text = path.read_text().strip()
+    text = path.read_text(encoding="utf-8").strip()
     if text.startswith("["):
         return json.loads(text)
     return [line.strip() for line in text.splitlines() if line.strip()]
@@ -128,27 +203,27 @@ def _print_result(res: dict, n_queries: int, metric_label: str):
     print(f"  real mean = {bold(real_str)}")
     for x in "ABCD":
         passed = res["passes"][x]
-        verdict = green("✓") if passed else red("✗")
+        verdict = green(gl("check")) if passed else red(gl("cross"))
         delta_s = f"{res['deltas'][x]:+.4f}"
         delta_c = green(delta_s) if passed else red(delta_s)
-        print(f"  Null {x}: mean={res['null_means'][x]:.4f}  Δ={delta_c}  {verdict}")
-    tau_str = dim("(τ=" + str(res["tau"]) + ")")
+        print(f"  Null {x}: mean={res['null_means'][x]:.4f}  {gl('delta')}={delta_c}  {verdict}")
+    tau_str = dim(f"({gl('tau')}=" + str(res["tau"]) + ")")
     if res["gate_passes"]:
-        print(f"  GATE: {green('✓ PASS')}  {tau_str}")
+        print(f"  GATE: {green(gl('check') + ' PASS')}  {tau_str}")
     else:
-        print(f"  GATE: {red('✗ FAIL')}  {tau_str}")
+        print(f"  GATE: {red(gl('cross') + ' FAIL')}  {tau_str}")
     for w in res.get("warnings", []):
-        print(f"  {yellow('⚠ warning:')} {w}")
+        print(f"  {yellow(gl('warn') + ' warning:')} {w}")
 
 
 def _print_post_grade_hints(res: dict):
     """Claude-Code-style 'what's next?' footer."""
     print()
-    print(dim("─" * 60))
+    print(dim(gl("rule") * 60))
     if res["gate_passes"]:
         print(dim("Next steps:"))
         print(dim("  • Lock your bench artifacts:  ") + cyan("falsify-eval lock ./data -o lock.json"))
-        print(dim("  • Try a stricter τ:           ") + cyan("falsify-eval grade ... --tau 0.10"))
+        print(dim(f"  • Try a stricter {gl('tau')}:           ") + cyan("falsify-eval grade ... --tau 0.10"))
         print(dim("  • More null trials for a tighter CI: ") + cyan("--n-trials 200"))
         print(dim("  • Output JSON for CI:        ") + cyan("--json | jq"))
     else:
@@ -166,7 +241,7 @@ def _print_post_grade_hints(res: dict):
         if "A" in failed and "B" in failed:
             print(dim("  • Failing both A and B suggests the metric is saturated; try"))
             print(dim("    a stricter k (e.g. k=1 for top-1 accuracy)."))
-        print(dim(f"  • Worst null: {worst} (Δ={res['deltas'][worst]:+.4f})"))
+        print(dim(f"  • Worst null: {worst} ({gl('delta')}={res['deltas'][worst]:+.4f})"))
 
 
 # ── Commands ──────────────────────────────────────────────────────────────
@@ -237,8 +312,8 @@ def cmd_lock(args):
     lock = lock_state(directory)
     out = json.dumps(lock, indent=2, default=str)
     if args.output:
-        Path(args.output).write_text(out)
-        print(green(f"✓ wrote lock to {args.output}") +
+        Path(args.output).write_text(out, encoding="utf-8")
+        print(green(f"{gl('check')} wrote lock to {args.output}") +
               dim(f"  ({len(lock['artifacts'])} artifacts, git={lock.get('git_commit','none')[:8]})"))
         print(dim("  next: ") + cyan(f"falsify-eval verify --lock {args.output} {directory}"))
     else:
@@ -248,12 +323,12 @@ def cmd_lock(args):
 
 def cmd_verify(args):
     from .lock import verify_state
-    lock = json.loads(Path(args.lock).read_text())
+    lock = json.loads(Path(args.lock).read_text(encoding="utf-8"))
     diff = verify_state(lock, Path(args.directory))
     if diff["matches"]:
-        print(green(f"✓ {args.directory} matches {args.lock}"))
+        print(green(f"{gl('check')} {args.directory} matches {args.lock}"))
         return 0
-    print(red(f"✗ {args.directory} differs from {args.lock}"))
+    print(red(f"{gl('cross')} {args.directory} differs from {args.lock}"))
     for c in diff.get("changed", [])[:10]:
         print(f"  {yellow('CHANGED')}  {c['path']}")
     for m in diff.get("missing", [])[:10]:
@@ -270,11 +345,11 @@ def cmd_quickstart(args):
     rows, pool = _demo_bench(n=50)
     bench_path = out_dir / "bench.jsonl"
     pool_path = out_dir / "pool.txt"
-    with bench_path.open("w") as f:
+    with bench_path.open("w", encoding="utf-8") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
-    pool_path.write_text("\n".join(pool) + "\n")
-    print(green("✓ wrote sample bench files:"))
+    pool_path.write_text("\n".join(pool) + "\n", encoding="utf-8")
+    print(green(f"{gl('check')} wrote sample bench files:"))
     print(f"  {bench_path}  ({len(rows)} queries)")
     print(f"  {pool_path}  ({len(pool)} labels)")
     print()
@@ -291,15 +366,16 @@ def cmd_doctor(args):
     print(bold("falsify-eval doctor — checking install"))
     print()
     print(f"  python:        {sys.version.split()[0]}")
+    print(f"  platform:      {sys.platform}  (stdout encoding={sys.stdout.encoding}, ascii_mode={_ascii_mode()})")
     try:
         import numpy as np
-        print(f"  numpy:         {np.__version__}  {green('✓')}")
+        print(f"  numpy:         {np.__version__}  {green(gl('check'))}")
     except ImportError:
         print(f"  numpy:         {red('NOT INSTALLED')}")
         return 1
     try:
         from . import __version__
-        print(f"  falsify-eval:  {__version__}  {green('✓')}")
+        print(f"  falsify-eval:  {__version__}  {green(gl('check'))}")
     except Exception:
         print(f"  falsify-eval:  installed but version unreadable")
 
@@ -314,13 +390,13 @@ def cmd_doctor(args):
         res = four_null_gate(retrieved, gold, rel, metric_fn,
                              item_pool=pool, k=5, n_trials=30, tau=0.05, seed=2026)
     except Exception as e:
-        print(red(f"✗ gate raised: {e}"))
+        print(red(f"{gl('cross')} gate raised: {e}"))
         return 1
     if not res["gate_passes"]:
-        print(red(f"✗ gate FAILED on demo bench (this should never happen)"))
+        print(red(f"{gl('cross')} gate FAILED on demo bench (this should never happen)"))
         return 1
-    print(green(f"✓ gate PASS on demo  (real_mean={res['real_mean']:.4f}, "
-                f"min Δ = {min(res['deltas'].values()):+.4f})"))
+    print(green(f"{gl('check')} gate PASS on demo  (real_mean={res['real_mean']:.4f}, "
+                f"min {gl('delta')} = {min(res['deltas'].values()):+.4f})"))
     print()
     print(green(bold("All systems green. ")) + dim("You're ready to use falsify-eval."))
     print()
@@ -339,12 +415,21 @@ EPILOG = textwrap.dedent("""\
       falsify-eval grade --input bench.jsonl --pool pool.txt --metric ndcg@5
       falsify-eval grade --input bench.jsonl --pool pool.txt --json | jq
 
+    Output mode:
+      Glyphs (Δ, ✓, ✗, τ) are printed as UTF-8 by default. Pass --ascii or
+      set FALSIFY_ASCII=1 to force ASCII-only output (useful when piping into
+      log processors that don't accept UTF-8).
+
     Documentation: https://github.com/spalsh-spec/falsify-eval
     Released by Bhardwaj & Sons under Apache 2.0.
 """)
 
 
 def main(argv=None):
+    # Parse --ascii pre-flight so it applies to argparse error messages too.
+    pre_force_ascii = ("--ascii" in (argv if argv is not None else sys.argv[1:]))
+    _init_io(force_ascii=pre_force_ascii)
+
     p = argparse.ArgumentParser(
         prog="falsify-eval",
         description="Calibrated falsification harness for retrieval evaluation.\n"
@@ -352,6 +437,8 @@ def main(argv=None):
         epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
+    p.add_argument("--ascii", action="store_true",
+                   help="force ASCII-only output (no Δ/✓/τ glyphs); also FALSIFY_ASCII=1")
     sub = p.add_subparsers(dest="cmd", required=True, metavar="COMMAND")
 
     g = sub.add_parser("grade", help="Run the four-null gate on a benchmark",
@@ -400,6 +487,10 @@ def main(argv=None):
     V.set_defaults(func=cmd_verify)
 
     args = p.parse_args(argv)
+    # Re-apply in case --ascii is in a later position the pre-flight missed
+    # (e.g., subparser-only parsing edge cases). Idempotent.
+    if getattr(args, "ascii", False):
+        _init_io(force_ascii=True)
     sys.exit(args.func(args))
 
 

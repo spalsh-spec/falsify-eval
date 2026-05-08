@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.4] — 2026-05-08
+
+### Fixed
+
+- **Windows console crash on `grade` (reported by Jasmeet, Win10/PowerShell, Py 3.14.3).**
+  The pretty-printer emitted Δ, τ, ✓, ✗, ⚠, ─ which the legacy Windows console
+  (cp1252 codepage) cannot encode, raising `UnicodeEncodeError: 'charmap' codec
+  can't encode character 'Δ'` mid-print. Two-layer fix in `falsify_eval/cli.py`:
+
+  1. **UTF-8 hardening at CLI entry.** `main()` now calls `_init_io()` which
+     reconfigures `sys.stdout`/`sys.stderr` to UTF-8 with `errors='replace'`
+     before anything is printed. This alone makes the original crash impossible
+     on every modern Python (≥3.7) and on every host OS, since the codepage of
+     the underlying console no longer governs the encoding used by the
+     interpreter.
+
+  2. **Auto-degrade to ASCII when the stream still can't encode.** If stdout's
+     post-reconfigure encoding still rejects our glyphs (e.g. piping into a
+     non-UTF-8 log processor), the printer transparently falls back to ASCII
+     equivalents: `Δ→d`, `τ→tau`, `✓→[ok]`, `✗→[x]`, `⚠→!`, `─→-`.
+
+### Added
+
+- **`--ascii` flag and `FALSIFY_ASCII=1` environment variable** to force
+  ASCII-only output on demand (useful for CI logs that strip UTF-8).
+- **`doctor` now reports `stdout encoding` and `ascii_mode`** so install bugs
+  related to console encoding are visible from a single command.
+- **Regression test `tests/test_windows_encoding.py`** that simulates a cp1252
+  console and proves the old code path crashes, the new path doesn't, and
+  `--ascii` produces a fully cp1252-decodable output stream.
+
+### Internal
+
+- All `Path.open()` and `Path.read_text()` / `write_text()` calls in `cli.py`
+  now pass `encoding='utf-8'` explicitly. This was a latent companion bug —
+  on the same Windows host that crashed Jasmeet's print, reading a UTF-8
+  bench.jsonl could silently mojibake-corrupt rows depending on user locale.
+
 ## [0.1.6.3] — 2026-05-08
 
 ### Added — public priority announcement of companion engine Vāk-Kaṇaja
