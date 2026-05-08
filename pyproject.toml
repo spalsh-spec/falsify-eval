@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "falsify-eval"
-version = "0.1.6.6"
+version = "0.1.6.7"
 description = "Calibrated falsification harness for retrieval evaluation."
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -26,7 +26,7 @@ classifiers = [
 keywords = ["retrieval", "evaluation", "falsification", "reproducibility", "rag", "ir"]
 
 [project.optional-dependencies]
-test = ["pytest>=7.0"]
+test = ["pytest>=7.0", "hypothesis>=6.0"]
 
 [project.urls]
 Homepage   = "https://github.com/spalsh-spec/falsify-eval"

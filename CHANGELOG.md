@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.7] — 2026-05-08
+
+### Fixed
+
+- **CI on 0.1.6.6 failed across all matrix cells** because the new
+  `tests/test_property_gate.py` imports `hypothesis`, which was used only as
+  a transitive dev install on my local box (a `.hypothesis/` cache was in
+  the tree but no dependency had been declared). Two-line fix:
+
+  - `pyproject.toml`: add `hypothesis>=6.0` to the `test` optional-deps
+    bucket alongside `pytest>=7.0`.
+  - `.github/workflows/ci.yml`: install with `pip install -e ".[test]"`
+    instead of `pip install -e .` + ad-hoc `pip install pytest`. Now the
+    test extras govern what CI installs, so adding a dev dep in
+    pyproject.toml automatically propagates to CI without a workflow edit.
+
 ## [0.1.6.6] — 2026-05-08
 
 ### Added — property-based test suite (Hypothesis) for the four-null gate
