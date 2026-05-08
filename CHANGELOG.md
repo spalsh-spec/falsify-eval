@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.9] — 2026-05-08
+
+### Added
+
+- **CS03 case-study scaffold** (`case_studies/cs03_aikosh_rag/`). First slot
+  for a real production retriever inside an organisation, prepared after
+  Jasmeet Singh (AI Kosh) volunteered to wire the four-null gate into AI
+  Kosh's internal RAG benchmark. The slot includes:
+  - `CS03_REPORT.md` — pre-registered structure with TBD sections marked
+    explicitly so no fabricated numbers can sit there.
+  - `run_case_study.py` — refuses to run until `data/queries.jsonl`,
+    `data/pool.txt`, and `data/retriever.py` are provided; exits 2 with a
+    clear input-list message rather than silently producing fake output.
+  - Pre-registered expected outcomes in §5 so the actual run can falsify
+    the predictions when results land.
+
+- **`Tested platforms` log in README.** External-verification entries by
+  testers who are not the package author, dated, with version pinned.
+  Initial entries:
+  - **2026-05-08** — Jasmeet Singh (AI Kosh) — Windows 10 (19045) /
+    Python 3.14.3 / PowerShell — verified install + upgrade
+    (0.1.6.2 → 0.1.6.7) + `doctor` + `quickstart` + `grade` all clean;
+    confirmed the cp1252 defect closed in 0.1.6.4 stays closed.
+  - **2026-05-07** — Mayank Singh — macOS 14 (M1) / Python 3.12 / zsh —
+    14-defect adversarial battery, all closed by 0.1.6.2.
+
+### Internal
+
+- README Status section was stale at 0.1.6.3; brought up to date with
+  entries for 0.1.6.4 → 0.1.6.9 and a corrected test count (91, was 67).
+- v0.2 plan renumbered: CS03 now slots AI Kosh, CS04 → FiQA, CS05 → Quora.
+  (CS01 NFCorpus and CS02 SciFact are already in tree with results.)
+
 ## [0.1.6.8] — 2026-05-08
 
 ### Added — empirical equivariance certificate for the four-null gate

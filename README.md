@@ -353,15 +353,32 @@ Public release imminent at `github.com/bhardwaj-and-sons/vak-kanaja`, Apache 2.0
 
 ## Status
 
-- **v0.1.6.3** — current. Public priority announcement of companion engine **Vāk-Kaṇaja** added above (engine code release follows the morning launch sequence). **67 tests** passing on a fresh clone (Mayank-battery 31 + property-based 4 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4).
+- **v0.1.6.8** — current. **91 tests** passing on a fresh clone (Mayank-battery 31 + property-based 15 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4 + Windows-encoding 3 + shell-mangled paths 6 + sundry 4); ~10 s on M1. CI matrix green on Ubuntu × {3.10, 3.11, 3.12} and macOS × {3.10, 3.11, 3.12}.
+- **v0.1.6.8** — empirical equivariance certificate: PREPRINT §5.9 + property tests proving the gate is strongly equivariant under order-preserving label-set bijections and Null C / `real_mean` are exactly equivariant under arbitrary bijections.
+- **v0.1.6.7** — declared `hypothesis>=6.0` as a test dep so CI installs it. (Caught by CI matrix the moment v0.1.6.6 landed.)
+- **v0.1.6.6** — Hypothesis property-based test suite for the four-null gate: 13 universally-true properties (algebraic, deterministic, metric, gate-semantics, validation), each fuzzed against ~80 random benches per CI run.
+- **v0.1.6.5** — cross-platform path-mangling hint: when `--input my-bench\bench.jsonl` is copy-pasted into zsh and the backslash gets eaten, the CLI now suggests the corrected forward-slash path instead of a bare `FileNotFoundError`.
+- **v0.1.6.4** — Windows console UTF-8 / ASCII output hardening (closes Jasmeet's cp1252 `UnicodeEncodeError` on the `Δ` glyph): reconfigure stdout to UTF-8 with `errors='replace'` at CLI entry, with auto-fallback to ASCII glyphs (`Δ→d`, `τ→tau`, `✓→[ok]`) when the post-reconfigure stream still can't encode them. Also `--ascii` flag and `FALSIFY_ASCII=1` env var.
+- **v0.1.6.3** — public priority announcement of companion engine **Vāk-Kaṇaja**.
 - **v0.1.6.2** — Mayank round-3 polish: negative-seed validation in `_validate_inputs`.
 - **v0.1.6.1** — Mayank round-2: CLI `--input -` now reads from stdin (was `FileNotFoundError: '-'`).
 - **v0.1.6** — bonferroni helper, scipy cross-check tests, property-based tests, CS02 SciFact case study, PREPRINT scope-honesty rewrite, AI/retrieval conflation strike across surfaces.
 - **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour Akosh-AI silent-run incident.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
-- **v0.2 (next)** — PyPI publish; case studies CS03 (FiQA) and CS04 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact.
+- **v0.2 (next)** — PyPI publish; case studies CS03 (AI Kosh internal RAG, scaffolded — see [`case_studies/cs03_aikosh_rag/`](case_studies/cs03_aikosh_rag/)), CS04 (FiQA) and CS05 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact; `label_order_seed` parameter to break dependency on adversarial label ordering (see PREPRINT §5.9).
 - **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling. *(Not yet shipped — do not claim coverage.)*
+
+### Tested platforms
+
+External-verification log. Each entry is a real run by a real person who is
+not the package author, dated, with the exact version they ran. New entries
+go at the top.
+
+| Date | Tester | OS | Python | Shell | Version | Notes |
+|---|---|---|---|---|---|---|
+| 2026-05-08 | Jasmeet Singh (AI Kosh) | Windows 10 (19045) | 3.14.3 | PowerShell | 0.1.6.7 | install / upgrade 0.1.6.2→0.1.6.7 / `doctor` / `quickstart` / `grade` all clean; original cp1252 defect closed. CS03 integration with AI Kosh's internal RAG retriever in flight. |
+| 2026-05-07 | Mayank Singh | macOS 14 (M1) | 3.12 | zsh | 0.1.5 → 0.1.6.2 | adversarial 14-defect battery; all closed. |
 
 Issues and PRs welcome. The reference implementation is intentionally minimal; the goal is for the protocol to be small enough that adopters audit the entire library before depending on it.
 

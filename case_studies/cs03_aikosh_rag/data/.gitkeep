@@ -1,0 +1,4 @@
+# Directory placeholder. Populated when Jasmeet (AI Kosh) provides:
+#   queries.jsonl  — bench queries with gold ids
+#   pool.txt       — item-id pool
+#   retriever.py   — wrapper exposing retrieve(query_text, k) -> list[item_id]
