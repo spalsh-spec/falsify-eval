@@ -139,6 +139,32 @@ METRICS = {"ndcg": ndcg_at_k, "recall": recall_at_k, "mrr": mrr_at_k}
 
 
 # ── Loaders ───────────────────────────────────────────────────────────────
+def _suggest_shell_mangled_path(bad: str) -> str | None:
+    r"""Detect shell-mangled Windows paths on POSIX and suggest the fix.
+
+    Bug 2026-05-08 (Parth, copy-pasting Jasmeet's Windows command into zsh):
+      ``--input my-bench\bench.jsonl`` arrives in argv as
+      ``my-benchbench.jsonl`` because zsh's ``\`` is an escape, not a path
+      separator. The resulting FileNotFoundError is correct but useless.
+      This helper recovers the likely intent so we can show
+      'did you mean my-bench/bench.jsonl?'.
+
+    Heuristic: split ``bad`` at every position where a directory exists in cwd
+    whose name equals the prefix AND the suffix exists inside it. If exactly
+    one such split exists, that's almost certainly what the user meant.
+    """
+    if "/" in bad or "\\" in bad or os.sep in bad:
+        return None
+    matches = []
+    cwd = Path.cwd()
+    for i in range(1, len(bad)):
+        prefix, suffix = bad[:i], bad[i:]
+        candidate = cwd / prefix / suffix
+        if (cwd / prefix).is_dir() and candidate.exists():
+            matches.append(f"{prefix}/{suffix}")
+    return matches[0] if len(matches) == 1 else None
+
+
 def load_jsonl(source):
     """Load JSONL rows from a path or from stdin.
 
@@ -150,6 +176,13 @@ def load_jsonl(source):
     if source == "-" or source == Path("-"):
         return _parse_jsonl_stream(sys.stdin, "<stdin>")
     path = Path(source) if not isinstance(source, Path) else source
+    if not path.exists():
+        suggestion = _suggest_shell_mangled_path(str(source))
+        hint = ""
+        if suggestion:
+            hint = ("\n" + dim(f"  hint: did you mean --input {suggestion} ?") +
+                    "\n" + dim("        (zsh/bash treat '\\' as an escape — use '/' on macOS/Linux)"))
+        raise SystemExit(red(f"--input: file not found: {source}") + hint)
     with path.open(encoding="utf-8") as f:
         return _parse_jsonl_stream(f, str(path))
 
@@ -172,6 +205,13 @@ def _parse_jsonl_stream(f, source_repr: str):
 def load_pool(path: Path | None):
     if path is None:
         return None
+    if not path.exists():
+        suggestion = _suggest_shell_mangled_path(str(path))
+        hint = ""
+        if suggestion:
+            hint = ("\n" + dim(f"  hint: did you mean --pool {suggestion} ?") +
+                    "\n" + dim("        (zsh/bash treat '\\' as an escape — use '/' on macOS/Linux)"))
+        raise SystemExit(red(f"--pool: file not found: {path}") + hint)
     text = path.read_text(encoding="utf-8").strip()
     if text.startswith("["):
         return json.loads(text)

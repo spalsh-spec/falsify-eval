@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.5] — 2026-05-08
+
+### Added
+
+- **Cross-platform path-mangling detection.** When `--input` or `--pool`
+  points to a non-existent file on POSIX, we now check whether the path
+  matches the shell-eaten form of a Windows-style path (e.g.
+  `my-benchbench.jsonl` ← typed `my-bench\bench.jsonl`, where zsh/bash
+  treated `\` as an escape rather than a path separator). If we can
+  unambiguously decode the intent — i.e. exactly one prefix in cwd is a
+  directory whose name is a prefix of the bad path AND contains the
+  remainder as a real file — we surface a precise "did you mean
+  my-bench/bench.jsonl?" hint instead of the bare FileNotFoundError.
+  Reported by Parth 2026-05-08 after copy-pasting Jasmeet's Windows
+  tutorial command into zsh.
+- **Regression test `tests/test_shell_mangled_paths.py`** covering both
+  the recovery suggestion and end-to-end `grade` error formatting.
+
+### Internal
+
+- Fixed a `SyntaxWarning: invalid escape sequence` in the new helper's
+  docstring by switching to a raw docstring (`r"""`). Caught by running
+  `python3 -W error::SyntaxWarning -m pytest`.
+
 ## [0.1.6.4] — 2026-05-08
 
 ### Fixed
