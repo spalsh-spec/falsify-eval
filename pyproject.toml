@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "falsify-eval"
-version = "0.1.6.10"
+version = "0.1.6.11"
 description = "Calibrated falsification harness for retrieval evaluation."
 readme = "README.md"
 license = {file = "LICENSE"}

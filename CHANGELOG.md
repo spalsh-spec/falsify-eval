@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6.11] — 2026-05-08
+
+### Fixed
+
+- **Publish workflow's version-sync guard tried to `import falsify_eval`
+  before the package was installed.** Caught by the workflow itself on its
+  first run (the v0.1.6.10 tag triggered the workflow, which failed at the
+  version-check step before reaching upload — exactly as a guard should
+  fail when something is wrong, but this time the something-wrong was the
+  guard). Switched to reading `__version__` and `pyproject.toml`'s `version`
+  directly via grep/sed, which (a) doesn't require the package to be
+  importable, and (b) cross-checks both source files against each other
+  and against the tag — three-way agreement is now the gate, matching what
+  `tests/test_mayank_battery.py::test_d7_version_sync` does in pytest.
+
 ## [0.1.6.10] — 2026-05-08
 
 ### Added — distribution + arXiv build prep

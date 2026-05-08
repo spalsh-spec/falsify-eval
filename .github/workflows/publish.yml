@@ -46,15 +46,25 @@ jobs:
         run: python -m twine check dist/*
 
       - name: Verify version matches tag
+        # Read versions from source files directly so this step works without
+        # the package being installed in this environment. Catches:
+        #   - tag/__init__.py drift
+        #   - tag/pyproject.toml drift
+        #   - __init__.py/pyproject.toml drift (the same check
+        #     test_d7_version_sync runs in pytest)
         run: |
           set -e
           TAG="${GITHUB_REF#refs/tags/v}"
-          PKG_VERSION=$(python -c "import falsify_eval; print(falsify_eval.__version__)")
-          if [ "$TAG" != "$PKG_VERSION" ]; then
-            echo "::error::tag v$TAG does not match falsify_eval.__version__ = $PKG_VERSION"
+          INIT_VERSION=$(grep -E '^__version__\s*=' falsify_eval/__init__.py | sed -E 's/.*"([^"]+)".*/\1/')
+          PYPROJECT_VERSION=$(grep -E '^version\s*=' pyproject.toml | sed -E 's/.*"([^"]+)".*/\1/')
+          echo "tag           = $TAG"
+          echo "__init__.py   = $INIT_VERSION"
+          echo "pyproject.toml = $PYPROJECT_VERSION"
+          if [ "$TAG" != "$INIT_VERSION" ] || [ "$TAG" != "$PYPROJECT_VERSION" ]; then
+            echo "::error::version mismatch — tag/init/pyproject must all agree"
             exit 1
           fi
-          echo "tag v$TAG matches package version ✓"
+          echo "all three agree on $TAG ✓"
 
       - uses: actions/upload-artifact@v4
         with:
