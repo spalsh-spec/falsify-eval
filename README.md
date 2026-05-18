@@ -41,7 +41,7 @@ Built for **search engines, recommendation systems, the retrieval side of RAG.**
 <br>
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/tests-67%20passing-brightgreen)](tests/)
+[![Tests](https://img.shields.io/badge/tests-91%20passing-brightgreen)](tests/)
 [![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -347,7 +347,7 @@ It also implements an **Anupalabdhi (non-perception) confidence floor**: when th
 
 The engine ships with a **calibrated negative result**: bench expansion N=21 → N=141 falsified the lift from the novel rerankers (Poincaré, topological persistence, fractal affinity), which now ship at production weight 0 and are documented as opt-in research components. The 3-channel φ-RRF baseline is the production default. This is the falsify-eval discipline applied to the authoring engine — same calibration that earned three clean rounds of adversarial review on this library.
 
-Public release imminent at `github.com/bhardwaj-and-sons/vak-kanaja`, Apache 2.0, under the **Bhardwaj &amp; Sons** brand. *Priority announcement dated 2026-05-08.*
+Public release imminent at `github.com/spalsh-spec/vak-kanaja`, Apache 2.0, under the **Bhardwaj &amp; Sons** brand. *Priority announcement dated 2026-05-08.*
 
 ---
 
