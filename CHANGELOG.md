@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — v0.2-prep housekeeping pass
+
+Three small fixes ahead of the v0.2.0 PyPI + arXiv + Zenodo cut. No
+behavioural change to the gate; no test-count change.
+
+- **CITATION.cff URL drift.** `url:` pointed at the wrong GitHub handle
+  (`sparshsharma`); corrected to the canonical `spalsh-spec`. Citation-graph
+  crawlers and reviewers use this field; wrong handle = broken linkage.
+- **AIKosh spelling normalized across public surfaces.** README, NEXT, and
+  CHANGELOG entries used "AI Kosh", "Akosh-AI", and "AI Kosh" interchangeably.
+  All platform references now use the official spelling **AIKosh**
+  (https://aikosh.indiaai.gov.in/). Personal-name reference in v0.1.2's
+  "External user (Akosh, India, 2026-05-04)" left unchanged. Directory
+  `case_studies/cs03_aikosh_rag/` unchanged.
+- **README Status section stale at v0.1.6.8.** Bumped current-version line to
+  **v0.1.6.11** (matches `pyproject.toml`); added per-version summary
+  bullets for v0.1.6.9 (CS03 scaffold + Tested-platforms log), v0.1.6.10
+  (publish workflow + arXiv build prep), and v0.1.6.11 (publish workflow
+  version-sync fix).
+
 ## [0.1.6.11] — 2026-05-08
 
 ### Fixed
@@ -74,8 +94,8 @@ behaviour changes; this is plumbing.
 
 - **CS03 case-study scaffold** (`case_studies/cs03_aikosh_rag/`). First slot
   for a real production retriever inside an organisation, prepared after
-  Jasmeet Singh (AI Kosh) volunteered to wire the four-null gate into AI
-  Kosh's internal RAG benchmark. The slot includes:
+  Jasmeet Singh (AIKosh) volunteered to wire the four-null gate into
+  AIKosh's internal RAG benchmark. The slot includes:
   - `CS03_REPORT.md` — pre-registered structure with TBD sections marked
     explicitly so no fabricated numbers can sit there.
   - `run_case_study.py` — refuses to run until `data/queries.jsonl`,
@@ -87,7 +107,7 @@ behaviour changes; this is plumbing.
 - **`Tested platforms` log in README.** External-verification entries by
   testers who are not the package author, dated, with version pinned.
   Initial entries:
-  - **2026-05-08** — Jasmeet Singh (AI Kosh) — Windows 10 (19045) /
+  - **2026-05-08** — Jasmeet Singh (AIKosh) — Windows 10 (19045) /
     Python 3.14.3 / PowerShell — verified install + upgrade
     (0.1.6.2 → 0.1.6.7) + `doctor` + `quickstart` + `grade` all clean;
     confirmed the cp1252 defect closed in 0.1.6.4 stays closed.
@@ -98,7 +118,7 @@ behaviour changes; this is plumbing.
 
 - README Status section was stale at 0.1.6.3; brought up to date with
   entries for 0.1.6.4 → 0.1.6.9 and a corrected test count (91, was 67).
-- v0.2 plan renumbered: CS03 now slots AI Kosh, CS04 → FiQA, CS05 → Quora.
+- v0.2 plan renumbered: CS03 now slots AIKosh, CS04 → FiQA, CS05 → Quora.
   (CS01 NFCorpus and CS02 SciFact are already in tree with results.)
 
 ## [0.1.6.8] — 2026-05-08
@@ -397,9 +417,9 @@ two relevance regimes.
 
 ## [0.1.5.2] — 2026-05-06
 
-### Added — `progress=True` flag (Akosh-AI 5-hour incident)
+### Added — `progress=True` flag (AIKosh 5-hour incident)
 
-Mayank reported the gate had been running 5 hours under Akosh AI's harness
+Mayank reported the gate had been running 5 hours under AIKosh's harness
 with no visible progress. Profiling confirmed the gate itself is fast
 (N=5,000 × pool=100k × n_trials=50 finishes in <2s with a cheap metric).
 The 5-hour runtime is fully explained by an LLM-judge metric at ~200 ms /

@@ -353,7 +353,10 @@ Public release imminent at `github.com/bhardwaj-and-sons/vak-kanaja`, Apache 2.0
 
 ## Status
 
-- **v0.1.6.8** — current. **91 tests** passing on a fresh clone (Mayank-battery 31 + property-based 15 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4 + Windows-encoding 3 + shell-mangled paths 6 + sundry 4); ~10 s on M1. CI matrix green on Ubuntu × {3.10, 3.11, 3.12} and macOS × {3.10, 3.11, 3.12}.
+- **v0.1.6.11** — current. **91 tests** passing on a fresh clone (Mayank-battery 31 + property-based 15 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4 + Windows-encoding 3 + shell-mangled paths 6 + sundry 4); ~10 s on M1. CI matrix green on Ubuntu × {3.10, 3.11, 3.12} and macOS × {3.10, 3.11, 3.12}.
+- **v0.1.6.11** — publish-workflow version-sync guard hardened: previously tried to `import falsify_eval` before the package was installed and failed at the version-check step; now reads `__version__` and `pyproject.toml`'s `version` directly via grep/sed so the tag, source files, and built artefact are cross-checked three ways without requiring an install.
+- **v0.1.6.10** — distribution + arXiv build prep (infrastructure-only, no gate behaviour change): added `.github/workflows/publish.yml` for OIDC trusted publishing to PyPI on every `v*` tag push; added `tools/build_arxiv.sh` for converting `PREPRINT.md` to an arXiv-submittable LaTeX bundle via pandoc; added `[tool.mutmut]` config + `docs/MUTATION_TESTING.md` documenting the deferred status; added `[project.optional-dependencies] dev` bucket pinning `mutmut`, `build`, and `twine`.
+- **v0.1.6.9** — added CS03 case-study scaffold (`case_studies/cs03_aikosh_rag/`) for the AIKosh internal RAG integration (Jasmeet Singh, in flight); added Tested-platforms log to README; renumbered v0.2 case studies (CS03 = AIKosh, CS04 = FiQA, CS05 = Quora).
 - **v0.1.6.8** — empirical equivariance certificate: PREPRINT §5.9 + property tests proving the gate is strongly equivariant under order-preserving label-set bijections and Null C / `real_mean` are exactly equivariant under arbitrary bijections.
 - **v0.1.6.7** — declared `hypothesis>=6.0` as a test dep so CI installs it. (Caught by CI matrix the moment v0.1.6.6 landed.)
 - **v0.1.6.6** — Hypothesis property-based test suite for the four-null gate: 13 universally-true properties (algebraic, deterministic, metric, gate-semantics, validation), each fuzzed against ~80 random benches per CI run.
@@ -363,10 +366,10 @@ Public release imminent at `github.com/bhardwaj-and-sons/vak-kanaja`, Apache 2.0
 - **v0.1.6.2** — Mayank round-3 polish: negative-seed validation in `_validate_inputs`.
 - **v0.1.6.1** — Mayank round-2: CLI `--input -` now reads from stdin (was `FileNotFoundError: '-'`).
 - **v0.1.6** — bonferroni helper, scipy cross-check tests, property-based tests, CS02 SciFact case study, PREPRINT scope-honesty rewrite, AI/retrieval conflation strike across surfaces.
-- **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour Akosh-AI silent-run incident.
+- **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour AIKosh silent-run incident.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
-- **v0.2 (next)** — PyPI publish; case studies CS03 (AI Kosh internal RAG, scaffolded — see [`case_studies/cs03_aikosh_rag/`](case_studies/cs03_aikosh_rag/)), CS04 (FiQA) and CS05 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact; `label_order_seed` parameter to break dependency on adversarial label ordering (see PREPRINT §5.9).
+- **v0.2 (next)** — PyPI publish; case studies CS03 (AIKosh internal RAG, scaffolded — see [`case_studies/cs03_aikosh_rag/`](case_studies/cs03_aikosh_rag/)), CS04 (FiQA) and CS05 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact; `label_order_seed` parameter to break dependency on adversarial label ordering (see PREPRINT §5.9).
 - **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling. *(Not yet shipped — do not claim coverage.)*
 
 ### Tested platforms
@@ -377,7 +380,7 @@ go at the top.
 
 | Date | Tester | OS | Python | Shell | Version | Notes |
 |---|---|---|---|---|---|---|
-| 2026-05-08 | Jasmeet Singh (AI Kosh) | Windows 10 (19045) | 3.14.3 | PowerShell | 0.1.6.7 | install / upgrade 0.1.6.2→0.1.6.7 / `doctor` / `quickstart` / `grade` all clean; original cp1252 defect closed. CS03 integration with AI Kosh's internal RAG retriever in flight. |
+| 2026-05-08 | Jasmeet Singh (AIKosh) | Windows 10 (19045) | 3.14.3 | PowerShell | 0.1.6.7 | install / upgrade 0.1.6.2→0.1.6.7 / `doctor` / `quickstart` / `grade` all clean; original cp1252 defect closed. CS03 integration with AIKosh's internal RAG retriever in flight. |
 | 2026-05-07 | Mayank Singh | macOS 14 (M1) | 3.12 | zsh | 0.1.5 → 0.1.6.2 | adversarial 14-defect battery; all closed. |
 
 Issues and PRs welcome. The reference implementation is intentionally minimal; the goal is for the protocol to be small enough that adopters audit the entire library before depending on it.
