@@ -8,7 +8,7 @@ authors:
     given-names: Sparsh
     email: sparshsharma219@gmail.com
 license: Apache-2.0
-url: https://github.com/sparshsharma/falsify-eval
+url: https://github.com/spalsh-spec/falsify-eval
 preferred-citation:
   type: article
   title: "Calibrated Falsification Harnesses for Retrieval Evaluation"

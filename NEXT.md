@@ -35,7 +35,7 @@ Full checklist + cover letter draft + categorisation in
 ### 3. Wait on Jasmeet (CS03)
 
 Slot scaffolded at `case_studies/cs03_aikosh_rag/`. He'll send results when
-the AI Kosh integration runs. Don't poke him for at least a week.
+the AIKosh integration runs. Don't poke him for at least a week.
 
 ### 4. Then the social posts
 
