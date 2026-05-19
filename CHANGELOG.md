@@ -7,10 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-05-19
+
+### Released — first public release
+
+The methodology library and its `falsify-eval` PyPI distribution go public
+under the **Bhardwaj & Sons** brand. Apache 2.0. v0.2.0 is the first version
+where `pip install falsify-eval` works without a git URL.
+
+- **Published to PyPI** as `falsify-eval` via the OIDC trusted-publisher
+  workflow on `v*` tag push. The version-sync guard cross-checks tag against
+  `__init__.py` and `pyproject.toml` before the upload step runs (per the
+  v0.1.6.11 fix).
+- **Zenodo DOI minted** for the release artefact. The DOI badge in the
+  README and the `identifiers` block in `CITATION.cff` are populated from
+  the GitHub Release → Zenodo deposit webhook.
+- **Repository made public** under `spalsh-spec/falsify-eval`. GitHub Pages
+  enabled at `https://spalsh-spec.github.io/falsify-eval/`, serving the
+  interactive sliders playground (`play.html`) and the long-form HTML
+  explainer.
+- **No behavioural changes from v0.1.6.11.** The four-null gate, the lock,
+  the stats helpers, the CLI, and the MCP server are byte-identical to
+  v0.1.6.11. v0.2.0 is the public-distribution turn, not a code turn.
+
 ### Fixed — v0.2-prep housekeeping pass
 
-Three small fixes ahead of the v0.2.0 PyPI + arXiv + Zenodo cut. No
-behavioural change to the gate; no test-count change.
+Four small fixes folded into this release. No behavioural change to the
+gate; no test-count change.
 
 - **CITATION.cff URL drift.** `url:` pointed at the wrong GitHub handle
   (`sparshsharma`); corrected to the canonical `spalsh-spec`. Citation-graph
@@ -21,11 +44,17 @@ behavioural change to the gate; no test-count change.
   (https://aikosh.indiaai.gov.in/). Personal-name reference in v0.1.2's
   "External user (Akosh, India, 2026-05-04)" left unchanged. Directory
   `case_studies/cs03_aikosh_rag/` unchanged.
-- **README Status section stale at v0.1.6.8.** Bumped current-version line to
-  **v0.1.6.11** (matches `pyproject.toml`); added per-version summary
-  bullets for v0.1.6.9 (CS03 scaffold + Tested-platforms log), v0.1.6.10
-  (publish workflow + arXiv build prep), and v0.1.6.11 (publish workflow
+- **README Status section stale at v0.1.6.8.** Bumped current-version line
+  through v0.1.6.11 (and now v0.2.0); added per-version summary bullets for
+  v0.1.6.9 (CS03 scaffold + Tested-platforms log), v0.1.6.10 (publish
+  workflow + arXiv build prep), and v0.1.6.11 (publish workflow
   version-sync fix).
+- **README test badge bumped 67 → 91.** Stale since the v0.1.6.3 era.
+- **README vak-kanaja cross-link** corrected from the non-existent
+  `github.com/bhardwaj-and-sons/vak-kanaja` to the working
+  `github.com/spalsh-spec/vak-kanaja`. Forward-compatible: when the
+  `bhardwaj-and-sons` org is created and the repo is transferred, GitHub
+  auto-redirects the spalsh-spec URL forever.
 
 ## [0.1.6.11] — 2026-05-08
 
