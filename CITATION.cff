@@ -9,11 +9,22 @@ authors:
     email: sparshsharma219@gmail.com
 license: Apache-2.0
 url: https://github.com/spalsh-spec/falsify-eval
+repository-code: "https://github.com/spalsh-spec/falsify-eval"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.20284676"
+    description: "Concept DOI — resolves to the latest version of falsify-eval on Zenodo."
+  - type: doi
+    value: "10.5281/zenodo.20284677"
+    description: "Version DOI — pins to v0.2.0 specifically."
 preferred-citation:
-  type: article
-  title: "Calibrated Falsification Harnesses for Retrieval Evaluation"
+  type: software
+  title: "falsify-eval: a calibrated falsification harness for retrieval evaluation"
   authors:
     - family-names: Sharma
       given-names: Sparsh
   year: 2026
-  notes: "Preprint forthcoming on arXiv (cs.IR)."
+  version: 0.2.0
+  doi: "10.5281/zenodo.20284676"
+  url: "https://github.com/spalsh-spec/falsify-eval"
+  notes: "Methodology preprint forthcoming on arXiv (cs.IR)."

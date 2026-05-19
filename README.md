@@ -42,6 +42,8 @@ Built for **search engines, recommendation systems, the retrieval side of RAG.**
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)
 [![Tests](https://img.shields.io/badge/tests-91%20passing-brightgreen)](tests/)
+[![PyPI](https://img.shields.io/pypi/v/falsify-eval.svg?color=blue)](https://pypi.org/project/falsify-eval/)
+[![DOI](https://zenodo.org/badge/1226286341.svg)](https://doi.org/10.5281/zenodo.20284676)
 [![Release](https://img.shields.io/github/v/release/spalsh-spec/falsify-eval?color=blue&label=release)](https://github.com/spalsh-spec/falsify-eval/releases/latest)
 [![Python ≥ 3.10](https://img.shields.io/badge/python-≥3.10-blue.svg)](https://www.python.org/)
 [![Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
