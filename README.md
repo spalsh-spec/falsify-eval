@@ -30,6 +30,12 @@ The **Case study** shows the same gate working on a peer-reviewed BEIR benchmark
 ### → Or install and run locally
 
 ```bash
+pip install falsify-eval
+```
+
+For the latest unreleased changes, install from source:
+
+```bash
 pip install git+https://github.com/spalsh-spec/falsify-eval
 ```
 
@@ -75,7 +81,7 @@ The published number looks great. It does not mean what you think it means.
 ## 30-second demo
 
 ```bash
-pip install git+https://github.com/spalsh-spec/falsify-eval
+pip install falsify-eval
 python -c "from falsify_eval.demo import run; run()"
 ```
 
@@ -380,7 +386,8 @@ Public release imminent at `github.com/spalsh-spec/vak-kanaja`, Apache 2.0, unde
 
 ## Status
 
-- **v0.1.6.11** — current. **91 tests** passing on a fresh clone (Mayank-battery 31 + property-based 15 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4 + Windows-encoding 3 + shell-mangled paths 6 + sundry 4); ~10 s on M1. CI matrix green on Ubuntu × {3.10, 3.11, 3.12} and macOS × {3.10, 3.11, 3.12}.
+- **v0.2.0** — current. First public release: live on PyPI (`pip install falsify-eval`), Zenodo DOI `10.5281/zenodo.20284676`, GitHub Pages playground. Published via OIDC trusted publishing (Sigstore-attested against tag `v0.2.0`).
+- **v0.1.6.11** — **91 tests** passing on a fresh clone (Mayank-battery 31 + property-based 15 + scipy cross-check 11 + smoke 8 + validation 9 + CLI stdin 4 + Windows-encoding 3 + shell-mangled paths 6 + sundry 4); ~10 s on M1. CI matrix green on Ubuntu × {3.10, 3.11, 3.12} and macOS × {3.10, 3.11, 3.12}.
 - **v0.1.6.11** — publish-workflow version-sync guard hardened: previously tried to `import falsify_eval` before the package was installed and failed at the version-check step; now reads `__version__` and `pyproject.toml`'s `version` directly via grep/sed so the tag, source files, and built artefact are cross-checked three ways without requiring an install.
 - **v0.1.6.10** — distribution + arXiv build prep (infrastructure-only, no gate behaviour change): added `.github/workflows/publish.yml` for OIDC trusted publishing to PyPI on every `v*` tag push; added `tools/build_arxiv.sh` for converting `PREPRINT.md` to an arXiv-submittable LaTeX bundle via pandoc; added `[tool.mutmut]` config + `docs/MUTATION_TESTING.md` documenting the deferred status; added `[project.optional-dependencies] dev` bucket pinning `mutmut`, `build`, and `twine`.
 - **v0.1.6.9** — added CS03 case-study scaffold (`case_studies/cs03_aikosh_rag/`) for the AIKosh internal RAG integration (Jasmeet Singh, in flight); added Tested-platforms log to README; renumbered v0.2 case studies (CS03 = AIKosh, CS04 = FiQA, CS05 = Quora).
@@ -396,7 +403,7 @@ Public release imminent at `github.com/spalsh-spec/vak-kanaja`, Apache 2.0, unde
 - **v0.1.5.2** — added `progress=True` flag to `four_null_gate` after Mayank's 5-hour AIKosh silent-run incident.
 - **v0.1.5.1** — closed `null_a` defect class for tuple / dataclass labels.
 - **v0.1.5** — fixed all 14 defects from the Mayank Singh adversarial battery; full credit in [`CHANGELOG.md`](CHANGELOG.md).
-- **v0.2 (next)** — PyPI publish; case studies CS03 (AIKosh internal RAG, scaffolded — see [`case_studies/cs03_aikosh_rag/`](case_studies/cs03_aikosh_rag/)), CS04 (FiQA) and CS05 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact; `label_order_seed` parameter to break dependency on adversarial label ordering (see PREPRINT §5.9).
+- **v0.2 (in progress)** — PyPI publish ✓ shipped (v0.2.0 live on PyPI); case studies CS03 (AIKosh internal RAG, scaffolded — see [`case_studies/cs03_aikosh_rag/`](case_studies/cs03_aikosh_rag/)), CS04 (FiQA) and CS05 (Quora) for metric-sensitivity triangulation; broken-predictor zoo as a public artifact; `label_order_seed` parameter to break dependency on adversarial label ordering (see PREPRINT §5.9).
 - **v0.3+ (planned)** — extension to LLM free-text and summarisation; pre-registration tooling. *(Not yet shipped — do not claim coverage.)*
 
 ### Tested platforms
