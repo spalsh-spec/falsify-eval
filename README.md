@@ -150,6 +150,31 @@ flowchart LR
 
 ---
 
+## First principles — the mental model
+
+> *If your AI cannot beat random chance in four different ways, you do not know if it is actually working.*
+
+**The broken ruler problem.** A bare score like "0.77 nDCG" is a measurement — but a measurement is only meaningful against a baseline. What does a dumb, cheating, or random system score on the same bench? If you do not know, the number is a rubber ruler: real, but meaningless.
+
+**The four control groups.** The gate builds four deliberately broken systems and measures each one:
+
+| Null | The cheat it simulates | What a PASS rules out |
+|---|---|---|
+| **A — permuted labels** | Shuffle which answer belongs to which question. Every answer still appears — just reassigned (a bijection). | Your system learned the *shape* of the answer distribution, not relevance. |
+| **B — uniform random** | For each question, draw a random correct answer with equal probability. | Your system exploits a uniform class-prior assumption. |
+| **C — random retrieval** | Replace your search results entirely — return K random documents from the corpus. | Your system is no better than noise. |
+| **D — marginal-matched ★** | Draw answers weighted by how *common* each answer actually is in the benchmark. | Your system only learned "answer X is frequent" — not what is being asked. |
+
+**The delta.** `Δ = your_score − null_score`. The gate passes only if `Δ ≥ τ` (default `0.05`) on **all four nulls simultaneously**. One failure = gate fails.
+
+**Why Null D is the novel contribution.** Say "Rigveda" appears in 30% of queries. A system that always answers "Rigveda" scores 0.30 recall without understanding a single question. Nulls A and B do not reliably catch this cheater — they sample without respecting frequency. Null D samples *with* frequency weights, directly simulating that exact exploit. Beating Null D means your system learned something beyond the base rate.
+
+**The integrity lock.** Even a passing gate is meaningless if the benchmark files changed between runs. `lock_state()` computes a SHA-256 fingerprint of every benchmark artifact and binds it to a git commit — like a firmware checksum on a device update. `verify_state()` detects any drift silently introduced by migrations, feedback loops, or annotation changes.
+
+→ [**Full visual guide**](EXPLAINER_CONCEPTS.html) · [**Editorial explainer**](EXPLAINER.html) · [**Preprint §3**](PREPRINT.md)
+
+---
+
 ## Three surfaces
 
 ```python

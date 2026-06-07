@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>falsify-eval — First Principles Visual Guide</title>
+<meta name="description" content="A layered, visual first-principles explanation of the four-null gate: what it is, how it works, and why it works. No maths required.">
+<style>
+:root{--bg:#0f0f13;--surface:#1a1a24;--border:#2a2a3a;--accent:#7c6af7;--accent2:#f7a26a;--accent3:#6af7c2;--accent4:#f76a8a;--text:#e8e8f0;--muted:#888899;--pass:#4caf82;--fail:#f76a8a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;padding:2rem 1.5rem 4rem;max-width:900px;margin:0 auto}
+h1{font-size:2rem;color:var(--accent);margin-bottom:.25rem}
+h2{font-size:1.25rem;color:var(--accent2);margin:2.5rem 0 .8rem}
+h3{font-size:.95rem;color:var(--accent3);margin:.9rem 0 .4rem}
+p{margin-bottom:.8rem;font-size:.95rem}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.subtitle{color:var(--muted);font-size:.9rem;margin-bottom:.5rem}
+.back{display:inline-block;color:var(--muted);font-size:.8rem;margin-bottom:2rem;border:1px solid var(--border);padding:.25rem .7rem;border-radius:6px}
+
+/* ONE-LINER */
+.hero{font-size:1.4rem;font-weight:700;text-align:center;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:1.5rem 0 2rem;line-height:1.4}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1rem}
+.card.hi{border-color:var(--accent)}
+
+/* ANALOGY */
+.analogy{background:linear-gradient(135deg,#1e1a30,#1a1e2e);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:1rem 1.2rem;margin:1rem 0;font-style:italic;font-size:.9rem}
+.analogy strong{color:var(--accent2);font-style:normal}
+
+/* FORMULA */
+.formula{background:#0a0a14;border:1px solid var(--border);border-radius:8px;padding:.8rem 1.2rem;font-family:'Courier New',monospace;font-size:.95rem;color:var(--accent3);margin:.8rem 0;text-align:center}
+.formula small{color:var(--muted);font-size:.78rem}
+
+/* FLOW */
+.flow{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:1.5rem 0}
+.fb{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:.6rem .9rem;text-align:center;font-size:.8rem;min-width:85px}
+.fb.real{border-color:var(--accent3);color:var(--accent3)}
+.fb.null{border-color:var(--muted);color:var(--muted)}
+.fb.gate{border-color:var(--accent);background:#1e1a30;color:var(--text)}
+.fb.pass{border-color:var(--pass);color:var(--pass)}
+.fb.fail{border-color:var(--fail);color:var(--fail)}
+.arr{font-size:1.3rem;color:var(--muted)}
+
+/* NULL GRID */
+.ng{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin:1rem 0}
+.nc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem}
+.nc.new{border-color:var(--accent)}
+.nc .tag{display:inline-block;background:#2a2040;color:var(--accent);border-radius:6px;padding:.1rem .5rem;font-size:.7rem;font-weight:700;margin-bottom:.35rem}
+.nc .lbl{font-weight:700;color:var(--text);font-size:.88rem}
+.nc .desc{font-size:.8rem;color:var(--muted);margin-top:.25rem}
+.nc .ex{font-size:.78rem;color:var(--accent2);margin-top:.45rem;background:#1e1a10;border-radius:6px;padding:.4rem .6rem}
+
+/* BARS */
+.br{display:flex;align-items:center;gap:.8rem;margin-bottom:.55rem}
+.bl{width:75px;font-size:.78rem;color:var(--muted);text-align:right;flex-shrink:0}
+.bt{flex:1;height:26px;background:#1a1a24;border:1px solid var(--border);border-radius:6px;position:relative;overflow:visible}
+.bbar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:8px;font-size:.73rem;font-weight:700}
+.bmark{position:absolute;top:0;bottom:0;width:3px;background:var(--fail);border-radius:2px}
+.bdl{font-size:.75rem;width:105px;flex-shrink:0}
+
+/* PILLS */
+.pill{display:inline-block;padding:.1rem .55rem;border-radius:999px;font-size:.68rem;font-weight:700}
+.pill.pass{background:#0a2a1a;color:var(--pass);border:1px solid var(--pass)}
+.pill.fail{background:#2a0a10;color:var(--fail);border:1px solid var(--fail)}
+.pill.new{background:#1a0a2a;color:var(--accent);border:1px solid var(--accent)}
+
+/* LOCK STEPS */
+.ls{display:flex;flex-direction:column;gap:.55rem;margin:1rem 0}
+.lrow{display:flex;align-items:center;gap:1rem;background:var(--surface);border-radius:10px;padding:.75rem 1rem;border:1px solid var(--border)}
+.li{font-size:1.4rem;width:2rem;text-align:center;flex-shrink:0}
+.lt{font-size:.84rem}
+.lt strong{color:var(--accent3)}
+
+/* STORY */
+.sr{display:flex;gap:.9rem;align-items:flex-start;margin-bottom:.7rem}
+.si{font-size:1.6rem;width:2.2rem;flex-shrink:0}
+.st{font-size:.87rem;color:var(--text)}
+
+/* PATH GRID */
+.pg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin:1rem 0}
+.ps{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem;text-align:center}
+.ps .num{font-size:1.8rem;font-weight:700;color:var(--accent);display:block;margin-bottom:.2rem}
+.ps .ttl{font-size:.88rem;font-weight:700;color:var(--accent2);margin-bottom:.35rem}
+.ps .bod{font-size:.76rem;color:var(--muted)}
+
+/* THREE-SENTENCE */
+.three{font-size:.98rem;color:var(--accent2);line-height:1.7}
+
+hr{border:none;border-top:1px solid var(--border);margin:2.5rem 0}
+.muted{color:var(--muted)}
+code{font-family:'Courier New',monospace;font-size:.85em;background:#1a1a2e;padding:.1rem .35rem;border-radius:4px;color:var(--accent3)}
+@media(max-width:600px){.ng,.pg{grid-template-columns:1fr}.flow{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<a class="back" href="README.md">← README</a>
+
+<h1>falsify-eval</h1>
+<p class="subtitle">First Principles Visual Guide · v0.2.0</p>
+
+<div class="hero">
+  "If your AI can't beat random chance in four different ways,<br>you don't know if it's actually working."
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>🔍 Layer 1 — The Problem</h2>
+
+<div class="card">
+  <h3>The Broken Ruler Problem</h3>
+  <p>Imagine a ruler made of rubber that stretches — but stretches the same way for everyone. You measure a table and get 120 cm. So does everyone else. The number is real. But it means nothing because <strong>there's no calibrated baseline</strong>.</p>
+  <p>This is what happens in AI evaluation. A score of <strong>0.770 nDCG</strong> sounds impressive. But what if a system that returns completely random documents also scores 0.60? Does your 0.770 prove anything?</p>
+</div>
+
+<div class="analogy">
+  <strong>ECE analogy:</strong> You're testing a band-pass filter. You measure the output signal level and get a big number. But you never checked the noise floor. Your filter might be amplifying everything — signal <em>and</em> noise — equally. The output level alone tells you nothing without a noise baseline.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>🧱 Layer 2 — The Null Hypothesis</h2>
+
+<div class="card hi">
+  <h3>What is a "null"?</h3>
+  <p>A null is a <strong>deliberately dumb, cheating, or random system</strong> used as a baseline. If your real system can't beat the dumb system by a meaningful margin, it isn't doing anything useful — it just looks like it is.</p>
+  <p>In science: <em>"Can we reject the null hypothesis?"</em> = <em>"Can we prove our result isn't just noise or a known pattern?"</em></p>
+</div>
+
+<div class="formula">
+  Δ = real_score − null_score<br>
+  <small>If Δ ≥ τ (default 0.05), you PASS that null. All four must pass for the gate to pass.</small>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>⚡ Layer 3 — The Four Nulls</h2>
+
+<div class="ng">
+  <div class="nc">
+    <div class="tag">NULL A</div>
+    <div class="lbl">Permuted Gold</div>
+    <div class="desc">Shuffle which answer belongs to which question — but keep the set of answers the same. A bijection: every answer still appears exactly once, just in a different slot.</div>
+    <div class="ex">Q1 gets Q3's answer. Q3 gets Q7's answer. The answers aren't random — just rearranged.</div>
+  </div>
+  <div class="nc">
+    <div class="tag">NULL B</div>
+    <div class="lbl">Uniform Random Gold</div>
+    <div class="desc">For each question, pick a completely random correct answer from the answer pool — independently, with equal probability for each option.</div>
+    <div class="ex">Q1 gets a random answer. Q2 gets a different random answer. No structure, no frequency weighting.</div>
+  </div>
+  <div class="nc">
+    <div class="tag">NULL C</div>
+    <div class="lbl">Random Retrieval</div>
+    <div class="desc">Replace your system's output entirely — return K random documents from the corpus instead of your actual search results.</div>
+    <div class="ex">Your search results are discarded. Five random documents from the corpus are returned instead.</div>
+  </div>
+  <div class="nc new">
+    <div class="tag">NULL D &nbsp;<span class="pill new">NEW CONTRIBUTION</span></div>
+    <div class="lbl">Marginal-Matched Random</div>
+    <div class="desc">Pick random answers — but weighted by how <em>common</em> each answer actually is in the dataset. This catches a cheater that never understands anything but always guesses the most frequent class.</div>
+    <div class="ex">If "Rigveda" appears 30% of the time, this null answers "Rigveda" ~30% of the time. Nulls A and B miss this cheater. Null D catches it.</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Why Null D is the key insight</h3>
+  <div class="sr">
+    <div class="si">🎯</div>
+    <div class="st">Imagine a doctor who only ever diagnoses "the flu." In flu season, they're 60% accurate — without understanding a single patient. They learned the frequency, not medicine.</div>
+  </div>
+  <div class="sr">
+    <div class="si">🧠</div>
+    <div class="st">Nulls A and B test against permuted and uniform-random labels — but <strong>don't simulate</strong> a system that learned the frequency distribution. They can false-positive on the frequency cheater.</div>
+  </div>
+  <div class="sr">
+    <div class="si">🔑</div>
+    <div class="st">Null D directly simulates the frequency cheater. If your system can't beat it, it hasn't learned anything beyond <em>"this answer appears often."</em> This is the novel contribution of this work.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>📊 Layer 4 — How the Gate Works</h2>
+
+<div class="flow">
+  <div class="fb real">Your System<br><small>real = 0.77</small></div>
+  <div class="arr">→</div>
+  <div class="fb null">Null A<br><small>0.45</small></div>
+  <div class="fb null">Null B<br><small>0.42</small></div>
+  <div class="fb null">Null C<br><small>0.08</small></div>
+  <div class="fb null">Null D★<br><small>0.51</small></div>
+  <div class="arr">→</div>
+  <div class="fb gate">Δ ≥ 0.05?<br><small>all four?</small></div>
+  <div class="arr">→</div>
+  <div class="fb pass">GATE PASS ✓</div>
+</div>
+
+<p class="muted" style="font-size:.8rem;margin-bottom:.8rem">Bar = real score · Red line = null score · The gap is Δ. Δ must be ≥ 0.05 to pass.</p>
+
+<div class="br"><div class="bl">Null A</div><div class="bt"><div class="bbar" style="width:77%;background:linear-gradient(90deg,#4caf82,#3a9a6e);color:#fff">0.77</div><div class="bmark" style="left:45%"></div></div><div class="bdl"><span class="pill pass">Δ=+0.32 PASS</span></div></div>
+<div class="br"><div class="bl">Null B</div><div class="bt"><div class="bbar" style="width:77%;background:linear-gradient(90deg,#4caf82,#3a9a6e);color:#fff">0.77</div><div class="bmark" style="left:42%"></div></div><div class="bdl"><span class="pill pass">Δ=+0.35 PASS</span></div></div>
+<div class="br"><div class="bl">Null C</div><div class="bt"><div class="bbar" style="width:77%;background:linear-gradient(90deg,#4caf82,#3a9a6e);color:#fff">0.77</div><div class="bmark" style="left:8%"></div></div><div class="bdl"><span class="pill pass">Δ=+0.69 PASS</span></div></div>
+<div class="br"><div class="bl">Null D ★</div><div class="bt"><div class="bbar" style="width:77%;background:linear-gradient(90deg,#4caf82,#3a9a6e);color:#fff">0.77</div><div class="bmark" style="left:51%"></div></div><div class="bdl"><span class="pill pass">Δ=+0.26 PASS</span></div></div>
+<div class="br" style="margin-top:.9rem"><div class="bl" style="color:var(--fail)">Null D★<br><small>(failing)</small></div><div class="bt"><div class="bbar" style="width:57%;background:linear-gradient(90deg,#f76a8a,#c04060);color:#fff">0.57</div><div class="bmark" style="left:54%"></div></div><div class="bdl"><span class="pill fail">Δ=+0.03 FAIL</span></div></div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>🔒 Layer 5 — The Integrity Lock</h2>
+
+<div class="card">
+  <p>Even if the gate passes, there's a second problem: did the benchmark change between runs? If someone (or something) silently modifies the test data, your score comparisons across commits mean nothing.</p>
+</div>
+
+<div class="ls">
+  <div class="lrow"><div class="li">📁</div><div class="lt"><strong>Walk all artifact files</strong> (.db, .json, .pkl, .npy, etc.) in the benchmark directory</div></div>
+  <div class="lrow"><div class="li">🔐</div><div class="lt"><strong>SHA-256 fingerprint each file</strong> — if even one byte changes, the hash changes entirely</div></div>
+  <div class="lrow"><div class="li">🌿</div><div class="lt"><strong>Bind to git commit</strong> — record the exact code version that produced this result</div></div>
+  <div class="lrow"><div class="li">📋</div><div class="lt"><strong>Write lock.json</strong> — run <code>verify_state()</code> anytime to check nothing drifted silently</div></div>
+</div>
+
+<div class="analogy">
+  <strong>ECE analogy:</strong> It's a checksum on a firmware binary. Before flashing a device, you verify the SHA-256 of the file matches what the manufacturer published — ensuring you're flashing the right, unmodified version. The lock does the same for your benchmark.
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>🎓 Layer 6 — How to Explain It</h2>
+
+<div class="card hi">
+  <h3>The three-sentence version for academics</h3>
+  <p class="three">"Standard retrieval evaluation reports a bare aggregate metric — without any comparison to null distributions. We show this is insufficient because four distinct null predictors (permuted labels, uniform random labels, random retrieval, and marginal-matched random labels) can produce non-trivial scores without performing genuine retrieval. Our four-null Δ-gate is passed if and only if the real system exceeds all four null distributions by a threshold τ; the fourth null — marginal-matched — is a novel contribution that catches a failure mode not addressed in prior work."</p>
+</div>
+
+<div class="card">
+  <div class="sr"><div class="si">📐</div><div class="st"><strong>It's falsificationist (Popper).</strong> You're not just claiming your system works — you're trying to prove it <em>could</em> fail, and showing it doesn't. That's philosophically rigorous science.</div></div>
+  <div class="sr"><div class="si">🧪</div><div class="st"><strong>It's like a clinical trial.</strong> Drug trials require control groups. You built four different types of control groups for AI evaluation, each targeting a different exploit.</div></div>
+  <div class="sr"><div class="si">⚡</div><div class="st"><strong>Null D is genuinely novel.</strong> The marginal-matched null catches the "frequency cheater" that existing evaluation frameworks miss. That's a real gap in the literature.</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<h2>🗺️ Learning Path — Concepts to Paper</h2>
+
+<div class="pg">
+  <div class="ps"><span class="num">1</span><div class="ttl">Null Hypothesis Testing</div><div class="bod">Khan Academy: "Hypothesis testing" (free, 2 hrs). This is the conceptual foundation of all four nulls. No calculus needed.</div></div>
+  <div class="ps"><span class="num">2</span><div class="ttl">nDCG &amp; Recall@K</div><div class="bod">Search "NDCG explained visually". Understand what metric_fn measures before worrying about the gate wrapped around it.</div></div>
+  <div class="ps"><span class="num">3</span><div class="ttl">Re-read gate.py</div><div class="bod">With the concept clear, re-read gate.py top-to-bottom. Narrate each function: "This creates a world where..."</div></div>
+  <div class="ps"><span class="num">4</span><div class="ttl">Δ and Bootstrap CIs</div><div class="bod">Δ = real − null. τ is the threshold. Then: what does "statistically significant" mean? Learn bootstrap confidence intervals.</div></div>
+  <div class="ps"><span class="num">5</span><div class="ttl">PREPRINT.md §3</div><div class="bod">Definition 1 + Proposition 1. Now that you know the code, the math notation will map directly to what you already built.</div></div>
+  <div class="ps"><span class="num">6</span><div class="ttl">Story Before LaTeX</div><div class="bod">Write a 1-page plain English version first. arXiv papers that open with the problem are read. Those that open with formulas are not.</div></div>
+</div>
+
+<hr>
+<p style="text-align:center;font-size:.78rem;color:var(--muted)">
+  falsify-eval · Sparsh Sharma · v0.2.0<br>
+  <a href="README.md">README</a> · <a href="EXPLAINER.html">Editorial explainer</a> · <a href="PREPRINT.md">Preprint</a>
+</p>
+
+</body>
+</html>
