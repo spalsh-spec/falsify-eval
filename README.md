@@ -171,7 +171,7 @@ flowchart LR
 
 **The integrity lock.** Even a passing gate is meaningless if the benchmark files changed between runs. `lock_state()` computes a SHA-256 fingerprint of every benchmark artifact and binds it to a git commit — like a firmware checksum on a device update. `verify_state()` detects any drift silently introduced by migrations, feedback loops, or annotation changes.
 
-→ [**Full visual guide**](EXPLAINER_CONCEPTS.html) · [**Editorial explainer**](EXPLAINER.html) · [**Preprint §3**](PREPRINT.md)
+→ [**The Four Nulls explained**](THE_FOUR_NULLS.html) · [**Visual guide**](EXPLAINER_CONCEPTS.html) · [**Editorial explainer**](EXPLAINER.html) · [**Preprint §3**](PREPRINT.md)
 
 ---
 
