@@ -1,0 +1,41 @@
+[
+  {
+    "id": "q1",
+    "retrieved_ids": [
+      "doc-lockout-distractor",
+      "doc-lockout",
+      "doc-arc-flash-distractor",
+      "doc-arc-flash",
+      "doc-general",
+      "doc-incident",
+      "doc-incident-distractor"
+    ],
+    "score": 8.260048454721321
+  },
+  {
+    "id": "q2",
+    "retrieved_ids": [
+      "doc-incident-distractor",
+      "doc-incident",
+      "doc-arc-flash",
+      "doc-arc-flash-distractor",
+      "doc-general",
+      "doc-lockout",
+      "doc-lockout-distractor"
+    ],
+    "score": 11.489279480443297
+  },
+  {
+    "id": "q3",
+    "retrieved_ids": [
+      "doc-arc-flash-distractor",
+      "doc-arc-flash",
+      "doc-incident",
+      "doc-lockout",
+      "doc-general",
+      "doc-incident-distractor",
+      "doc-lockout-distractor"
+    ],
+    "score": 12.751224935843366
+  }
+]

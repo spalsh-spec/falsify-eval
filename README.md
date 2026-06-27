@@ -44,6 +44,90 @@ Free. Open source. Runs on your laptop. Works on any search system.
 Built for **search engines, recommendation systems, the retrieval side of RAG.**<br>
 *Not* built for the part of ChatGPT that writes paragraphs — that's a different problem we haven't built a test for.
 
+### Local audit web app
+
+This repo now includes a local-first audit dashboard in `apps/web`.
+
+Best for **retrieval, ranking, and RAG retrieval-side audits**. It is not a judge for free-text generation, summarisation, or open-ended answer quality.
+
+Screenshots:
+
+![Audit web workbench](docs/screenshots/audit-web-workbench.png)
+
+![Audit report export](docs/screenshots/audit-web-report.png)
+
+Run it:
+
+```bash
+npm install
+npm run dev --workspace apps/web
+```
+
+Open `http://localhost:3000`.
+
+The app accepts:
+
+- dataset `.json` or `.jsonl`
+- system output `.json` or `.jsonl`
+- baseline output `.json` or `.jsonl`, or a corpus file for a generated BM25 baseline
+- optional corpus `.json` or `.jsonl` with document `id` and `text`
+- claim config as JSON or YAML
+
+It returns:
+
+- PASS / WARN / FAIL verdict
+- human-readable Markdown report
+- machine-readable JSON report
+- dataset quality report before the evidence checks
+- evidence table for metric, statistical, null, stability, leakage, and reproducibility checks
+
+Privacy model:
+
+- audits run locally
+- uploaded files are never placed in `public/`
+- raw uploads are stored under `.local-audits/raw` or `AUDIT_STORAGE_DIR`
+- filenames are not trusted as storage paths
+- reports redact emails, phone numbers, bearer tokens, API keys, and obvious secrets
+- no audit code makes external network calls
+- delete an audit job with `DELETE /api/audits/:id`
+
+Run the included corpus-backed demo:
+
+```bash
+npm run build:cli --workspace apps/web
+node apps/web/dist-cli/falsify-audit.mjs run \
+  --dataset examples/audit-web-demo/dataset.jsonl \
+  --system examples/audit-web-demo/system-output.jsonl \
+  --corpus examples/audit-web-demo/corpus.jsonl \
+  --config examples/audit-web-demo/config.yaml \
+  --out /tmp/falsify-audit-demo.json \
+  --pack-out /tmp/falsify-audit-pack
+```
+
+The public demo folder includes the dataset, corpus, system output, generated BM25 baseline output, claim config, and expected Markdown report: [`examples/audit-web-demo/`](examples/audit-web-demo/).
+
+The corpus path builds a deterministic BM25 lexical baseline locally. No auth, accounts, hosted storage, external APIs, or LLM judging are used.
+
+Deploy notes:
+
+- Local-first use is the default and safest path for private benchmarks.
+- Vercel is suitable for a public demo with toy data only unless private storage and access control are added.
+- Full notes: [`docs/AUDIT_WEB_DEPLOYMENT.md`](docs/AUDIT_WEB_DEPLOYMENT.md).
+
+Phase 2 local workbench additions:
+
+```bash
+node apps/web/dist-cli/falsify-audit.mjs template --template rag_search --out /tmp/rag-claim.yaml
+node apps/web/dist-cli/falsify-audit.mjs compare \
+  --dataset apps/web/examples/rag-dataset.jsonl \
+  --system apps/web/examples/rag-system-v1.jsonl \
+  --right-system apps/web/examples/rag-system.jsonl \
+  --corpus apps/web/examples/rag-corpus.jsonl \
+  --config apps/web/examples/claim.yaml \
+  --mode system_v1_vs_v2 \
+  --out /tmp/falsify-comparison.json
+```
+
 <br>
 
 [![CI](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml/badge.svg)](https://github.com/spalsh-spec/falsify-eval/actions/workflows/ci.yml)

@@ -39,3 +39,11 @@ arxiv/
 # Mutation testing cache (regenerable; pinned to mutmut 2.x v0.2 milestone)
 .mutmut-cache
 mutants/
+
+# Node / Next web app
+node_modules/
+apps/web/.next/
+apps/web/.next.broken-*/
+apps/web/.local-audits/
+apps/web/dist-cli/
+apps/web/tsconfig.tsbuildinfo

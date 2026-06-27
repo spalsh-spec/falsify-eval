@@ -1,0 +1,15 @@
+claim: Demo RAG system beats BM25 on the safety retrieval sample
+primary_metric: ndcg@1
+minimum_effect_size: 0.01
+alpha: 0.05
+seed: 42
+system_name: Demo RAG
+baseline_name: BM25
+system_version: phase-1-demo
+dataset_version: phase-1-demo
+checks:
+  - bootstrap_ci
+  - shuffled_labels
+  - random_baseline
+  - lexical_baseline
+  - dataset_quality

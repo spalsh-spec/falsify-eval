@@ -1,0 +1,3 @@
+{"id":"q1","query":"What prevents machine restart during maintenance?","expected_answer":"Lockout tagout isolates hazardous energy before maintenance.","relevant_ids":["doc-lockout"],"difficulty":"easy","source":"safety-demo"}
+{"id":"q2","query":"Which document explains incident reporting timeframes?","expected_answer":"The incident reporting procedure defines the reporting window.","relevant_ids":["doc-incident"],"difficulty":"medium","source":"safety-demo"}
+{"id":"q3","query":"What PPE is required for arc flash work?","expected_answer":"The arc flash procedure lists face shield, gloves, and rated clothing.","relevant_ids":["doc-arc-flash"],"difficulty":"hard","source":"safety-demo"}

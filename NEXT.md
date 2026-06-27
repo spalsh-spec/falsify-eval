@@ -61,3 +61,14 @@ line reads `pip install falsify-eval` instead of the git URL.
   (Jasmeet + Mayank). Equivariance certificate. Property suite. CI matrix.
   PyPI pipeline. arXiv pipeline. That's a real week.
 - Sleep, food, water, one human conversation. In that order.
+# Audit tool deferred work
+
+- Done: YAML claim config support with `js-yaml` JSON schema parsing.
+- Done: packaged CLI:
+  `falsify-audit run --dataset data.jsonl --system system.jsonl --baseline baseline.jsonl --config claim.yaml --out report.json`
+- Done: optional corpus input with local BM25 lexical baseline.
+- Done: API route integration tests with multipart uploads.
+- Done: RAG JSONL importer aliases, dataset quality report, and demo files.
+- Done: Phase 2 comparison view, local templates, audit pack export, and CLI/web parity paths.
+- Add optional encrypted-at-rest local storage for highly sensitive benchmark data.
+- Add job retention policy and scheduled local cleanup.
